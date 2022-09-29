@@ -7,13 +7,15 @@ deploy.dev:
   variables:
     ENV_FILE: '${DEV_ENV}'
     PROJECT_NAME: avatars-moscott-ui
-    EXT_PORT: 3004
+    EXT_PORT: 3009
     INT_PORT: 3000
     DOCKERFILE: .docker/Dockerfile
     DOCKER_PROJECT_DIR: "."
   script:
     - echo "${ENV_FILE}" | envsubst > .env
-    - docker build --build-arg CI_SERVER_HOST=$CI_SERVER_HOST --build-arg CI_JOB_TOKEN=$CI_JOB_TOKEN -t "${PROJECT_NAME?}" -f "${DOCKERFILE?}" "${DOCKER_PROJECT_DIR?}"
+    - echo $CI_SERVER_HOST
+    - echo $CI_JOB_TOKEN
+    - docker build --build-arg CI_SERVER_HOST=$CI_SERVER_HOST --build-arg CI_JOB_TOKEN=$CI_JOB_TOKEN -t "${PROJECT_NAME?}" -f "${DOCKERFILE?}" "${DOCKER_PROJECT_DIR?}"    
     - docker stop "${PROJECT_NAME?}" || true
     - docker rm "${PROJECT_NAME?}" || true
     - docker run ${DOCKER_OPTS} -d -p ${EXT_PORT?}:${INT_PORT?} --name "${PROJECT_NAME}" "${PROJECT_NAME}"
@@ -21,4 +23,5 @@ deploy.dev:
     - web3dev-dev
   only:
     - develop
+
 
