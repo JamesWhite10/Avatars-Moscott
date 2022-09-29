@@ -1,0 +1,24 @@
+include:
+  - project: "devops/deploy"
+    ref: master
+    file: "node/lint.yml"
+
+deploy.dev:
+  variables:
+    ENV_FILE: '${DEV_ENV}'
+    PROJECT_NAME: avatars-moscott-ui
+    EXT_PORT: 3004
+    INT_PORT: 3000
+    DOCKERFILE: .docker/Dockerfile
+    DOCKER_PROJECT_DIR: "."
+  script:
+    - echo "${ENV_FILE}" | envsubst > .env
+    - docker build --build-arg CI_SERVER_HOST=$CI_SERVER_HOST --build-arg CI_JOB_TOKEN=$CI_JOB_TOKEN -t "${PROJECT_NAME?}" -f "${DOCKERFILE?}" "${DOCKER_PROJECT_DIR?}"
+    - docker stop "${PROJECT_NAME?}" || true
+    - docker rm "${PROJECT_NAME?}" || true
+    - docker run ${DOCKER_OPTS} -d -p ${EXT_PORT?}:${INT_PORT?} --name "${PROJECT_NAME}" "${PROJECT_NAME}"
+  tags:
+    - web3dev-dev
+  only:
+    - develop
+
