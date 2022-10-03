@@ -1,0 +1,51 @@
+@import "styles/media";
+
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+}
+
+.progress_container {
+  transform: rotate(-90deg);
+}
+
+.outer_border {
+  border: 7px solid transparent;
+  border-radius: 100%;
+  z-index: 2;
+  box-shadow: inset 0px 1px 3px rgb(65 69 167 / 25%);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  pointer-events: none;
+}
+
+.progress_track {
+  stroke: rgba(178, 198, 255, 1);
+  stroke-width: 8;
+  @media (max-width: $mq-tablet-max) {
+    stroke-width: 6;
+  }
+}
+
+.progress {
+  stroke: var(--primary-600);
+  stroke-width: 8;
+  transition: stroke-dasharray .2s, stroke-dashoffset .2s ease;
+  @media (max-width: $mq-tablet-max) {
+    stroke-width: 6;
+  }
+}
+
+.content {
+  position: absolute;
+  width: calc(100% - 25px);
+  height: calc(100% - 25px);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

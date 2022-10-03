@@ -1,0 +1,19 @@
+.root {
+  height: 100vh;
+}
+
+.editor_container {
+  width: 100%;
+  height: 100%;
+  background: var(--gray-200);
+}
+
+.workarea_overlay {
+  height: 100vh;
+  display: flex;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}

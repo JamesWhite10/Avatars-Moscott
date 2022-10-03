@@ -1,0 +1,26 @@
+.root {
+  width: 100%;
+  height: 100%;
+  background: #E1EBFF;
+  border-radius: 100%;
+  font-family: var(--font-space-grotesk);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  outline: none;
+  transition-property: background-color;
+  box-shadow: inset 0 1px 12px rgba(65, 69, 167, 0.32);
+  &:hover {
+    background-color: #FFFFFF;
+    cursor: pointer;
+  }
+
+  &:active {
+    background: #C2D6FC;
+  }
+
+  &:disabled {
+    background: #D0D7E7;
+  }
+}
