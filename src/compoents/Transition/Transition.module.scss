@@ -1,0 +1,36 @@
+.root_FadeEnter {
+  opacity: 0 !important;
+  transition: opacity .3s ease;
+}
+
+.root_FadeEnterActive {
+  opacity: 1 !important;
+  transition: opacity .3s ease;
+}
+
+.root_FadeEnterDone {
+  opacity: 1 !important;
+  transition: all .3s ease;
+}
+
+.root_FadeExit {
+  opacity: 1 !important;
+  transition: all .3s ease;
+}
+
+.root_FadeExitActive {
+  opacity: 0 !important;
+  transition: all .3s ease;
+}
+
+.root_FadeExitDone {
+  opacity: 0 !important;
+  transition: all .3s ease;
+}
+
+.fade_container {
+  transition: opacity .3s ease;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+}
