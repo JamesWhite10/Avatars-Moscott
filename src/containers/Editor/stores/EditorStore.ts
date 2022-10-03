@@ -12,15 +12,7 @@ export default class EditorStore {
   }
 
   public init(): void {
-    const id = setInterval(() => {
-      if (this.progress === 100) {
-        this.setIsReady(true);
-        console.log('clear');
-        clearInterval(id);
-        return;
-      }
-      this.setProgress(this.progress + 1);
-    }, 4000 / 100);
+    if (this.progress === 100) this.setIsReady(true);
   }
 
   public setIsReady(isLoading: boolean): void {

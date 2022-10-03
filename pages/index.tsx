@@ -1,6 +1,8 @@
 import type { NextPage } from 'next';
 import EditorProvider from '@app/containers/Editor/Provider/EditorProvider';
-import Editor from '@app/containers/Editor';
+import dynamic from 'next/dynamic';
+
+const Editor = dynamic(() => import('@app/containers/Editor'), { ssr: false });
 
 const Home: NextPage = () => {
   return (
