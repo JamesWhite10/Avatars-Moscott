@@ -20,16 +20,14 @@ export default class EditorStore {
 
   public initialize(): void {
     this.threeScene = new SceneViewport();
-    this.threeScene.init(this.onProgress);
+    this.threeScene.init(this.onProgress.bind(this))
+      .then(() => {
+        this.setIsReady(true);
+      });
   }
 
   public onProgress(progress: number): void {
-    if (progress === 100) this.init();
     this.setProgress(progress);
-  }
-
-  public init(): void {
-    this.setIsReady(true);
   }
 
   public setIsReady(isLoading: boolean): void {
