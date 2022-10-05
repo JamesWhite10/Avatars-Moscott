@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import setupEnvironment from '../../helpers/setupEnvironment';
-import loadGLB from '../../helpers/loadGLB';
+import ResourcesManager, { GlbResource, HdrTextureResource, ResourceType } from '../../ResourcesManager';
+import textures from '../../assets/json/textures/textures.json';
 
-export class SceneViewport {
+class SceneViewport {
   public threeScene: THREE.Scene;
 
   public threeRenderer: THREE.WebGLRenderer;
@@ -12,10 +13,13 @@ export class SceneViewport {
 
   public controls: OrbitControls;
 
+  protected resourcesManager: ResourcesManager;
+
   constructor() {
     this.threeScene = new THREE.Scene();
     this.threeRenderer = this.makeThreeRenderer();
     this.threeCamera = this.makeThreeCamera();
+    this.resourcesManager = new ResourcesManager();
     this.controls = this.makeThreeControls(this.threeCamera, this.threeRenderer);
   }
 
@@ -102,10 +106,34 @@ export class SceneViewport {
     this.threeRenderer.render(this.threeScene, this.threeCamera);
   }
 
-  public loadSceneTexture(texture: string): Promise<void> {
-    return loadGLB(texture)
-      .then((gltf) => {
-        this.threeScene.add(gltf.scene);
+  public init(
+    onProgress: (value: number) => void,
+  ): Promise<void> {
+    return Promise.all([this.loadSceneTexture(onProgress)])
+      .then(() => {
+        this.runRenderCycle();
+        this.setEnvironment();
+        this.applyTexture();
       });
   }
+
+  public loadSceneTexture(
+    progress: (progress: number) => void,
+  ): Promise<void> {
+    this.resourcesManager.addGlb(textures.background);
+    this.resourcesManager.addHdrTexture(textures.environment);
+    return this.resourcesManager.load(progress);
+  }
+
+  public applyTexture(): void {
+    const texture = this.resourcesManager.getResourceContentByUrlOrFail<GlbResource>(textures.background, ResourceType.GLB);
+    const hdrTexture = this.resourcesManager.getResourceContentByUrlOrFail<HdrTextureResource>(
+      textures.environment,
+      ResourceType.HDR_TEXTURE,
+    );
+    this.threeScene.add(texture.scene);
+    this.threeScene.environment = hdrTexture;
+  }
 }
+
+export default SceneViewport;
