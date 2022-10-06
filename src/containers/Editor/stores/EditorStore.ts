@@ -9,6 +9,8 @@ export default class EditorStore {
 
   public showLoadingScreen = true;
 
+  public isLoadErrorModalOpen = false;
+
   public threeScene: SceneViewport | null = null;
 
   protected resourceManager: ResourcesManager | null;
@@ -38,6 +40,10 @@ export default class EditorStore {
     if (progress < 0) this.progress = 0;
     if (progress >= 100) this.progress = 100;
     this.progress = progress;
+  }
+
+  public setIsLoadErrorModalOpen(isOpen: boolean): void {
+    this.isLoadErrorModalOpen = isOpen;
   }
 
   public setShowLoadingScreen(show: boolean): void {

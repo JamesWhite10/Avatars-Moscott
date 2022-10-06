@@ -7,6 +7,7 @@ import { useMedia } from 'react-use';
 import { screenSizes } from '@app/config/media';
 import { observer } from 'mobx-react';
 import useEditorStore from '@app/containers/Editor/hooks/useEditorStore';
+import ErrorModal from '@app/containers/Editor/containers/SceneLoad/ErrorModal';
 
 const SceneLoad: FC = observer(() => {
   const { progress, isReady, showLoadingScreen, setShowLoadingScreen } = useEditorStore();
@@ -48,6 +49,7 @@ const SceneLoad: FC = observer(() => {
           </Fade>
         </CircularProgress>
       </div>
+      <ErrorModal />
     </Fade>
 
   );
