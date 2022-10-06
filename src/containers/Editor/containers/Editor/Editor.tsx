@@ -10,15 +10,15 @@ import BottomControls from '@app/containers/Editor/containers/BottomControls';
 import RightControls from '@app/containers/Editor/containers/RightControls';
 
 const Editor: FC = observer(() => {
-  const { init } = useEditorStore();
-
-  const editorRefCallback = useCallback((element: HTMLDivElement) => {
-    console.log('el to init', element);
-  }, []);
+  const { initialize, threeScene } = useEditorStore();
 
   useEffect(() => {
-    init();
+    initialize();
   }, []);
+
+  const editorRefCallback = useCallback((element: HTMLDivElement) => {
+    if (threeScene !== null) threeScene.setContainer(element);
+  }, [threeScene]);
 
   return (
     <>

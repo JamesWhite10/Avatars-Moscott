@@ -1,4 +1,6 @@
 import { makeAutoObservable } from 'mobx';
+import SceneViewport from '../../../modules/Scene/SceneViewport/SceneViewport';
+import ResourcesManager from '../../../modules/ResourcesManager';
 
 export default class EditorStore {
   public isReady = false;
@@ -7,20 +9,25 @@ export default class EditorStore {
 
   public showLoadingScreen = true;
 
+  public threeScene: SceneViewport | null = null;
+
+  protected resourceManager: ResourcesManager | null;
+
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
+    this.resourceManager = new ResourcesManager();
   }
 
-  public init(): void {
-    const id = setInterval(() => {
-      if (this.progress === 100) {
+  public initialize(): void {
+    this.threeScene = new SceneViewport();
+    this.threeScene.init(this.onProgress.bind(this))
+      .then(() => {
         this.setIsReady(true);
-        console.log('clear');
-        clearInterval(id);
-        return;
-      }
-      this.setProgress(this.progress + 1);
-    }, 4000 / 100);
+      });
+  }
+
+  public onProgress(progress: number): void {
+    this.setProgress(progress);
   }
 
   public setIsReady(isLoading: boolean): void {
@@ -35,9 +42,5 @@ export default class EditorStore {
 
   public setShowLoadingScreen(show: boolean): void {
     this.showLoadingScreen = show;
-  }
-
-  public hideLoadingScreen(): void {
-    if (this.isReady) this.setShowLoadingScreen(false);
   }
 }
