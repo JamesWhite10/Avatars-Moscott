@@ -75,3 +75,24 @@
     line-height: 26px;
   }
 }
+
+.errorText_container {
+  max-width: 312px;
+  height: 305px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  @media (max-width: $mq-mobile-max) {
+    margin: 0 auto;
+  }
+}
+
+.errorText_text {
+  font-family: var(--font-space-grotesk);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 47px;
+  //color: rgba(255, 255, 255, 0.5);
+  color: #FFFFFF;
+}
