@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import classNames from './SceneLoad.module.scss';
 import { observer } from 'mobx-react';
-import Modal from '@app/compoents/Modal';
+import Modal from '@app/components/Modal';
 import useEditorStore from '@app/containers/Editor/hooks/useEditorStore';
 
 const ErrorModal: FC = observer(() => {

@@ -1,8 +1,8 @@
 import { FC, useMemo } from 'react';
 import classNames from './SceneLoad.module.scss';
-import CircularProgress from '@app/compoents/CircularProgress';
-import RoundButton from '@app/compoents/RoundButton';
-import Fade from '@app/compoents/Transition/Fade';
+import CircularProgress from '@app/components/CircularProgress';
+import RoundButton from '@app/components/RoundButton';
+import Fade from '@app/components/Transition/Fade';
 import { useMedia } from 'react-use';
 import { screenSizes } from '@app/config/media';
 import { observer } from 'mobx-react';
