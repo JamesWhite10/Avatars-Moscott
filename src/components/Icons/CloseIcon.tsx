@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { IconProps } from '@app/compoents/Icons/iconTypes';
+import { IconProps } from '@app/components/Icons/iconTypes';
 
 const CloseIcon = memo<IconProps>((props) => {
   const {
