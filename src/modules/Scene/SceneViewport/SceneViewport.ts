@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import setupEnvironment from '../../helpers/setupEnvironment';
 import ResourcesManager, { GlbResource, HdrTextureResource, ResourceType } from '../../ResourcesManager';
-import textures from '../../assets/json/textures/textures.json';
+import scene from '../../assets/json/scene/scene.json';
+import setupEnvironment from '../../helpers/setupEnvironment';
+import { MaskottEnum } from '../../enum/MaskottEnum';
 
 class SceneViewport {
   public threeScene: THREE.Scene;
@@ -21,6 +22,7 @@ class SceneViewport {
     this.threeCamera = this.makeThreeCamera();
     this.resourcesManager = new ResourcesManager();
     this.controls = this.makeThreeControls(this.threeCamera, this.threeRenderer);
+    this.setupEnvironment();
   }
 
   protected makeThreeRenderer(): THREE.WebGLRenderer {
@@ -36,7 +38,8 @@ class SceneViewport {
     return renderer;
   }
 
-  public setEnvironment(): void {
+  // TODO: get out of here
+  public setLight(): void {
     setupEnvironment(this.threeRenderer, this.threeScene);
   }
 
@@ -112,7 +115,7 @@ class SceneViewport {
     return Promise.all([this.loadSceneTexture(onProgress)])
       .then(() => {
         this.runRenderCycle();
-        this.setEnvironment();
+        this.setLight();
         this.applyTexture();
       });
   }
@@ -120,19 +123,45 @@ class SceneViewport {
   public loadSceneTexture(
     progress: (progress: number) => void,
   ): Promise<void> {
-    this.resourcesManager.addGlb(textures.background);
-    this.resourcesManager.addHdrTexture(textures.environment);
+    this.resourcesManager.addGlb(scene.background);
+    this.resourcesManager.addHdrTexture(scene.environment);
     return this.resourcesManager.load(progress);
   }
 
+  public setupEnvironment(): void {
+    this.threeRenderer.outputEncoding = THREE.sRGBEncoding;
+    this.threeRenderer.shadowMap.enabled = true;
+    this.threeRenderer.domElement.style.userSelect = 'none';
+    this.threeRenderer.domElement.style.outline = 'none';
+    this.threeRenderer.domElement.setAttribute('tabindex', '0');
+    this.threeRenderer.setClearColor(0x95b1cc);
+    this.threeRenderer.setPixelRatio(2);
+    this.threeRenderer.setSize(window.innerWidth, window.innerHeight);
+    this.threeRenderer.localClippingEnabled = true;
+    this.threeRenderer.physicallyCorrectLights = true;
+    this.threeRenderer.toneMapping = THREE.LinearToneMapping;
+    this.threeRenderer.toneMappingExposure = 1;
+  }
+
   public applyTexture(): void {
-    const texture = this.resourcesManager.getResourceContentByUrlOrFail<GlbResource>(textures.background, ResourceType.GLB);
+    const pmremGenerator = new THREE.PMREMGenerator(this.threeRenderer);
+    const texture = this.resourcesManager.getResourceContentByUrlOrFail<GlbResource>(scene.background, ResourceType.GLB);
     const hdrTexture = this.resourcesManager.getResourceContentByUrlOrFail<HdrTextureResource>(
-      textures.environment,
+      scene.environment,
       ResourceType.HDR_TEXTURE,
     );
+
+    texture.scene.getObjectByName(MaskottEnum.MIRA)?.traverse((node) => {
+      if (node instanceof THREE.Mesh) {
+        node.receiveShadow = true;
+        node.castShadow = true;
+      }
+    });
+
     this.threeScene.add(texture.scene);
-    this.threeScene.environment = hdrTexture;
+    this.threeScene.environment = pmremGenerator.fromEquirectangular(hdrTexture).texture;
+    hdrTexture.dispose();
+    pmremGenerator.dispose();
   }
 }
 
