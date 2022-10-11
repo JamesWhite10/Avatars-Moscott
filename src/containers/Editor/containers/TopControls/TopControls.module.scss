@@ -1,0 +1,23 @@
+.root {
+  position: absolute;
+  width: 100%;
+}
+
+.leftGroup_container {
+  left: 8px;
+  top: 8px;
+  position: absolute;
+}
+
+.rightGroup_container {
+  right: 8px;
+  top: 8px;
+  height: 100%;
+  position: absolute;
+}
+
+.rightGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

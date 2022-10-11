@@ -1,0 +1,34 @@
+.root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--gray-300);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  transition: all .2s ease;
+  width: 40px;
+  height: 40px;
+  border:none;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--gray-500);
+  }
+
+  &:active {
+    background: var(--gray-700);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    background: var(--gray-100);
+  }
+}
+
+.active {
+  background: var(--gray-700);
+
+  &:hover {
+    background: var(--gray-700);
+  }
+}
