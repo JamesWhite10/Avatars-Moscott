@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { IconProps } from '@app/compoents/Icons/iconTypes';
+import { IconProps } from '@app/components/Icons/iconTypes';
 
 const CloseIcon = memo<IconProps>((props) => {
   const {
@@ -8,6 +8,7 @@ const CloseIcon = memo<IconProps>((props) => {
     fill = '#FFFFFF',
     className,
   } = props;
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

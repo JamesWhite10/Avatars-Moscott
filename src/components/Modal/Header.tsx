@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren } from 'react';
 import classNames from './Modal.module.scss';
-import { CloseIcon } from '@app/compoents/Icons';
+import { CloseIcon } from '@app/components/Icons';
 
 export interface HeaderProps {
   onCloseClick: () => void;

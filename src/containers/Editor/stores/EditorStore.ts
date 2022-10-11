@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import SceneViewport from '../../../modules/Scene/SceneViewport/SceneViewport';
 import ResourcesManager from '../../../modules/ResourcesManager';
+import ControlsStore from './ControlsStore';
 
 export default class EditorStore {
   public isReady = false;
@@ -15,9 +16,18 @@ export default class EditorStore {
 
   protected resourceManager: ResourcesManager | null;
 
+  public controlsStore!: ControlsStore;
+
   constructor() {
-    makeAutoObservable(this, {}, { autoBind: true });
     this.resourceManager = new ResourcesManager();
+    makeAutoObservable(this, {}, { autoBind: true });
+    this.controlsStore = new ControlsStore();
+    this.subscribe();
+  }
+
+  public subscribe(): void {
+    this.controlsStore.subscribe('soundChange', () => { console.log('sound change'); });
+    this.controlsStore.subscribe('takeScreenShot', () => { console.log('take screenshot'); });
   }
 
   public initialize(): void {

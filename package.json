@@ -20,6 +20,7 @@
     "classnames": "^2.3.2",
     "concurrently": "^6.3.0",
     "dat.gui": "^0.7.9",
+    "eventemitter3": "^4.0.7",
     "mobx": "^6.6.2",
     "mobx-react": "^7.5.3",
     "next": "12.3.1",
