@@ -13,6 +13,7 @@ import ClearIcon from './ClearIcon';
 import BackIcon from './BackIcon';
 import ArrowRightIcon from './ArrowRightIcon';
 import ArrowLeftIcon from './ArrowLeftIcon';
+import MusicOffIcon from './MusicOffIcon';
 
 export {
   CloseIcon,
@@ -30,4 +31,5 @@ export {
   BackIcon,
   ArrowRightIcon,
   ArrowLeftIcon,
+  MusicOffIcon,
 };

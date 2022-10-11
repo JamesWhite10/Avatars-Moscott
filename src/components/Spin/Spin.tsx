@@ -18,7 +18,7 @@ export interface SpinProps {
    */
   position?: 'stretch' | 'fullscreen' | 'default';
   transitionDelay?: number;
-  borderRadius?: string;
+  borderRadius?: string | number;
 }
 
 const Spin: FC<SpinProps> = memo((props) => {
