@@ -1,0 +1,98 @@
+@import "./styles/media";
+
+.root {
+  font-family: var(--font-space-grotesk);
+  border: none;
+  outline: none;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #FFFFFF;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.titleHide {
+  display: none;
+}
+
+.primary {
+  background: #4145A7;
+
+  &:hover {
+    background: #2E3075;
+  }
+
+  &:active {
+    background: #202252;
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+}
+
+.secondary {
+  background: #97989E;
+
+  &:hover {
+    background: #72747F;
+  }
+
+  &:active {
+    background: #4E5060;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: auto;
+    pointer-events: none;
+  }
+}
+
+.ghost {
+  background: transparent;
+
+  &:hover {
+    background: #B1B2B5;
+  }
+
+  &:active {
+    background: #4E5060;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+}
+
+.lg {
+  width: 147px;
+  height: 48px;
+  font-size: 20px;
+  padding: 12px 16px 12px 16px;
+}
+
+.md {
+  width: 129px;
+  height: 40px;
+  font-size: 16px;
+  padding: 8px 12px 8px 12px;
+}
+
+.sm {
+  width: 116px;
+  height: 32px;
+  font-size: 14px;
+  padding: 4px 8px 4px 8px;
+}
