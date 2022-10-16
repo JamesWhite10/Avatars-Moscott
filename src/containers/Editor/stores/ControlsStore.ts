@@ -35,9 +35,20 @@ export default class ControlsStore {
   }
 
   public onFullScreenChange(): Promise<void> {
-    if (this.fullScreenMode) return document.exitFullscreen().then(() => this.setFullScreenMode(false));
-    return document.body.requestFullscreen()
-      .then(() => this.setFullScreenMode(true));
+    /**
+     * FullScreen API отличается для SAFARI и всего остального
+     * В частности в том что SAFARI - не возвращает Promise
+     */
+    const requestFn = document.body.requestFullscreen ?? (document.body as any).webkitRequestFullscreen;
+    const requestFullScreen = requestFn.bind(document.body);
+    const exitFunc = document.exitFullscreen ?? (document as any).webkitExitFullscreen;
+    const exitFullScreen = exitFunc.bind(document);
+    if (this.fullScreenMode) {
+      this.setFullScreenMode(false);
+      return exitFullScreen();
+    }
+    this.setFullScreenMode(true);
+    return requestFullScreen();
   }
 
   public onSoundChange = (): void => {

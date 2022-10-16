@@ -39,6 +39,7 @@ const RightControls: FC = observer(() => {
   return (
     <div className={classNames.rightGroup}>
       <IconButton
+        className={classNames.fullScreenButton}
         active={fullScreenMode}
         onClick={onFullScreenChange}
       >

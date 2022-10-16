@@ -8,6 +8,7 @@ export interface IconButtonProps {
   active?: boolean;
   loading?: boolean;
   onClick?: () => void;
+  className?: string;
 }
 
 const IconButton = forwardRef<HTMLButtonElement, PropsWithChildren<IconButtonProps>>((props, ref) => {
@@ -16,6 +17,7 @@ const IconButton = forwardRef<HTMLButtonElement, PropsWithChildren<IconButtonPro
     active = false,
     loading = false,
     onClick = () => undefined,
+    className,
     children,
   } = props;
 
@@ -24,7 +26,7 @@ const IconButton = forwardRef<HTMLButtonElement, PropsWithChildren<IconButtonPro
       ref={ref}
       type="button"
       disabled={disabled}
-      className={cn(classNames.root, { [classNames.active]: active })}
+      className={cn(className, classNames.root, { [classNames.active]: active })}
       onClick={onClick}
     >
       <Spin

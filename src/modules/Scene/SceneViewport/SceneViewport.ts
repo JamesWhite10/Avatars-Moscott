@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import ResourcesManager, { GlbResource, HdrTextureResource, ResourceType } from '../../ResourcesManager';
 import scene from '../../assets/json/scene/scene.json';
 import setupEnvironment from '../../helpers/setupEnvironment';
-import { MaskottEnum } from '../../enum/MaskottEnum';
+import { MaskottEnum } from '../../../enum/MaskottEnum';
 
 class SceneViewport {
   public threeScene: THREE.Scene;
