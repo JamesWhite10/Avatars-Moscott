@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import ResourcesManager, { GlbResource, HdrTextureResource, ResourceType } from '../../ResourcesManager';
 import scene from '../../assets/json/scene/scene.json';
 import setupEnvironment from '../../helpers/setupEnvironment';
-import { MaskottEnum } from '../../enum/MaskottEnum';
+import { MaskottEnum } from '@app/enum/MaskottEnum';
 import CameraControls from 'camera-controls';
 import { getRendererSnapshot } from '../../utils/getRendererSnapshot';
 
@@ -128,8 +128,6 @@ class SceneViewport {
 
   public setupEnvironment(): void {
     this.threeRenderer.outputEncoding = THREE.sRGBEncoding;
-    // this.threeRenderer.shadowMap.type = THREE.VSMShadowMap;
-    // this.threeRenderer.shadowMap.type = THREE.PCFShadowMap;
     this.threeRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.threeRenderer.shadowMap.enabled = true;
 

@@ -57,9 +57,9 @@ const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps>>((pr
         isActive={loading}
         overlayBackgroundColor="inherit"
         color={colorSpin.white}
+        borderRadius={12}
         position="stretch"
       />
-
       <div
         className={cn({ [classNames.title]: !loading, [classNames.titleHide]: loading })}
       >
