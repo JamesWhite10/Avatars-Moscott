@@ -14,6 +14,8 @@ import BackIcon from './BackIcon';
 import ArrowRightIcon from './ArrowRightIcon';
 import ArrowLeftIcon from './ArrowLeftIcon';
 import MusicOffIcon from './MusicOffIcon';
+import CyberfoxIcon from './CyberfoxIcon';
+import Web3devIcon from './Web3devIcon';
 
 export {
   CloseIcon,
@@ -32,4 +34,6 @@ export {
   ArrowRightIcon,
   ArrowLeftIcon,
   MusicOffIcon,
+  CyberfoxIcon,
+  Web3devIcon,
 };
