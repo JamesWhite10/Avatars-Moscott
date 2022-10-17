@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Button, { ButtonSize, ButtonScheme } from '@app/components/Button/Button';
+import Button from '@app/components/Button/Button';
 import { EmptyIcon } from '@app/components/Icons';
 import Card from '@app/components/Card';
 import MiraImage from '@app/assets/mira.png';
@@ -25,8 +25,8 @@ const Components = () => {
         <Button
           loading={loading}
           onClick={() => setLoading(!loading)}
-          colorScheme={ButtonScheme.PRIMARY}
-          size={ButtonSize.LG}
+          colorScheme="primary"
+          size="lg"
           disabled={disabled}
           startIcon={<EmptyIcon />}
           endIcon={<EmptyIcon />}
@@ -36,7 +36,7 @@ const Components = () => {
         <Button
           loading={loading}
           onClick={() => setLoading(!loading)}
-          colorScheme={ButtonScheme.SECONDARY}
+          colorScheme="secondary"
           disabled={disabled}
           startIcon={<EmptyIcon />}
           endIcon={<EmptyIcon />}
@@ -46,8 +46,8 @@ const Components = () => {
         <Button
           loading={loading}
           onClick={() => setLoading(!loading)}
-          colorScheme={ButtonScheme.GHOST}
-          size={ButtonSize.SM}
+          colorScheme="ghost"
+          size="sm"
           disabled={disabled}
           startIcon={<EmptyIcon />}
           endIcon={<EmptyIcon />}

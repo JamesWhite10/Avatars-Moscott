@@ -1,4 +1,4 @@
-@import "./styles/media";
+@import "../../../styles/media.module";
 
 .root {
   font-family: var(--font-space-grotesk);
@@ -10,6 +10,7 @@
   position: relative;
   box-sizing: border-box;
   overflow: hidden;
+  transition: all .2s ease;
 }
 
 .title {
@@ -24,55 +25,67 @@
   display: none;
 }
 
+.active {
+  color: var(--primary-600);
+}
+
+
 .primary {
-  background: #4145A7;
+  &:not(.active) {
+    background: #4145A7;
 
-  &:hover {
-    background: #2E3075;
+    &:hover {
+      background: #2E3075;
+    }
+
+    &:active {
+      background: #202252;
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      pointer-events: none;
+    }
   }
 
-  &:active {
-    background: #202252;
-  }
-
-  &:disabled {
-    opacity: 0.3;
-    pointer-events: none;
-  }
 }
 
 .secondary {
-  background: #97989E;
+  &:not(.active) {
+    background: #97989E;
 
-  &:hover {
-    background: #72747F;
-  }
+    &:hover {
+      background: #72747F;
+    }
 
-  &:active {
-    background: #4E5060;
-  }
+    &:active {
+      background: #4E5060;
+    }
 
-  &:disabled {
-    opacity: 0.4;
-    cursor: auto;
-    pointer-events: none;
+    &:disabled {
+      opacity: 0.4;
+      cursor: auto;
+      pointer-events: none;
+    }
   }
 }
 
 .ghost {
-  background: transparent;
+  &:not(.active) {
+    background: transparent;
 
-  &:hover {
-    background: #B1B2B5;
-  }
+    &:hover {
+      background: #B1B2B5;
+    }
 
-  &:active {
-    background: #4E5060;
-  }
+    &:active {
+      background: #4E5060;
+    }
 
-  &:disabled {
-    opacity: 0.4;
-    pointer-events: none;
+    &:disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
   }
 }
 

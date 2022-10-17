@@ -14,7 +14,7 @@ const Editor: FC = observer(() => {
 
   useEffect(() => {
     initialize();
-  }, []);
+  }, [useEditorStore]);
 
   const editorRefCallback = useCallback((element: HTMLDivElement) => {
     if (threeScene !== null) threeScene.setContainer(element);
