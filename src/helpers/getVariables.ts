@@ -48,7 +48,9 @@ export type AppVariableType = {
 /**
  * Get css variables
  * @see styles/variables.css
+ * @warn не использовать там где есть SSR
  */
-export const getVariables = <T extends keyof AppVariableType>(variable: T): string => {
+export const getVariables = <T extends keyof AppVariableType>(variable: T): string | undefined => {
+  if (typeof window === 'undefined') return;
   return getComputedStyle(document.body).getPropertyValue(variable);
 };

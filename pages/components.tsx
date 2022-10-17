@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import Button from '@app/components/Button/Button';
-import { EmptyIcon } from '@app/components/Icons';
+import { CyberfoxIcon, EmptyIcon, Web3devIcon } from '@app/components/Icons';
 import Card from '@app/components/Card';
 import MiraImage from '@app/assets/mira.png';
 import YukiImage from '@app/assets/yuki.png';
+import CharacterSelectButton from '@app/components/CharacterSelectButton';
 
 const Components = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [disabled] = useState<boolean>(false);
+  const [active, setIsActive] = useState(false);
 
   const styles = {
     presentationButtons: {
@@ -75,6 +77,45 @@ const Components = () => {
           image={YukiImage.src}
           label="Yuki"
           contentType="image"
+        />
+      </div>
+      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+        <CharacterSelectButton
+          loading={loading}
+          size="lg"
+          onClick={() => {
+            setIsActive(!active);
+            setLoading(!loading);
+          }}
+          active={active}
+          name="Yuki"
+          description="web3dev"
+          icon={<Web3devIcon />}
+        />
+        <CharacterSelectButton
+          loading={loading}
+          size="lg"
+          onClick={() => {
+            setIsActive(!active);
+            setLoading(!loading);
+          }}
+          active={active}
+          name="Mira"
+          description="Cyberfox"
+          icon={<CyberfoxIcon />}
+          disabled
+        />
+        <CharacterSelectButton
+          loading={loading}
+          size="md"
+          onClick={() => {
+            setIsActive(!active);
+            setLoading(!loading);
+          }}
+          active={active}
+          name="Mira"
+          description="Cyberfox"
+          icon={<CyberfoxIcon />}
         />
       </div>
     </div>
