@@ -6,3 +6,9 @@ export type Maskott = {
   id?: string;
   styles: [];
 };
+
+export type MaskottStyle = {
+  id: string;
+  name: string;
+  videoUrl: string;
+};

@@ -32,6 +32,9 @@ export default class EditorStore {
       const maskottPreview = this.threeScene?.getSnapshot();
       if (maskottPreview) this.loadSnapshot(maskottPreview, 'maskott');
     });
+    this.controlsStore.subscribe('styleChange', (id) => {
+      console.log('style change with id', id);
+    });
   }
 
   public initialize(): void {

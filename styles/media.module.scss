@@ -1,0 +1,13 @@
+$mq-desktop: 1280px;
+$mq-tablet-min: 720px;
+$mq-tablet-max:1279px;
+$mq-mobile-min: 360px;
+$mq-mobile-max:719px;
+
+:export {
+  mqDesktop: $mq-desktop;
+  mqTabletMin: $mq-tablet-min;
+  mqTabletMax: $mq-tablet-max;
+  mqMobileMin: $mq-mobile-min;
+  mqMoblileMax: $mq-mobile-max;
+}

@@ -29,9 +29,9 @@
 }
 
 .overlay_active {
-  border: 6px solid #FFFFFF;
+  border: 6px solid var(--primary-600);
   &:hover {
-    border: 6px solid #FFFFFF;
+    border: 6px solid var(--primary-600);
   }
 }
 

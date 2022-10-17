@@ -1,10 +1,12 @@
 import { FC, PropsWithChildren, useRef } from 'react';
 import classNames from './Transition.module.scss';
 import { CSSTransition } from 'react-transition-group';
+import cn from 'classnames';
 
 export interface PageTransitionProps {
   onExited?: () => void;
   onEntered?: () => void;
+  className?: string;
   enable?: boolean;
   timeout?: number;
   appear?: boolean;
@@ -16,6 +18,7 @@ const Fade: FC<PropsWithChildren<PageTransitionProps>> = (props) => {
   const {
     onEntered = () => undefined,
     onExited = () => undefined,
+    className,
     enable = true,
     timeout = 300,
     appear = true,
@@ -46,7 +49,7 @@ const Fade: FC<PropsWithChildren<PageTransitionProps>> = (props) => {
     >
       <div
         ref={nodeRef}
-        className={classNames.fade_container}
+        className={cn(classNames.fade_container, className)}
       >
         {children}
       </div>

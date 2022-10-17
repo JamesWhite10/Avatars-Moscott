@@ -1,62 +1,50 @@
-import React, { forwardRef, PropsWithChildren, ReactElement, useMemo } from 'react';
+import React, { forwardRef, PropsWithChildren, ReactElement } from 'react';
 import classNames from './Button.module.scss';
 import Spin from './../Spin/Spin';
 import cn from 'classnames';
 
-export enum ButtonScheme {
-  PRIMARY = 'primary',
-  SECONDARY = 'secondary',
-  GHOST = 'ghost',
-}
+export type ButtonScheme = 'primary' | 'secondary' | 'ghost';
 
-export enum ButtonSize {
-  LG = 'lg',
-  MD = 'md',
-  SM = 'sm',
-}
+export type ButtonSize = 'lg' | 'md' | 'sm';
 
 export interface ButtonProps {
   disabled?: boolean;
+  active?: boolean;
   onClick?: () => void;
   loading?: boolean;
   className?: string;
-  colorScheme: ButtonScheme;
+  colorScheme?: ButtonScheme;
   size?: ButtonSize;
-  startIcon: ReactElement;
-  endIcon: ReactElement;
+  startIcon?: ReactElement;
+  endIcon?: ReactElement;
 }
 
 const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps>>((props, ref) => {
   const {
-    disabled,
+    disabled = false,
     onClick = () => undefined,
     loading = false,
+    active = false,
     className,
     children,
-    colorScheme,
-    size = ButtonSize.MD,
+    colorScheme = 'primary',
+    size = 'md',
     startIcon,
     endIcon,
   } = props;
-
-  const colorSpin = useMemo(() => {
-    return {
-      white: '#FFFFFF',
-    };
-  }, []);
 
   return (
     <button
       ref={ref}
       type="button"
-      className={cn(classNames.root, className, classNames[colorScheme], classNames[size])}
+      className={cn(classNames.root, className, classNames[colorScheme], classNames[size], { [classNames.active]: active })}
       onClick={onClick}
       disabled={disabled}
     >
       <Spin
         isActive={loading}
         overlayBackgroundColor="inherit"
-        color={colorSpin.white}
+        color="#FFFFFF"
         borderRadius={12}
         position="stretch"
       />
