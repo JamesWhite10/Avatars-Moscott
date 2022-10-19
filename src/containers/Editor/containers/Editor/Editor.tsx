@@ -8,12 +8,34 @@ import WorkArea from '@app/containers/Editor/containers/WorkArea';
 import TopControls from '@app/containers/Editor/containers/TopControls';
 import BottomControls from '@app/containers/Editor/containers/BottomControls';
 import RightControls from '@app/containers/Editor/containers/RightControls';
+import { Maskott } from '@app/types/maskott';
+import MiraImage from '@app/assets/mira.png';
+import { CyberfoxIcon, Web3devIcon } from '@app/components/Icons';
+import YukiImage from '@app/assets/yuki.png';
+
+const mockCharacters: Maskott[] = [
+  {
+    id: 'mira',
+    image: MiraImage.src,
+    name: 'Mira',
+    description: 'Cyberfox',
+    icon: <CyberfoxIcon />,
+  },
+  {
+    id: 'Yuki',
+    image: YukiImage.src,
+    name: 'Yuki',
+    description: 'web3dev',
+    icon: <Web3devIcon />,
+  },
+];
 
 const Editor: FC = observer(() => {
-  const { initialize, threeScene } = useEditorStore();
+  const { initialize, threeScene, setUp } = useEditorStore();
 
   useEffect(() => {
     initialize();
+    setUp(mockCharacters); // TODO унести отсюда в редактор
   }, [useEditorStore]);
 
   const editorRefCallback = useCallback((element: HTMLDivElement) => {
