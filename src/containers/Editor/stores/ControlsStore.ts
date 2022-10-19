@@ -1,35 +1,12 @@
 import { makeAutoObservable } from 'mobx';
 import EventEmitter from 'eventemitter3';
-import { MaskottStyle } from '../../../types/maskott';
 
 export type ControlsEventType = {
   soundChange: () => void;
   takeScreenShot: () => void;
-  styleChange: (id: string) => void;
+  styleSelect: () => void;
+  characterSelect: () => void;
 };
-
-const mockStyles: MaskottStyle[] = [
-  {
-    id: 'style_one',
-    name: 'Style One',
-    videoUrl: '/avatars/mira_style1.MP4',
-  },
-  {
-    id: 'style_two',
-    name: 'Style Two',
-    videoUrl: '/avatars/mira_style2.MP4',
-  },
-  {
-    id: 'style_three',
-    name: 'Style Three',
-    videoUrl: '/avatars/mira_style1.MP4',
-  },
-  {
-    id: 'style_four',
-    name: 'Style Four',
-    videoUrl: '/avatars/mira_style2.MP4',
-  },
-];
 
 export type AvatarPropertyType = 'style' | 'accessories' | 'character';
 
@@ -38,14 +15,7 @@ export default class ControlsStore {
 
   public soundDisabled: boolean = false;
 
-  /**
-   * TODO подумать, возможно должно будет уехать в подстор
-   */
   public activeProperty?: AvatarPropertyType = undefined;
-
-  public activeStyle?: string = 'style_one';
-
-  public styles: MaskottStyle[] = mockStyles;
 
   public eventEmitter!: EventEmitter<ControlsEventType>;
 
@@ -76,19 +46,16 @@ export default class ControlsStore {
 
   public setActiveAvatarPropertyType(property?: AvatarPropertyType): void {
     this.activeProperty = property;
-  }
-
-  public setActiveStyle(style?: string): void {
-    this.activeStyle = style;
-  }
-
-  public setStyles(styles: MaskottStyle[]): void {
-    this.styles = styles;
-  }
-
-  public onStyleChange(id: string): void {
-    this.activeStyle = id;
-    this.eventEmitter.emit('styleChange', id);
+    switch (property) {
+      case 'character':
+        this.eventEmitter.emit('characterSelect');
+        break;
+      case 'style':
+        this.eventEmitter.emit('styleSelect');
+        break;
+      default:
+        break;
+    }
   }
 
   public onFullScreenChange(): Promise<void> {
