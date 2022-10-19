@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import SceneViewport from '../../../modules/Scene/SceneViewport/SceneViewport';
+import SceneViewport from '@app/modules/features/Scene/viewports/SceneViewport';
 import ResourcesManager from '../../../modules/ResourcesManager';
 import ControlsStore from './ControlsStore';
 import { saveSnapshot } from '../../../helpers/saveSnapshot';
@@ -29,7 +29,7 @@ export default class EditorStore {
   public subscribe(): void {
     this.controlsStore.subscribe('soundChange', () => { console.log('sound change'); });
     this.controlsStore.subscribe('takeScreenShot', () => {
-      const maskottPreview = this.threeScene?.getSnapshot();
+      const maskottPreview = this.threeScene?.mainScene?.getSnapshot();
       if (maskottPreview) this.loadSnapshot(maskottPreview, 'maskott');
     });
   }
