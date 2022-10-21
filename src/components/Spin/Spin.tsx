@@ -1,4 +1,4 @@
-import { FC, memo, useState } from 'react';
+import { FC, memo, useRef, useState } from 'react';
 import classNames from './Spin.module.scss';
 import { CSSTransition } from 'react-transition-group';
 import { useDebounce } from 'react-use';
@@ -32,6 +32,7 @@ const Spin: FC<SpinProps> = memo((props) => {
     borderRadius,
   } = props;
 
+  const elRef = useRef<HTMLDivElement>(null);
   const [internalIsActive, setInternalIsActive] = useState<boolean>(isActive);
   useDebounce(() => setInternalIsActive(isActive), transitionDelay, [isActive]);
 
@@ -52,6 +53,7 @@ const Spin: FC<SpinProps> = memo((props) => {
       in={internalIsActive}
       timeout={400}
       appear
+      nodeRef={elRef}
       classNames={{
         enter: classNames.root_enter,
         enterActive: classNames.root_enterActive,
@@ -61,6 +63,7 @@ const Spin: FC<SpinProps> = memo((props) => {
     >
       {(state) => (
         <div
+          ref={elRef}
           className={cn(classNames.root, classNameByPosition[position])}
           style={getRootStyles(state)}
         >

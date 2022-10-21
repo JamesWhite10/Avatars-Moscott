@@ -1,4 +1,4 @@
-@import "styles/media";
+@import "../../../../../styles/media.module";
 
 .root {
   position: absolute;
@@ -11,6 +11,12 @@
   position: absolute;
 }
 
+.leftGroup {
+  display: grid;
+  grid-gap: 8px;
+  grid-auto-flow: column;
+}
+
 .rightGroup_container {
   right: 8px;
   top: 8px;
@@ -19,9 +25,8 @@
 }
 
 .rightGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-gap: 8px;
 }
 
 .fullScreenButton {
