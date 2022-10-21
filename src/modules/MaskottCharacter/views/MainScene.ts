@@ -9,12 +9,18 @@ import CameraControls from 'camera-controls';
 import SceneViewport from '../../features/Scene/viewports/SceneViewport';
 import { getRendererSnapshot } from '../../utils/getRendererSnapshot';
 import { MaskottInterface } from '../MaskottInterface/MaskottInterface';
+import EventEmitter from 'eventemitter3';
+
+export type SceneEventType = {
+  loadMaskott:() => void;
+  maskottChange:(maskottName: string) => void;
+};
 
 export interface MainSceneOptions {
   sceneViewport: SceneViewport;
   mainView: MainView;
 }
-// todo: странное название
+// todo: интерфейс для пермещения и бленндинга в твине
 export type MaskottDataFromOrTo = {
   okamiPositionZ: number;
   miraPositionZ: number;
@@ -24,6 +30,8 @@ export type MaskottDataFromOrTo = {
 
 export class MainScene {
   private _sceneViewport: SceneViewport;
+
+  public eventEmitter!: EventEmitter<SceneEventType>;
 
   private _mainView: MainView;
 
@@ -37,6 +45,7 @@ export class MainScene {
 
   constructor(options: MainSceneOptions) {
     this._sceneViewport = options.sceneViewport;
+    this.eventEmitter = new EventEmitter<SceneEventType>();
     this._mainView = options.mainView;
     this.raycastSystem = new RaycastSystem(options.sceneViewport.threeScene, options.sceneViewport.threeCamera);
   }
@@ -50,16 +59,19 @@ export class MainScene {
     TWEEN.update();
   }
 
-  public changeMaskott(value = ''): void {
+  public changeMaskott(value = ''): Promise<void> | void {
     const isSame = value === this.chooseMaskott;
     if (value === MaskottEnum.MIRA) {
       if (isSame) this.getSameMaskott(this.miraMaskott, this.okamiMaskott);
       this.chooseMaskott = value;
-      this.moveToMira(!isSame);
-    } else if (value === MaskottEnum.OKAMI) {
+      return this.moveToMira(!isSame);
+    }
+    // todo : рассинхрон из-за неверного нейминга мальчика, как поменяем модельки убрать лишнее условие
+    if (value === MaskottEnum.YUKU || value === MaskottEnum.OKAMI) {
       if (isSame) this.getSameMaskott(this.okamiMaskott, this.miraMaskott);
-      this.chooseMaskott = value;
-      this.moveToOkami(!isSame);
+      this.chooseMaskott = value as MaskottEnum;
+      return this.moveToOkami(!isSame)
+        .then(() => Promise.resolve());
     }
   }
 
@@ -70,52 +82,67 @@ export class MainScene {
     }
   }
 
-  public moveToMira(isChange = true): void {
-    const maskottDataTo = { okamiPositionZ: -1.6, miraPositionZ: 0, okamiBlending: 0.0, miraBlending: 1.0 };
-    const maskottDataFrom = { okamiPositionZ: 0, miraPositionZ: -1.6, okamiBlending: 1.0, miraBlending: 0.0 };
+  public moveToMira(isChange = true): Promise<void> {
+    return new Promise((resolve) => {
+      this.eventEmitter.emit('loadMaskott');
+      const maskottDataTo = { okamiPositionZ: -1.6, miraPositionZ: 0, okamiBlending: 0.0, miraBlending: 1.0 };
+      const maskottDataFrom = { okamiPositionZ: 0, miraPositionZ: -1.6, okamiBlending: 1.0, miraBlending: 0.0 };
 
-    this.tweenChangeData(maskottDataFrom, maskottDataTo, isChange);
-    if (isChange) {
-      this._sceneViewport.threeControls.dampingFactor = 0.04;
-      this._sceneViewport.threeControls.mouseButtons.left = CameraControls.ACTION.NONE;
-      this._sceneViewport.threeControls.mouseButtons.right = CameraControls.ACTION.NONE;
-      Promise.all([
-        this._sceneViewport.threeControls.moveTo(-1.3, 1, 1, true),
-        this._sceneViewport.threeControls.setTarget(-0.4, 1, 1, true),
-      ])
-        .finally(() => {
-          this._sceneViewport.threeControls.mouseButtons.left = CameraControls.ACTION.ROTATE;
-          this._sceneViewport.threeControls.mouseButtons.right = CameraControls.ACTION.OFFSET;
-          this._sceneViewport.threeControls.draggingDampingFactor = 0.5;
-        });
-    }
+      this.tweenChangeData(maskottDataFrom, maskottDataTo, isChange);
+      if (isChange) {
+        this._sceneViewport.threeControls.dampingFactor = 0.04;
+        this._sceneViewport.threeControls.mouseButtons.left = CameraControls.ACTION.NONE;
+        this._sceneViewport.threeControls.mouseButtons.right = CameraControls.ACTION.NONE;
+        Promise.all([
+          this._sceneViewport.threeControls.moveTo(-0.756, 1, 1, true),
+          this._sceneViewport.threeControls.setTarget(-0.3, 1, 1, true),
+        ])
+          .finally(() => {
+            this._sceneViewport.threeControls.mouseButtons.left = CameraControls.ACTION.ROTATE;
+            this._sceneViewport.threeControls.mouseButtons.right = CameraControls.ACTION.OFFSET;
+            this._sceneViewport.threeControls.draggingDampingFactor = 0.5;
+            resolve();
+            this.eventEmitter.emit('maskottChange', MaskottEnum.MIRA);
+          });
+      } else {
+        this.eventEmitter.emit('maskottChange', MaskottEnum.MIRA);
+        resolve();
+      }
+    });
   }
 
-  public moveToOkami(isChange = true): void {
-    const maskottDataTo = { okamiPositionZ: 0, miraPositionZ: -1.6, okamiBlending: 1.0, miraBlending: 0.0 };
-    const maskottDataFrom = { okamiPositionZ: -1.6, miraPositionZ: 0, okamiBlending: 0.0, miraBlending: 1.0 };
+  public moveToOkami(isChange = true): Promise<void> {
+    return new Promise((resolve) => {
+      this.eventEmitter.emit('loadMaskott');
+      const maskottDataTo = { okamiPositionZ: 0, miraPositionZ: -1.6, okamiBlending: 1.0, miraBlending: 0.0 };
+      const maskottDataFrom = { okamiPositionZ: -1.6, miraPositionZ: 0, okamiBlending: 0.0, miraBlending: 1.0 };
 
-    this.tweenChangeData(maskottDataFrom, maskottDataTo, isChange);
+      this.tweenChangeData(maskottDataFrom, maskottDataTo, isChange);
 
-    if (isChange) {
-      this._sceneViewport.threeControls.dampingFactor = 0.04;
-      this._sceneViewport.threeControls.mouseButtons.left = CameraControls.ACTION.NONE;
-      this._sceneViewport.threeControls.mouseButtons.right = CameraControls.ACTION.NONE;
-      Promise.all([
-        this._sceneViewport.threeControls.moveTo(3.86, 1, 1, true),
-        this._sceneViewport.threeControls.setTarget(3, 1, 1, true),
-      ])
-        .finally(() => {
-          this._sceneViewport.threeControls.mouseButtons.left = CameraControls.ACTION.ROTATE;
-          this._sceneViewport.threeControls.mouseButtons.right = CameraControls.ACTION.OFFSET;
-          this._sceneViewport.threeControls.draggingDampingFactor = 0.5;
-        });
-    }
+      if (isChange) {
+        this._sceneViewport.threeControls.dampingFactor = 0.04;
+        this._sceneViewport.threeControls.mouseButtons.left = CameraControls.ACTION.NONE;
+        this._sceneViewport.threeControls.mouseButtons.right = CameraControls.ACTION.NONE;
+        Promise.all([
+          this._sceneViewport.threeControls.moveTo(3.86, 1, 1, true),
+          this._sceneViewport.threeControls.setTarget(3, 1, 1, true),
+        ])
+          .finally(() => {
+            this._sceneViewport.threeControls.mouseButtons.left = CameraControls.ACTION.ROTATE;
+            this._sceneViewport.threeControls.mouseButtons.right = CameraControls.ACTION.OFFSET;
+            this._sceneViewport.threeControls.draggingDampingFactor = 0.5;
+            this.eventEmitter.emit('maskottChange', MaskottEnum.YUKU);
+            resolve();
+          });
+      } else {
+        this.eventEmitter.emit('maskottChange', MaskottEnum.YUKU);
+        resolve();
+      }
+    });
   }
 
-  public getDefaultMaskott(): void {
-    const randomNumber = Math.floor(Math.random() * 2);
-    if (!randomNumber) {
+  public getDefaultMaskott(maskott: string): void {
+    if (maskott === MaskottEnum.MIRA) {
       this.chooseMaskott = MaskottEnum.MIRA;
 
       this._sceneViewport.threeControls.setPosition(0, 1.4, 2.6, false);
@@ -124,8 +151,8 @@ export class MainScene {
       if (this.okamiMaskott?.character) this.okamiMaskott.character.position.z = -1.6;
 
       this._mainView.blendingShader.uniforms.forEach((value) => {
-        value.uniform.u_blendingCa.value = 1.0;
-        value.uniform.u_blendingCb.value = 0.0;
+        value.uniform.u_miraBlending.value = 1.0;
+        value.uniform.u_okamiBlending.value = 0.0;
       });
     } else {
       this.chooseMaskott = MaskottEnum.OKAMI;
@@ -136,8 +163,8 @@ export class MainScene {
       }
 
       this._mainView.blendingShader.uniforms.forEach((value) => {
-        value.uniform.u_blendingCa.value = 0.0;
-        value.uniform.u_blendingCb.value = 1.0;
+        value.uniform.u_miraBlending.value = 0.0;
+        value.uniform.u_okamiBlending.value = 1.0;
       });
     }
   }
@@ -182,8 +209,8 @@ export class MainScene {
         if (this.miraMaskott?.character) this.miraMaskott.character.position.z = miraPositionZ;
         if (isChangeTexture) {
           this._mainView.blendingShader.uniforms.forEach((value) => {
-            value.uniform.u_blendingCa.value = miraBlending;
-            value.uniform.u_blendingCb.value = okamiBlending;
+            value.uniform.u_miraBlending.value = miraBlending;
+            value.uniform.u_okamiBlending.value = okamiBlending;
           });
         }
       })

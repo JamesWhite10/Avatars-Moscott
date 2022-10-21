@@ -11,10 +11,10 @@ export interface UniformOptions {
 }
 
 export interface Uniform {
-  u_blendingCa: { value: number };
-  u_blendingCb: { value: number };
-  textureOne: { value: THREE.Texture };
-  textureSecond: { value: THREE.Texture };
+  u_miraBlending: { value: number };
+  u_okamiBlending: { value: number };
+  miraTexture: { value: THREE.Texture };
+  okamiTexture: { value: THREE.Texture };
 }
 
 export class BlendingShader {
@@ -35,21 +35,21 @@ export class BlendingShader {
 
   private getFragmentShader(): string {
     return `
-    uniform sampler2D textureOne;
-    uniform sampler2D textureSecond;
-    uniform float u_blendingCa;
-    uniform float u_blendingCb;
+    uniform sampler2D miraTexture;
+    uniform sampler2D okamiTexture;
+    uniform float u_miraBlending;
+    uniform float u_okamiBlending;
 
     varying vec2 vUv;
 
     void main(void) {
       vec3 c;
-      vec4 Ca = texture2D(textureOne, vUv);
-      vec4 Cb = texture2D(textureSecond, vUv);
-      if ( Ca.a < .5 ) discard;
-      if ( Cb.a < .5 ) discard;
-      c = Ca.rgb * u_blendingCa + Cb.rgb * u_blendingCb;
-      gl_FragColor= vec4(c, 1.0);
+      vec4 miraTexture2D = texture2D(miraTexture, vUv);
+      vec4 okamiTexture2D = texture2D(okamiTexture, vUv);
+      if ( miraTexture2D.a < .5 ) discard;
+      if ( okamiTexture2D.a < .5 ) discard;
+      c = miraTexture2D.rgb * u_miraBlending + okamiTexture2D.rgb * u_okamiBlending;
+      gl_FragColor = vec4(c, 1.0);
     }
   `;
   }
@@ -58,10 +58,10 @@ export class BlendingShader {
     const uniformOptions: UniformOptions = {
       name,
       uniform: {
-        u_blendingCa: { value: 0.0 },
-        u_blendingCb: { value: 1.0 },
-        textureOne: { value: textureOne },
-        textureSecond: { value: textureSecond },
+        u_miraBlending: { value: 0.0 },
+        u_okamiBlending: { value: 1.0 },
+        miraTexture: { value: textureOne },
+        okamiTexture: { value: textureSecond },
       },
     };
 

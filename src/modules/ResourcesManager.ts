@@ -1,4 +1,4 @@
-import { GLTFLoader, GLTF as ThreeGLTF, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
+import { GLTFLoader, GLTF as ThreeGLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DataTexture, Texture, TextureLoader } from 'three';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 
@@ -76,15 +76,6 @@ class ResourcesManager {
   public addTexture(url: string): this {
     this.addResource(url, ResourceType.TEXTURE);
     return this;
-  }
-
-  public addVrm(url: string): this {
-    this.addResource(url, ResourceType.GLB);
-    return this;
-  }
-
-  public getVrmByUrlOrFail(url: string): GLTF {
-    return this.getResourceContentByUrlOrFail<GlbResource>(url, ResourceType.GLB);
   }
 
   public getTextureByUrlOrFail(url: string): Texture {

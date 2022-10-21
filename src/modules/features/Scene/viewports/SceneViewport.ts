@@ -128,7 +128,6 @@ class SceneViewport {
         this.mainView.applyHdrTexture();
         this.mainView.appleShadow();
         this.mainScene.maskottInit();
-        this.mainScene.getDefaultMaskott();
       });
   }
 

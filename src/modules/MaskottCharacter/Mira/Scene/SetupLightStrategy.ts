@@ -5,8 +5,8 @@ export class SetupLightStrategy implements SetupLightStrategyInterface {
   public setupLight(scene: THREE.Scene): THREE.SpotLight {
     const color = 0xffffff;
     const light = new THREE.SpotLight(color);
-    light.position.set(-0.12, 2.8, 1.72);
-    light.target.position.set(0, 0.67, 0);
+    light.position.set(-0.12, 2.5, 1.72);
+    light.target.position.set(0.12, 0.68, 0);
     scene.add(light);
     light.angle = 0.3;
     light.castShadow = true;

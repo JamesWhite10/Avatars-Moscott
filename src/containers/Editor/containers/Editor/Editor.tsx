@@ -31,12 +31,15 @@ const mockCharacters: Maskott[] = [
 ];
 
 const Editor: FC = observer(() => {
-  const { initialize, threeScene, setUp } = useEditorStore();
+  const { initialize, threeScene, setUp, isReady } = useEditorStore();
 
   useEffect(() => {
     initialize();
-    setUp(mockCharacters); // TODO унести отсюда в редактор
   }, [useEditorStore]);
+
+  useEffect(() => {
+    if (isReady) setUp(mockCharacters); // TODO унести отсюда в редактор
+  }, [isReady]);
 
   const editorRefCallback = useCallback((element: HTMLDivElement) => {
     if (threeScene !== null) threeScene.setContainer(element);
