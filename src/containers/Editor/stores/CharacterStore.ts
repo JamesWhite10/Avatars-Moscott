@@ -64,7 +64,7 @@ export default class CharacterStore implements EmitterInterface<CharacterStoreEv
 
   public onCharacterChange(id: string): void {
     const characterCandidate = this.characters.find((character) => character.id === id);
-    if (!characterCandidate) return;
+    if (!characterCandidate || characterCandidate.name === this.character?.name) return;
     this.setShowCharacterSelection(false);
     this.character = characterCandidate;
     this.eventEmitter.emit('characterChange', id);

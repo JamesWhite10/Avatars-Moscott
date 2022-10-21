@@ -5,7 +5,7 @@ import CameraControls from 'camera-controls';
 import { MainView } from '../views/MainView';
 import OkamiBaseTexture from '@app/modules/assets/json/scene/maskotts/Okami.json';
 import MiraBaseTexture from '@app/modules/assets/json/scene/maskotts/Mira.json';
-import { MainScene } from '../../../MaskottCharacter/views/MainScene';
+import { MainScene } from '../../../MaskottScene/views/MainScene';
 
 CameraControls.install({ THREE });
 
@@ -30,8 +30,6 @@ class SceneViewport {
 
   public resourcesManager: ResourcesManager;
 
-  private _handleCLick = this.handleClick.bind(this);
-
   constructor() {
     this.threeScene = new THREE.Scene();
     this.threeRenderer = this.makeThreeRenderer();
@@ -43,7 +41,7 @@ class SceneViewport {
     this.clock = new THREE.Clock();
     this.setupEnvironment();
 
-    this.threeRenderer.domElement.addEventListener('click', this._handleCLick);
+    this.threeRenderer.domElement.addEventListener('click', this.clickHandler.bind(this));
   }
 
   protected makeThreeRenderer(): THREE.WebGLRenderer {
@@ -128,6 +126,16 @@ class SceneViewport {
         this.mainView.applyHdrTexture();
         this.mainView.appleShadow();
         this.mainScene.maskottInit();
+
+        this.initLight(
+          new THREE.Vector3(2.86847, 2.8, 1.9024),
+          new THREE.Vector3(2.86847, 0.63, 0),
+        );
+
+        this.initLight(
+          new THREE.Vector3(-0.12, 2.5, 1.72),
+          new THREE.Vector3(0.12, 0.68, 0),
+        );
       });
   }
 
@@ -163,8 +171,26 @@ class SceneViewport {
     this.threeRenderer.toneMappingExposure = 1;
   }
 
-  public handleClick(event: MouseEvent): void {
+  public clickHandler(event: MouseEvent): void {
     if (this.mainScene) this.mainScene.handleClick(event);
+  }
+
+  public initLight(position: THREE.Vector3, target: THREE.Vector3): void {
+    const color = 0xffffff;
+    const light = new THREE.SpotLight(color);
+    light.position.set(position.x, position.y, position.z);
+    light.target.position.set(target.x, target.y, target.z);
+    this.threeScene.add(light);
+    light.angle = 0.3;
+    light.castShadow = true;
+    light.intensity = 1.7;
+
+    light.shadow.mapSize.width = 4800;
+    light.shadow.mapSize.height = 4800;
+    light.shadow.camera.near = 1.9;
+    light.shadow.camera.far = 1000;
+
+    light.target.updateMatrixWorld();
   }
 }
 

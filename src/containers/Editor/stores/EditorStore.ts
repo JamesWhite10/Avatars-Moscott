@@ -109,12 +109,12 @@ export default class EditorStore {
   }
 
   public sceneSubscribe(): void {
-    this.threeScene?.mainScene?.eventEmitter.on('maskottChange', (name) => {
+    this.threeScene?.mainScene?.subscribe('maskottChange', (name) => {
       this.charactersStore.setCharacterIsChanging(false);
       this.charactersStore.setCharacter(name);
     });
 
-    this.threeScene?.mainScene?.eventEmitter.on('loadMaskott', () => {
+    this.threeScene?.mainScene?.subscribe('loadMaskott', () => {
       this.charactersStore.setCharacterIsChanging(true);
     });
   }
