@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import SceneViewport from '../../../modules/Scene/SceneViewport/SceneViewport';
+import SceneViewport from '@app/modules/features/Scene/viewports/SceneViewport';
 import ResourcesManager from '../../../modules/ResourcesManager';
 import ControlsStore from './ControlsStore';
 import { saveSnapshot } from '../../../helpers/saveSnapshot';
@@ -38,7 +38,7 @@ export default class EditorStore {
   public subscribe(): void {
     this.controlsStore.subscribe('soundChange', () => { console.log('sound change'); });
     this.controlsStore.subscribe('takeScreenShot', () => {
-      const maskottPreview = this.threeScene?.getSnapshot();
+      const maskottPreview = this.threeScene?.mainScene?.getSnapshot();
       if (maskottPreview) this.loadSnapshot(maskottPreview, 'maskott');
     });
     this.controlsStore.subscribe('styleSelect', () => {
@@ -49,12 +49,14 @@ export default class EditorStore {
       this.charactersStore.setShowCharacterSelection(!this.charactersStore.showCharacterSelection);
     });
 
-    this.charactersStore.subscribe('characterChange', () => {
+    this.charactersStore.subscribe('characterChange', (id) => {
+      const characterCandidate = this.charactersStore.characters.find((character) => character.id === id);
       this.charactersStore.setCharacterIsChanging(true);
       this.charactersStore.setShowCharacterSelection(false);
-      setTimeout(() => {
-        this.charactersStore.setCharacterIsChanging(false);
-      }, 3000);
+      this.threeScene?.mainScene?.changeMaskott(characterCandidate!.name)
+        ?.then(() => {
+          this.charactersStore.setCharacterIsChanging(false);
+        });
     });
     this.charactersStore.subscribe('characterSelectionClosed', () => {
       this.controlsStore.setActiveAvatarPropertyType();
@@ -71,6 +73,7 @@ export default class EditorStore {
     this.threeScene.init(this.onProgress.bind(this))
       .then(() => {
         this.setIsReady(true);
+        if (this.threeScene?.mainScene) this.sceneSubscribe();
       });
   }
 
@@ -83,7 +86,8 @@ export default class EditorStore {
   }
 
   public setUp(characters: Maskott[]): void {
-    this.charactersStore.setUp(characters);
+    const character = this.charactersStore.setUp(characters);
+    if (character && character.name) this.threeScene?.mainScene?.getDefaultMaskott(character.name);
   }
 
   public setProgress(progress: number): void {
@@ -102,5 +106,16 @@ export default class EditorStore {
 
   public loadSnapshot(maskottPreview: string, maskottName: string): void {
     saveSnapshot(maskottPreview, maskottName);
+  }
+
+  public sceneSubscribe(): void {
+    this.threeScene?.mainScene?.subscribe('maskottChange', (name) => {
+      this.charactersStore.setCharacterIsChanging(false);
+      this.charactersStore.setCharacter(name);
+    });
+
+    this.threeScene?.mainScene?.subscribe('loadMaskott', () => {
+      this.charactersStore.setCharacterIsChanging(true);
+    });
   }
 }

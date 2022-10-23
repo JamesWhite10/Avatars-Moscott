@@ -28,11 +28,13 @@ export default class CharacterStore implements EmitterInterface<CharacterStoreEv
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
-  public setUp(characters: Maskott[]): void {
+  public setUp(characters: Maskott[]): Maskott | void {
     if (this.isPrepared) return;
     this.characters = characters;
     this.isPrepared = true;
-    this.character = characters[Math.floor((Math.random() * this.characters.length) + 1) - 1];
+    const character = characters[Math.floor((Math.random() * this.characters.length) + 1) - 1];
+    this.character = character;
+    return character;
   }
 
   public subscribe<T extends keyof CharacterStoreEventsType>(
@@ -62,9 +64,13 @@ export default class CharacterStore implements EmitterInterface<CharacterStoreEv
 
   public onCharacterChange(id: string): void {
     const characterCandidate = this.characters.find((character) => character.id === id);
-    if (!characterCandidate) return;
+    if (!characterCandidate || characterCandidate.name === this.character?.name) return;
     this.setShowCharacterSelection(false);
     this.character = characterCandidate;
     this.eventEmitter.emit('characterChange', id);
+  }
+
+  public setCharacter(maskottName: string): void {
+    this.character = this.characters.find((character) => character.name === maskottName);
   }
 }

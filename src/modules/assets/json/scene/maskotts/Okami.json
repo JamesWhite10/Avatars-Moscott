@@ -1,0 +1,18 @@
+{
+  "background": {
+    "base": {
+      "mountains_mesh": "/3d/assets/texture/YukiBaseTheme/YukiBase/mountainsorange_color.png",
+      "planet_mesh": "/3d/assets/texture/YukiBaseTheme/YukiBase/planetsorange_color.png",
+      "portal_mesh": "/3d/assets/texture/YukiBaseTheme/YukiBase/portalorange_color.jpg",
+      "sky_mesh": "/3d/assets/texture/YukiBaseTheme/YukiBase/skyorange_color.jpg",
+      "floor_mesh": "/3d/assets/texture/YukiBaseTheme/YukiBase/floororange_color.jpg"
+    },
+    "hacker": {
+      "mountains_mesh": "/3d/assets/texture/hacker/mountainshacker_color.png",
+      "planet_mesh": "/3d/assets/texture/hacker/planetshacker_color.png",
+      "portal_mesh": "/3d/assets/texture/hacker/portalhacker_color.jpg",
+      "sky_mesh": "/3d/assets/texture/hacker/skyhacker_color.jpg",
+      "floor_mesh": "/3d/assets/texture/hacker/floorhacker_color.jpg"
+    }
+  }
+}

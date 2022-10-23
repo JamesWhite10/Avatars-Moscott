@@ -1,0 +1,11 @@
+{
+  "background": {
+    "base": {
+      "mountains_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/mountainsblue_color.png",
+      "planet_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/planetsblue_color.png",
+      "portal_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/portalblue_color.jpg",
+      "sky_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/skyblue_color.jpg",
+      "floor_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/floorblue_color.jpg"
+    }
+  }
+}
