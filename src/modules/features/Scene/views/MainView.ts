@@ -109,6 +109,7 @@ export class MainView {
       if (node instanceof THREE.Mesh) {
         node.receiveShadow = true;
         node.castShadow = true;
+        node.position.x = 0.8;
         (node.material as THREE.MeshStandardMaterial).emissiveIntensity = 1.5;
       }
     });

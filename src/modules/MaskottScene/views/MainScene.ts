@@ -80,10 +80,12 @@ export class MainScene {
 
       this.tweenChangeData(maskottDataFrom, maskottDataTo);
       return this.moveToMaskott(
-        new THREE.Vector3(-0.756, 1, 1),
-        new THREE.Vector3(-0.3, 1, 1),
+        new THREE.Vector3(-0.5, 1, 1),
+        -Math.PI / 2,
         MaskottEnum.MIRA,
-      ).then(() => Promise.resolve());
+      ).then(() => {
+        return Promise.resolve();
+      });
     }
     // todo : рассинхрон из-за неверного нейминга мальчика, как поменяем модельки надо убрать лишнее условие
     if ((maskottName === MaskottEnum.YUKU || maskottName === MaskottEnum.OKAMI) && maskottName !== this.chooseMaskott) {
@@ -93,23 +95,28 @@ export class MainScene {
       const maskottDataFrom = { okamiPositionZ: -1.6, miraPositionZ: 0, okamiBlending: 0.0, miraBlending: 1.0 };
 
       this.tweenChangeData(maskottDataFrom, maskottDataTo);
-
+      this._sceneViewport.threeControls.maxAzimuthAngle = Infinity;
       return this.moveToMaskott(
-        new THREE.Vector3(3.86, 1, 1),
-        new THREE.Vector3(3, 1, 1),
+        new THREE.Vector3(3.1, 1, 1.7),
+        Math.PI * 0.1,
         MaskottEnum.YUKU,
-      ).then(() => Promise.resolve());
+      ).then(() => {
+        return Promise.resolve();
+      })
+        .finally(() => {
+          this._sceneViewport.threeControls.maxAzimuthAngle = Math.PI * 0.07;
+        });
     } Promise.resolve();
   }
 
-  public moveToMaskott(moveTo: THREE.Vector3, moveTarget: THREE.Vector3, maskottName: MaskottEnum): Promise<void> {
+  public moveToMaskott(moveTo: THREE.Vector3, rotate: number, maskottName: MaskottEnum): Promise<void> {
     this.eventEmitter.emit('loadMaskott');
     this._sceneViewport.threeControls.dampingFactor = 0.04;
     this._sceneViewport.threeControls.mouseButtons.left = CameraControls.ACTION.NONE;
     this._sceneViewport.threeControls.mouseButtons.right = CameraControls.ACTION.NONE;
     return Promise.all([
       this._sceneViewport.threeControls.moveTo(moveTo.x, moveTo.y, moveTo.z, true),
-      this._sceneViewport.threeControls.setTarget(moveTarget.x, moveTarget.y, moveTarget.z, true),
+      this._sceneViewport.threeControls.rotateTo(rotate, 0, true),
     ])
       .then(() => {
         this._sceneViewport.threeControls.mouseButtons.left = CameraControls.ACTION.ROTATE;
@@ -125,9 +132,9 @@ export class MainScene {
     const maskottObjectMira = this.getMaskottByName(MaskottEnum.MIRA)?.maskottObject;
     if (maskott === MaskottEnum.MIRA) {
       this.chooseMaskott = MaskottEnum.MIRA;
-
-      this._sceneViewport.threeControls.setPosition(0, 1.4, 2.6, false);
-      this._sceneViewport.threeControls.setTarget(0, 1, 1.1, false);
+      this._sceneViewport.threeControls.setTarget(-1, 1, 1.7, false);
+      this._sceneViewport.threeControls.setPosition(-1.5, 2, 1.7, false);
+      this._sceneViewport.threeControls.rotateTo(-Math.PI * 0.44, 0, false);
       if (maskottObjectOkami) maskottObjectOkami.position.z = -1.6;
 
       this._mainView.blendingShader.uniforms.forEach((value) => {
@@ -147,26 +154,6 @@ export class MainScene {
         value.uniform.u_okamiBlending.value = 1.0;
       });
     }
-  }
-
-  public getSnapshot(): string {
-    const { background } = this._sceneViewport.threeScene;
-    const rendererSize = this._sceneViewport.threeRenderer.getSize(new THREE.Vector2());
-
-    this._sceneViewport.threeScene.background = null;
-
-    this._sceneViewport.threeCamera.children.forEach((child) => this._sceneViewport.snapshotThreeCamera.add(child));
-
-    this._sceneViewport.threeRenderer.render(this._sceneViewport.threeScene, this._sceneViewport.snapshotThreeCamera);
-
-    const snapshot = getRendererSnapshot({ trim: false, renderer: this._sceneViewport.threeRenderer });
-
-    this._sceneViewport.threeScene.background = background;
-    this._sceneViewport.threeRenderer.setSize(rendererSize.width, rendererSize.height);
-
-    this._sceneViewport.snapshotThreeCamera.children.forEach((child) => this._sceneViewport.threeCamera.add(child));
-
-    return snapshot;
   }
 
   public handleClick(event: MouseEvent): void {
@@ -202,5 +189,9 @@ export class MainScene {
     handler: SceneEventType[T],
   ): void {
     this.eventEmitter.on(event, handler as (...args: any) => void);
+  }
+
+  public getSnapshot(): string {
+    return getRendererSnapshot({ trim: false, renderer: this._sceneViewport.threeRenderer });
   }
 }

@@ -16,8 +16,6 @@ class SceneViewport {
 
   public threeCamera: THREE.PerspectiveCamera;
 
-  public snapshotThreeControls: CameraControls;
-
   public threeControls: CameraControls;
 
   public clock: THREE.Clock;
@@ -37,7 +35,6 @@ class SceneViewport {
     this.snapshotThreeCamera = this.makeThreeCamera();
     this.resourcesManager = new ResourcesManager();
     this.threeControls = this.makeThreeControls(this.threeCamera, this.threeRenderer);
-    this.snapshotThreeControls = this.makeThreeControls(this.snapshotThreeCamera, this.threeRenderer);
     this.clock = new THREE.Clock();
     this.setupEnvironment();
 
@@ -66,7 +63,6 @@ class SceneViewport {
       this.mainScene?.onUpdate();
       const delta = this.clock.getDelta();
       this.threeControls.update(delta);
-      this.snapshotThreeControls.update(delta);
       this.render();
     });
   }
@@ -98,14 +94,13 @@ class SceneViewport {
 
     controls.maxPolarAngle = Math.PI * 0.53;
     controls.minPolarAngle = Math.PI * 0.48;
-    controls.maxAzimuthAngle = Math.PI * 0.07;
-    controls.minAzimuthAngle = -Math.PI * 0.07;
+    controls.maxAzimuthAngle = 0.3;
+    controls.minAzimuthAngle = -0.3;
 
-    controls.setTarget(0, 0, 0);
-
+    controls.mouseButtons.right = CameraControls.ACTION.NONE;
     controls.dampingFactor = 0.3;
     controls.dollySpeed = 0.8;
-    controls.minDistance = 1.1;
+    controls.minDistance = 1.3;
     controls.maxDistance = 1.8;
     return controls;
   }
@@ -133,8 +128,8 @@ class SceneViewport {
         );
 
         this.initLight(
-          new THREE.Vector3(-0.12, 2.5, 1.72),
-          new THREE.Vector3(0.12, 0.68, 0),
+          new THREE.Vector3(-0.5, 2.5, 1.72),
+          new THREE.Vector3(-0.5, 0.68, 0),
         );
       });
   }
