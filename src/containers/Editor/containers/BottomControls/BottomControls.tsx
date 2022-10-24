@@ -7,11 +7,13 @@ import variables from '../../../../../styles/media.module.scss';
 import Button from '@app/components/Button';
 import { useControlsStore, useStyleStore } from '@app/containers/Editor/hooks/useEditorStore';
 import Characters from '@app/containers/Editor/containers/BottomControls/Characters';
+import useSoundSystem from '@app/hooks/useSoundSystem';
 
 const BottomControls: FC = observer(() => {
   const { activeProperty, setActiveAvatarPropertyType } = useControlsStore();
   const { setControlElement, showStyleSelection, setShowStyleSelection } = useStyleStore();
   const isMobile = useMedia(`(max-width: ${variables.mqMobileMax})`);
+  const soundSystem = useSoundSystem();
 
   const needShowCloseButton = useMemo(() => {
     if (!isMobile) return false;
@@ -19,6 +21,7 @@ const BottomControls: FC = observer(() => {
   }, [isMobile, activeProperty]);
 
   const styleSelectHandler = useCallback(() => {
+    soundSystem.playSound('click', true);
     if (activeProperty === 'style') {
       setShowStyleSelection(false);
       return;
@@ -27,8 +30,9 @@ const BottomControls: FC = observer(() => {
   }, [activeProperty]);
 
   const closeButtonHandler = useCallback(() => {
+    soundSystem.playSound('click', true);
     if (activeProperty === 'style') setShowStyleSelection(false);
-  }, [activeProperty]);
+  }, [activeProperty, soundSystem]);
 
   return (
     <div className={classNames.root}>
@@ -39,6 +43,7 @@ const BottomControls: FC = observer(() => {
           <Button
             ref={setControlElement}
             onClick={closeButtonHandler}
+            onMouseEnter={() => soundSystem.playSound('hover', true)}
           >
             Ok
           </Button>
@@ -47,6 +52,7 @@ const BottomControls: FC = observer(() => {
             ref={setControlElement}
             active={showStyleSelection}
             onClick={styleSelectHandler}
+            onMouseEnter={() => soundSystem.playSound('hover', true)}
           >
             Style
           </Button>

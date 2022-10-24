@@ -7,6 +7,7 @@ import { IconProps } from '@app/components/Icons/iconTypes';
 
 export interface CharacterSelectButtonProps {
   onClick?: () => void;
+  onMouseEnter?: () => void;
   loading?: boolean;
   active?: boolean;
   disabled?: boolean;
@@ -19,6 +20,7 @@ export interface CharacterSelectButtonProps {
 const CharacterSelectButton = forwardRef<HTMLButtonElement, CharacterSelectButtonProps>((props, ref) => {
   const {
     onClick = () => undefined,
+    onMouseEnter = () => undefined,
     loading = false,
     disabled = false,
     size = 'md',
@@ -45,6 +47,7 @@ const CharacterSelectButton = forwardRef<HTMLButtonElement, CharacterSelectButto
       ref={ref}
       className={cn(classNames.root, classNames[size])}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
       type="button"
       disabled={disabled}
     >

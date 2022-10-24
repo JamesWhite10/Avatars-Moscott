@@ -15,7 +15,7 @@ const SceneLoad: FC = observer(() => {
   const isDesktop = useMedia(screenSizes.mqDesktop, false);
 
   const progressSize = useMemo(() => {
-    return isDesktop ? 187 : 127;
+    return isDesktop ? 200 : 140;
   }, [isDesktop]);
 
   const loadingText = useMemo(() => {

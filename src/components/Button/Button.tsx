@@ -11,6 +11,7 @@ export interface ButtonProps {
   disabled?: boolean;
   active?: boolean;
   onClick?: () => void;
+  onMouseEnter?: () => void;
   loading?: boolean;
   className?: string;
   colorScheme?: ButtonScheme;
@@ -23,6 +24,7 @@ const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps>>((pr
   const {
     disabled = false,
     onClick = () => undefined,
+    onMouseEnter = () => undefined,
     loading = false,
     active = false,
     className,
@@ -39,6 +41,7 @@ const Button = forwardRef<HTMLButtonElement, PropsWithChildren<ButtonProps>>((pr
       type="button"
       className={cn(classNames.root, className, classNames[colorScheme], classNames[size], { [classNames.active]: active })}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
       disabled={disabled}
     >
       <Spin

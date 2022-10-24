@@ -8,6 +8,7 @@ export interface IconButtonProps {
   active?: boolean;
   loading?: boolean;
   onClick?: () => void;
+  onMouseEnter?: () => void;
   className?: string;
 }
 
@@ -17,6 +18,7 @@ const IconButton = forwardRef<HTMLButtonElement, PropsWithChildren<IconButtonPro
     active = false,
     loading = false,
     onClick = () => undefined,
+    onMouseEnter = () => undefined,
     className,
     children,
   } = props;
@@ -28,6 +30,7 @@ const IconButton = forwardRef<HTMLButtonElement, PropsWithChildren<IconButtonPro
       disabled={disabled}
       className={cn(className, classNames.root, { [classNames.active]: active })}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
     >
       <Spin
         isActive={loading}

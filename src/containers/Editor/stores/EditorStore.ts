@@ -6,6 +6,7 @@ import { saveSnapshot } from '../../../helpers/saveSnapshot';
 import { Maskott } from '../../../types/maskott';
 import CharacterStore from './CharacterStore';
 import StyleStore from './StyleStore';
+import SoundSystem from '../../../sound/SoundSystem';
 
 export default class EditorStore {
   public isReady = false;
@@ -26,12 +27,15 @@ export default class EditorStore {
 
   public styleStore!: StyleStore;
 
-  constructor() {
+  public soundSystem!: SoundSystem;
+
+  constructor(soundSystem: SoundSystem) {
     this.resourceManager = new ResourcesManager();
     makeAutoObservable(this, {}, { autoBind: true });
     this.controlsStore = new ControlsStore();
     this.charactersStore = new CharacterStore();
     this.styleStore = new StyleStore();
+    this.soundSystem = soundSystem;
     this.subscribe();
   }
 
@@ -44,7 +48,9 @@ export default class EditorStore {
     this.controlsStore.subscribe('styleSelect', () => {
       this.styleStore.setShowStyleSelection(true);
     });
-
+    this.controlsStore.subscribe('soundChange', (isMuted) => {
+      this.soundSystem.mute(!isMuted);
+    });
     this.controlsStore.subscribe('characterSelect', () => {
       this.charactersStore.setShowCharacterSelection(!this.charactersStore.showCharacterSelection);
     });
@@ -56,6 +62,7 @@ export default class EditorStore {
       this.threeScene?.mainScene?.changeMaskott(characterCandidate!.name)
         ?.then(() => {
           this.charactersStore.setCharacterIsChanging(false);
+          if (characterCandidate) this.soundSystem.playSound(characterCandidate.name.toLowerCase());
         });
     });
     this.charactersStore.subscribe('characterSelectionClosed', () => {
@@ -64,6 +71,7 @@ export default class EditorStore {
 
     this.styleStore.subscribe('styleChange', (id) => {
       console.log('style change', id);
+      this.soundSystem.playSound(id, true);
     });
     this.styleStore.subscribe('styleSelectionClosed', () => this.controlsStore.setActiveAvatarPropertyType());
   }
@@ -102,6 +110,7 @@ export default class EditorStore {
 
   public setShowLoadingScreen(show: boolean): void {
     this.showLoadingScreen = show;
+    this.soundSystem.playSound('background');
   }
 
   public loadSnapshot(maskottPreview: string, maskottName: string): void {
@@ -112,6 +121,7 @@ export default class EditorStore {
     this.threeScene?.mainScene?.subscribe('maskottChange', (name) => {
       this.charactersStore.setCharacterIsChanging(false);
       this.charactersStore.setCharacter(name);
+      this.soundSystem.playSound(name.toLowerCase(), true);
     });
 
     this.threeScene?.mainScene?.subscribe('loadMaskott', () => {
