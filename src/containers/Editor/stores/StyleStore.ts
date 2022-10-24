@@ -5,22 +5,22 @@ import EventEmitter from 'eventemitter3';
 
 const mockStyles: MaskottStyle[] = [
   {
-    id: 'style_one',
+    id: 'style_yuki_base',
     name: 'Style One',
     videoUrl: '/avatars/mira_style1.MP4',
   },
   {
-    id: 'style_two',
+    id: 'style_yuki_hacker',
     name: 'Style Two',
     videoUrl: '/avatars/mira_style2.MP4',
   },
   {
-    id: 'style_three',
+    id: 'style_mira_base',
     name: 'Style Three',
     videoUrl: '/avatars/mira_style1.MP4',
   },
   {
-    id: 'style_four',
+    id: 'style_mira_hacker',
     name: 'Style Four',
     videoUrl: '/avatars/mira_style2.MP4',
   },

@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import EventEmitter from 'eventemitter3';
 
 export type ControlsEventType = {
-  soundChange: () => void;
+  soundChange: (isMuted: boolean) => void;
   takeScreenShot: () => void;
   styleSelect: () => void;
   characterSelect: () => void;
@@ -76,8 +76,8 @@ export default class ControlsStore {
   }
 
   public onSoundChange = (): void => {
+    this.eventEmitter.emit('soundChange', this.soundDisabled);
     this.setSoundIsDisabled(!this.soundDisabled);
-    this.eventEmitter.emit('soundChange');
   };
 
   public onTakeScreenShot(): void {

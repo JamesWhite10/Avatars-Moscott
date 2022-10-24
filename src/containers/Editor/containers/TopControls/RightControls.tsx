@@ -1,9 +1,10 @@
-import { FC, useEffect, useMemo } from 'react';
+import { FC, useCallback, useEffect, useMemo } from 'react';
 import { observer } from 'mobx-react';
 import classNames from './TopControls.module.scss';
 import IconButton from '@app/components/IconButton';
 import { FullScreenExitIcon, FullScreenIcon, MusicIcon, MusicOffIcon, ScreenShotIcon } from '@app/components/Icons';
 import { useControlsStore } from '@app/containers/Editor/hooks/useEditorStore';
+import useSoundSystem from '@app/hooks/useSoundSystem';
 
 const RightControls: FC = observer(() => {
   const {
@@ -15,6 +16,8 @@ const RightControls: FC = observer(() => {
     onTakeScreenShot,
   } = useControlsStore();
 
+  const soundSystem = useSoundSystem();
+
   const fullScreenIcon = useMemo(() => {
     return fullScreenMode ? <FullScreenExitIcon /> : <FullScreenIcon />;
   }, [fullScreenMode]);
@@ -22,6 +25,16 @@ const RightControls: FC = observer(() => {
   const musicIcon = useMemo(() => {
     return soundDisabled ? <MusicOffIcon /> : <MusicIcon />;
   }, [soundDisabled]);
+
+  const fullScreenHandler = useCallback(() => {
+    soundSystem.playSound('click');
+    onFullScreenChange();
+  }, [onFullScreenChange, soundSystem]);
+
+  const screenShotHandler = useCallback(() => {
+    soundSystem.playSound('click');
+    onTakeScreenShot();
+  }, [onTakeScreenShot, soundSystem]);
 
   useEffect(() => {
     const handler = () => {
@@ -41,7 +54,8 @@ const RightControls: FC = observer(() => {
       <IconButton
         className={classNames.fullScreenButton}
         active={fullScreenMode}
-        onClick={onFullScreenChange}
+        onClick={fullScreenHandler}
+        onMouseEnter={() => soundSystem.playSound('hover', true)}
       >
         { fullScreenIcon }
       </IconButton>
@@ -51,7 +65,10 @@ const RightControls: FC = observer(() => {
       >
         { musicIcon }
       </IconButton>
-      <IconButton onClick={onTakeScreenShot}>
+      <IconButton
+        onClick={screenShotHandler}
+        onMouseEnter={() => soundSystem.playSound('hover', true)}
+      >
         <ScreenShotIcon />
       </IconButton>
     </div>

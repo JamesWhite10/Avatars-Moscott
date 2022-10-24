@@ -6,13 +6,16 @@ import { useCharacterStore, useControlsStore } from '@app/containers/Editor/hook
 import { useMedia } from 'react-use';
 import variables from '../../../../../styles/media.module.scss';
 import Button from '@app/components/Button';
+import useSoundSystem from '@app/hooks/useSoundSystem';
 
 const LeftControls: FC = observer(() => {
   const { setActiveAvatarPropertyType, activeProperty } = useControlsStore();
   const { isPrepared, character, characterIsChanging, showCharacterSelection, setControlElement } = useCharacterStore();
   const isMobile = useMedia(`(max-width: ${variables.mqMobileMax}`);
+  const soundSystem = useSoundSystem();
 
   const characterSelectHandler = useCallback(() => {
+    soundSystem.playSound('click', true);
     setActiveAvatarPropertyType('character');
   }, [activeProperty]);
 
@@ -37,8 +40,13 @@ const LeftControls: FC = observer(() => {
         name={character.name}
         description={character.description}
         onClick={characterSelectHandler}
+        onMouseEnter={() => soundSystem.playSound('hover', true)}
       />}
-      <Button size={buttonSize}>
+      <Button
+        size={buttonSize}
+        onClick={() => soundSystem.playSound('click', true)}
+        onMouseEnter={() => soundSystem.playSound('hover', true)}
+      >
         About
       </Button>
     </div>
