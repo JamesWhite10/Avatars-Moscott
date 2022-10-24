@@ -5,11 +5,32 @@ import Card from '@app/components/Card';
 import MiraImage from '@app/assets/mira.png';
 import YukiImage from '@app/assets/yuki.png';
 import CharacterSelectButton from '@app/components/CharacterSelectButton';
+import FormInput from '@app/components/FormInput/FormInput';
+import { FieldValues, useForm } from 'react-hook-form';
+import FormTextArea from '@app/components/FormTextArea/FormTextArea';
+
+export interface FormValues extends FieldValues {
+  name: string;
+  comments: string;
+}
 
 const Components = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [disabled] = useState<boolean>(false);
   const [active, setIsActive] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+  } = useForm<FormValues>({
+    mode: 'onChange',
+    defaultValues: {
+      name: '',
+      comments: '',
+    },
+  });
+
+  const submit = (data: FieldValues) => console.log(data);
 
   const styles = {
     presentationButtons: {
@@ -118,6 +139,27 @@ const Components = () => {
           icon={<CyberfoxIcon />}
         />
       </div>
+      <form onSubmit={handleSubmit(submit)}>
+        <div style={{ display: 'flex', gap: 4, background: '#CDCDCD' }}>
+          <FormInput
+            control={control}
+            name="name"
+            label="Name"
+            placeholder="Name"
+            showValidationMessages={false}
+            clearable
+          />
+          <FormTextArea
+            control={control}
+            name="comments"
+            label="Your comments"
+            placeholder="Your comments"
+            showHintMessages={false}
+            clearable
+          />
+        </div>
+        <button type="submit">Send</button>
+      </form>
     </div>
   );
 };
