@@ -1,0 +1,87 @@
+.formGroupField {
+  position: relative;
+}
+
+.formFieldInput {
+  width: 100%;
+  height: 54px;
+  font-family: var(--font-space-grotesk);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  box-sizing: border-box;
+  overflow: hidden;
+  resize: none;
+  color: rgba(255, 255, 255, 1);
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all .2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid white;
+  }
+
+  &:focus {
+    background: mix(rgba(127, 135, 255, 1), rgba(23, 26, 48, 0.15));
+    filter: drop-shadow(0 0 #4444dd);
+    outline: none;
+    border: 1px solid rgba(127, 135, 255, 1);
+    box-shadow: rgba(127, 135, 255, 0.5) 0 1px 4px, rgb(127, 135, 255, 0.5) 0 0 0 3px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &::placeholder {
+    color: transparent;
+  }
+
+  &::placeholder:focus {
+    color: #EEEEEE;
+  }
+
+  &:placeholder-shown ~ .formLabel {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    cursor: text;
+    top: 17px;
+    font-family: var(--font-space-grotesk);
+    transition: .4s;
+  }
+}
+
+.formLabel {
+  position: absolute;
+  top: 1px;
+  margin-left: 18px;
+  display: block;
+  transition: 0.4s;
+  font-size: 14px;
+  line-height: 20px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.clearIcon {
+  position: absolute;
+  top: 14px;
+  right: 19px;
+  cursor: pointer;
+}
+
+.input_error {
+  border: 1px solid rgba(255, 118, 77, 1);
+
+  &:hover {
+    border: 1px solid rgba(255, 118, 77, 1);
+  }
+
+  &:focus {
+    outline: 2px solid mix(rgba(255, 118, 77, 1), rgba(23, 26, 48, 0.15));
+  }
+}
