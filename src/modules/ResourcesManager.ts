@@ -1,6 +1,7 @@
-import { GLTFLoader, GLTF as ThreeGLTF } from 'three/examples/jsm/loaders/GLTFLoader';
+import { GLTFLoader, GLTF as ThreeGLTF, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DataTexture, Texture, TextureLoader } from 'three';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
+import * as ThreeVRM from '@pixiv/three-vrm';
 
 export interface Loader {
   load: (
@@ -26,6 +27,7 @@ export enum ResourceType {
   GLB = 'GLB',
   HDR_TEXTURE = 'HDR_TEXTURE',
   TEXTURE = 'TEXTURE',
+  VRM = 'VRM',
 }
 
 export interface GlbResource extends Resource {
@@ -43,11 +45,18 @@ export interface HdrTextureResource extends Resource {
   content?: DataTexture;
 }
 
+export interface VrmResource extends Resource {
+  type: ResourceType.VRM;
+  content?: ThreeGLTF;
+}
+
 export type ResourcesRecord = Record<string, (
-  GlbResource | HdrTextureResource | TextureResource)>;
+  GlbResource | HdrTextureResource | TextureResource | VrmResource)>;
 
 class ResourcesManager {
   public gltfLoader: GLTFLoader = new GLTFLoader();
+
+  public vrmLoader: GLTFLoader = new GLTFLoader();
 
   public rgbeLoader: RGBELoader = new RGBELoader();
 
@@ -64,12 +73,18 @@ class ResourcesManager {
   constructor(params: ResourcesManagerOptions = {}) {
     this.gltfLoader.setCrossOrigin('anonymous');
     this.textureLoader.setCrossOrigin('anonymous');
+    this.vrmLoader.setCrossOrigin('anonymous');
     this.rgbeLoader.setCrossOrigin('anonymous');
     this.useQueryTimestamp = params.useQueryTimestamp ?? true;
   }
 
   public addGlb(url: string): this {
     this.addResource(url, ResourceType.GLB);
+    return this;
+  }
+
+  public addVrm(url: string): this {
+    this.addResource(url, ResourceType.VRM);
     return this;
   }
 
@@ -92,6 +107,10 @@ class ResourcesManager {
     if (resource?.type !== type) return undefined;
     return resource as T;
   }
+
+  public getVrmByUrlOrFail = (url: string): GLTF => {
+    return this.getResourceContentByUrlOrFail<VrmResource>(url, ResourceType.VRM);
+  };
 
   public getResourceContentByUrlOrFail<T extends Resource>(url: string, type: ResourceType): Required<T>['content'] {
     const resource = this.getResourceByUrl<T>(url, type);
@@ -128,6 +147,10 @@ class ResourcesManager {
     if (resource.type === ResourceType.GLB) return this.gltfLoader;
     if (resource.type === ResourceType.HDR_TEXTURE) return this.rgbeLoader;
     if (resource.type === ResourceType.TEXTURE) return this.textureLoader;
+    if (resource.type === ResourceType.VRM) {
+      this.vrmLoader.register((parser) => new ThreeVRM.VRMLoaderPlugin(parser));
+      return this.vrmLoader;
+    }
     throw new Error(`Loader for type ${resource.type} not defined`);
   }
 
@@ -150,10 +173,12 @@ class ResourcesManager {
         resolve();
       },
       (xhr) => {
-        const progressLoaded = ((xhr.loaded / 33935200) * 100);
-        if (progressLoaded > this.overallProgressLoad) {
-          this.overallProgressLoad = progressLoaded;
-          onProgress(Math.floor(this.overallProgressLoad));
+        if (resource.type === ResourceType.VRM) {
+          const progressLoaded = (xhr.loaded / xhr.total) * 100;
+          if (progressLoaded > this.overallProgressLoad) {
+            this.overallProgressLoad = progressLoaded;
+            onProgress(Math.floor(this.overallProgressLoad));
+          }
         }
       },
       () => {

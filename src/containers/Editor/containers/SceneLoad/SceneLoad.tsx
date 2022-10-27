@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import classNames from './SceneLoad.module.scss';
 import CircularProgress from '@app/components/CircularProgress';
 import RoundButton from '@app/components/RoundButton';
@@ -13,6 +13,10 @@ const SceneLoad: FC = observer(() => {
   const { progress, isReady, showLoadingScreen, setShowLoadingScreen } = useEditorStore();
 
   const isDesktop = useMedia(screenSizes.mqDesktop, false);
+
+  useEffect(() => {
+    setShowLoadingScreen(true);
+  }, []);
 
   const progressSize = useMemo(() => {
     return isDesktop ? 200 : 140;

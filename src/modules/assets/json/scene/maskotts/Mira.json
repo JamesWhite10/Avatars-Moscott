@@ -1,11 +1,14 @@
 {
+  "maskottSkins": {
+    "baseSkin": "/3d/assets/models/miraBase.vrm"
+  },
   "background": {
     "base": {
-      "mountains_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/mountainsblue_color.png",
-      "planet_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/planetsblue_color.png",
-      "portal_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/portalblue_color.jpg",
-      "sky_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/skyblue_color.jpg",
-      "floor_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/floorblue_color.jpg"
+      "mountains_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/mountains_blue_color.png",
+      "planet_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/planet_blue_color.png",
+      "portal_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/portal_blue_color.jpg",
+      "sky_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/sky_blue_color.jpg",
+      "floor_mesh": "/3d/assets/texture/miraBaseTheme/miraBase/floor_blue_color.jpg"
     }
   }
 }

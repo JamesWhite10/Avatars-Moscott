@@ -12,9 +12,9 @@ export interface UniformOptions {
 
 export interface Uniform {
   u_miraBlending: { value: number };
-  u_okamiBlending: { value: number };
+  u_yukiBlending: { value: number };
   miraTexture: { value: THREE.Texture };
-  okamiTexture: { value: THREE.Texture };
+  yukiTexture: { value: THREE.Texture };
 }
 
 export class BlendingShader {
@@ -24,11 +24,15 @@ export class BlendingShader {
 
   private getVertexShader(): string {
     return `
+    #include <common>
+    #include <skinning_pars_vertex>
     varying vec2 vUv;
       void main() {
         vUv = uv;
-        vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-        gl_Position = projectionMatrix * mvPosition;
+        #include <skinbase_vertex>
+        #include <begin_vertex>
+        #include <skinning_vertex>
+        #include <project_vertex>
       }
     `;
   }
@@ -36,19 +40,19 @@ export class BlendingShader {
   private getFragmentShader(): string {
     return `
     uniform sampler2D miraTexture;
-    uniform sampler2D okamiTexture;
+    uniform sampler2D yukiTexture;
     uniform float u_miraBlending;
-    uniform float u_okamiBlending;
+    uniform float u_yukiBlending;
 
     varying vec2 vUv;
 
     void main(void) {
       vec3 c;
       vec4 miraTexture2D = texture2D(miraTexture, vUv);
-      vec4 okamiTexture2D = texture2D(okamiTexture, vUv);
+      vec4 yukiTexture2D = texture2D(yukiTexture, vUv);
       if ( miraTexture2D.a < .5 ) discard;
-      if ( okamiTexture2D.a < .5 ) discard;
-      c = miraTexture2D.rgb * u_miraBlending + okamiTexture2D.rgb * u_okamiBlending;
+      if ( yukiTexture2D.a < .5 ) discard;
+      c = miraTexture2D.rgb * u_miraBlending + yukiTexture2D.rgb * u_yukiBlending;
       gl_FragColor = vec4(c, 1.0);
     }
   `;
@@ -59,9 +63,9 @@ export class BlendingShader {
       name,
       uniform: {
         u_miraBlending: { value: 0.0 },
-        u_okamiBlending: { value: 1.0 },
+        u_yukiBlending: { value: 1.0 },
         miraTexture: { value: textureOne },
-        okamiTexture: { value: textureSecond },
+        yukiTexture: { value: textureSecond },
       },
     };
 
