@@ -2,12 +2,14 @@ import * as THREE from 'three';
 import { MaskottEnum } from '../../../../enum/MaskottEnum';
 import { GlbResource, HdrTextureResource, ResourceType } from '../../../ResourcesManager';
 import scene from '../../../assets/json/scene/scene.json';
-import MiraBaseTexture from '../../../assets/json/scene/maskotts/Mira.json';
-import OkamiBaseTexture from '../../../assets/json/scene/maskotts/Okami.json';
+import Mira from '../../../assets/json/scene/maskotts/Mira.json';
+import Yuki from '../../../assets/json/scene/maskotts/Yuki.json';
 import { MeshEnum } from '../../../enums/MeshEnum';
 import { BlendingShader } from '../shaders/BlendingShader';
 import SceneViewport from '../viewports/SceneViewport';
+import * as ThreeVRM from '@pixiv/three-vrm';
 import { TextureMaskottEnum } from '../../../enums/TextureMaskottEnum';
+import PrimitiveCollider from '../../PrimitiveCollider';
 
 export interface MainViewOptions {
   sceneViewport: SceneViewport;
@@ -33,11 +35,13 @@ export class MainView {
 
   private _texture: TexturesParams = { baseOrange: [], baseBlue: [] };
 
+  private _mixer!: null | THREE.AnimationMixer;
+
   private _currentTextures = [{
-    texture: MiraBaseTexture.background.base,
+    texture: Mira.background.base,
     backgroundName: TextureMaskottEnum.BASE_BLUE,
   }, {
-    texture: OkamiBaseTexture.background.base,
+    texture: Yuki.background.base,
     backgroundName: TextureMaskottEnum.BASE_ORANGE,
   },
   ];
@@ -45,6 +49,10 @@ export class MainView {
   constructor(options: MainViewOptions) {
     this._sceneViewport = options.sceneViewport;
     this.blendingShader = new BlendingShader();
+  }
+
+  public onUpdate(delta: number): void {
+    this._mixer?.update(delta);
   }
 
   public applyHdrTexture(): void {
@@ -67,12 +75,12 @@ export class MainView {
     this._currentTextures.forEach((item) => {
       Object.keys(item.texture).forEach((key) => {
         if (item.backgroundName === TextureMaskottEnum.BASE_BLUE) {
-          const materialUrl = MiraBaseTexture.background.base[key as keyof typeof MiraBaseTexture.background.base];
+          const materialUrl = Mira.background.base[key as keyof typeof Mira.background.base];
           const texture = this._sceneViewport.resourcesManager.getTextureByUrlOrFail(materialUrl);
           texture.flipY = false;
           this._texture.baseBlue.push(texture);
         } else if (item.backgroundName === TextureMaskottEnum.BASE_ORANGE) {
-          const materialUrl = OkamiBaseTexture.background.base[key as keyof typeof OkamiBaseTexture.background.base];
+          const materialUrl = Yuki.background.base[key as keyof typeof Yuki.background.base];
           const texture = this._sceneViewport.resourcesManager.getTextureByUrlOrFail(materialUrl);
           texture.flipY = false;
           this._texture.baseOrange.push(texture);
@@ -101,25 +109,41 @@ export class MainView {
       }
     });
 
+    const animation = background.animations[0];
+
+    this._mixer = new THREE.AnimationMixer(background.scene);
+    this._mixer.clipAction(animation).play();
+
     this._sceneViewport.threeScene.add(background.scene);
   }
 
-  public appleShadow(): void {
-    this._sceneViewport.threeScene.getObjectByName(MaskottEnum.MIRA)?.traverse((node) => {
+  public addMaskotts(): void {
+    const mira = this._sceneViewport.resourcesManager.getVrmByUrlOrFail(Mira.maskottSkins.baseSkin);
+    const yuki = this._sceneViewport.resourcesManager.getVrmByUrlOrFail(Yuki.maskottSkins.baseSkin);
+
+    this.applyMaskott(new THREE.Vector3(1.5, 0, 0), mira.userData.vrm, MaskottEnum.MIRA);
+    this.applyMaskott(new THREE.Vector3(4, 0, 0), yuki.userData.vrm, MaskottEnum.YUKU);
+  }
+
+  public applyMaskott = (position: THREE.Vector3, model: ThreeVRM.VRM, maskottName: MaskottEnum): void => {
+    const primitiveCollider = new PrimitiveCollider();
+    primitiveCollider.object.name = maskottName;
+    primitiveCollider.object.position.set(position.x, position.y, position.z);
+    model.springBoneManager?.reset();
+
+    ThreeVRM.VRMUtils.removeUnnecessaryVertices(model.scene);
+    ThreeVRM.VRMUtils.removeUnnecessaryJoints(model.scene);
+
+    model.scene.traverse((node) => {
       if (node instanceof THREE.Mesh) {
-        node.receiveShadow = true;
-        node.castShadow = true;
-        node.position.x = 0.8;
-        (node.material as THREE.MeshStandardMaterial).emissiveIntensity = 1.5;
+        node.receiveShadow = false;
+        node.castShadow = false;
+        node.material.gradientMap = 'none';
       }
     });
 
-    this._sceneViewport.threeScene.getObjectByName(MaskottEnum.OKAMI)?.traverse((node) => {
-      if (node instanceof THREE.Mesh) {
-        node.receiveShadow = true;
-        node.castShadow = true;
-        (node.material as THREE.MeshStandardMaterial).emissiveIntensity = 1.5;
-      }
-    });
-  }
+    primitiveCollider.object.add(model.scene);
+
+    this._sceneViewport.threeScene.add(primitiveCollider.object);
+  };
 }

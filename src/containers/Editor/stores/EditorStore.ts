@@ -8,13 +8,14 @@ import CharacterStore from './CharacterStore';
 import StyleStore from './StyleStore';
 import SoundSystem from '../../../sound/SoundSystem';
 import AnimationStore from './AnimationStore';
+import { MaskottEnum } from '../../../enum/MaskottEnum';
 
 export default class EditorStore {
   public isReady = false;
 
   public progress = 0;
 
-  public showLoadingScreen = true;
+  public showLoadingScreen = false;
 
   public isLoadErrorModalOpen = false;
 
@@ -66,8 +67,8 @@ export default class EditorStore {
       const characterCandidate = this.charactersStore.characters.find((character) => character.id === id);
       this.charactersStore.setCharacterIsChanging(true);
       this.charactersStore.setShowCharacterSelection(false);
-      this.threeScene?.mainScene?.changeMaskott(characterCandidate!.name)
-        ?.then(() => {
+      this.threeScene?.mainScene?.changeMaskott(characterCandidate!.name as MaskottEnum)
+        .then(() => {
           this.charactersStore.setCharacterIsChanging(false);
           if (characterCandidate) this.soundSystem.playSound(characterCandidate.name.toLowerCase());
         });

@@ -31,11 +31,11 @@ const mockCharacters: Maskott[] = [
 ];
 
 const Editor: FC = observer(() => {
-  const { initialize, threeScene, setUp, isReady } = useEditorStore();
+  const { initialize, threeScene, setUp, isReady, showLoadingScreen } = useEditorStore();
 
   useEffect(() => {
-    initialize();
-  }, [useEditorStore]);
+    if (showLoadingScreen) initialize();
+  }, [useEditorStore, showLoadingScreen]);
 
   useEffect(() => {
     if (isReady) setUp(mockCharacters); // TODO унести отсюда в редактор

@@ -3,8 +3,8 @@ import ResourcesManager from '../../../ResourcesManager';
 import scene from '../../../assets/json/scene/scene.json';
 import CameraControls from 'camera-controls';
 import { MainView } from '../views/MainView';
-import OkamiBaseTexture from '@app/modules/assets/json/scene/maskotts/Okami.json';
-import MiraBaseTexture from '@app/modules/assets/json/scene/maskotts/Mira.json';
+import Yuki from '@app/modules/assets/json/scene/maskotts/Yuki.json';
+import Mira from '@app/modules/assets/json/scene/maskotts/Mira.json';
 import { MainScene } from '../../../MaskottScene/views/MainScene';
 
 CameraControls.install({ THREE });
@@ -45,6 +45,7 @@ class SceneViewport {
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       preserveDrawingBuffer: true,
+      alpha: true,
     });
     return renderer;
   }
@@ -63,6 +64,7 @@ class SceneViewport {
       this.mainScene?.onUpdate();
       const delta = this.clock.getDelta();
       this.threeControls.update(delta);
+      this.mainView?.onUpdate(delta);
       this.render();
     });
   }
@@ -98,10 +100,10 @@ class SceneViewport {
     controls.minAzimuthAngle = -0.3;
 
     controls.mouseButtons.right = CameraControls.ACTION.NONE;
-    controls.dampingFactor = 0.3;
+    controls.dampingFactor = 0.1;
     controls.dollySpeed = 0.8;
-    controls.minDistance = 1.3;
-    controls.maxDistance = 1.8;
+    controls.minDistance = 2.3;
+    controls.maxDistance = 4;
     return controls;
   }
 
@@ -116,20 +118,20 @@ class SceneViewport {
       .then(() => {
         this.runRenderCycle();
         this.mainView = new MainView({ sceneViewport: this });
-        this.mainScene = new MainScene({ sceneViewport: this, mainView: this.mainView });
+        this.mainView.addMaskotts();
         this.mainView.applyTexture();
         this.mainView.applyHdrTexture();
-        this.mainView.appleShadow();
+        this.mainScene = new MainScene({ sceneViewport: this, mainView: this.mainView });
         this.mainScene.maskottInit();
 
         this.initLight(
-          new THREE.Vector3(2.86847, 2.8, 1.9024),
-          new THREE.Vector3(2.86847, 0.63, 0),
+          new THREE.Vector3(4, 2.8, 1.7),
+          new THREE.Vector3(4, 0, 0),
         );
 
         this.initLight(
-          new THREE.Vector3(-0.5, 2.5, 1.72),
-          new THREE.Vector3(-0.5, 0.68, 0),
+          new THREE.Vector3(1.5, 2.8, 1.7),
+          new THREE.Vector3(1.5, 0, 0),
         );
       });
   }
@@ -138,10 +140,13 @@ class SceneViewport {
     this.resourcesManager.addGlb(scene.background);
     this.resourcesManager.addHdrTexture(scene.environment);
 
-    Object.values(OkamiBaseTexture.background.base).forEach((texture) => {
+    this.resourcesManager.addVrm(Yuki.maskottSkins.baseSkin);
+    this.resourcesManager.addVrm(Mira.maskottSkins.baseSkin);
+
+    Object.values(Yuki.background.base).forEach((texture) => {
       this.resourcesManager.addTexture(texture);
     });
-    Object.values(MiraBaseTexture.background.base).forEach((texture) => {
+    Object.values(Mira.background.base).forEach((texture) => {
       this.resourcesManager.addTexture(texture);
     });
 
@@ -158,7 +163,7 @@ class SceneViewport {
     this.threeRenderer.domElement.setAttribute('tabindex', '0');
 
     this.threeRenderer.setClearColor(0x95b1cc);
-    this.threeRenderer.setPixelRatio(window.devicePixelRatio || 1);
+    this.threeRenderer.setPixelRatio(2);
     this.threeRenderer.setSize(window.innerWidth, window.innerHeight);
 
     this.threeRenderer.physicallyCorrectLights = false;
@@ -167,24 +172,19 @@ class SceneViewport {
   }
 
   public clickHandler(event: MouseEvent): void {
-    if (this.mainScene) this.mainScene.handleClick(event);
+    if (this.mainScene) this.mainScene.handleMaskottClick(event);
   }
 
   public initLight(position: THREE.Vector3, target: THREE.Vector3): void {
-    const color = 0xffffff;
-    const light = new THREE.SpotLight(color);
+    const color = 0xFFFFFF;
+    const intensity = 1.3;
+    const light = new THREE.SpotLight(color, intensity);
     light.position.set(position.x, position.y, position.z);
     light.target.position.set(target.x, target.y, target.z);
+    light.penumbra = 1;
+    light.angle = 0.9;
+
     this.threeScene.add(light);
-    light.angle = 0.3;
-    light.castShadow = true;
-    light.intensity = 1.7;
-
-    light.shadow.mapSize.width = 4800;
-    light.shadow.mapSize.height = 4800;
-    light.shadow.camera.near = 1.9;
-    light.shadow.camera.far = 1000;
-
     light.target.updateMatrixWorld();
   }
 }

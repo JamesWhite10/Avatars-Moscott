@@ -14,12 +14,14 @@ export class RaycastSystem {
     this.threeCamera = threeCamera;
   }
 
-  public raycast(event: MouseEvent): THREE.Intersection<THREE.Object3D<THREE.Event>>[] {
+  public raycast(event: MouseEvent, value: string): THREE.Intersection<THREE.Object3D<THREE.Event>>[] {
     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     this.raycaster.setFromCamera(this.mouse, this.threeCamera);
 
-    return this.raycaster.intersectObjects(this.threeScene.children);
+    const object = this.threeScene.getObjectByName(value);
+
+    return this.raycaster.intersectObjects(object?.children || this.threeScene.children, false);
   }
 }
