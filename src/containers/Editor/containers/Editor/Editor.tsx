@@ -55,8 +55,8 @@ const Editor: FC = observer(() => {
         />
         <WorkArea>
           <TopControls />
-          <BottomControls />
           <RightControls />
+          <BottomControls />
         </WorkArea>
         <About />
       </div>

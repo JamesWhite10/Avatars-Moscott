@@ -6,9 +6,10 @@ export type ControlsEventType = {
   takeScreenShot: () => void;
   styleSelect: () => void;
   characterSelect: () => void;
+  animationSelect: () => void;
 };
 
-export type AvatarPropertyType = 'style' | 'accessories' | 'character';
+export type AvatarPropertyType = 'style' | 'accessories' | 'character' | 'animations';
 
 export default class ControlsStore {
   public fullScreenMode: boolean = false;
@@ -52,6 +53,9 @@ export default class ControlsStore {
         break;
       case 'style':
         this.eventEmitter.emit('styleSelect');
+        break;
+      case 'animations':
+        this.eventEmitter.emit('animationSelect');
         break;
       default:
         break;

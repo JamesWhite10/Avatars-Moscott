@@ -5,13 +5,15 @@ import Styles from './Styles';
 import { useMedia } from 'react-use';
 import variables from '../../../../../styles/media.module.scss';
 import Button from '@app/components/Button';
-import { useControlsStore, useStyleStore } from '@app/containers/Editor/hooks/useEditorStore';
+import { useAnimationStore, useControlsStore, useStyleStore } from '@app/containers/Editor/hooks/useEditorStore';
 import Characters from '@app/containers/Editor/containers/BottomControls/Characters';
 import useSoundSystem from '@app/hooks/useSoundSystem';
+import AnimationsMobile from '@app/containers/Editor/containers/BottomControls/AnimationsMobile';
 
 const BottomControls: FC = observer(() => {
   const { activeProperty, setActiveAvatarPropertyType } = useControlsStore();
   const { setControlElement, showStyleSelection, setShowStyleSelection } = useStyleStore();
+  const { setShowAnimationSelection } = useAnimationStore();
   const isMobile = useMedia(`(max-width: ${variables.mqMobileMax})`);
   const soundSystem = useSoundSystem();
 
@@ -32,12 +34,14 @@ const BottomControls: FC = observer(() => {
   const closeButtonHandler = useCallback(() => {
     soundSystem.playSound('click', true);
     if (activeProperty === 'style') setShowStyleSelection(false);
+    if (activeProperty === 'animations') setShowAnimationSelection(false);
   }, [activeProperty, soundSystem]);
 
   return (
     <div className={classNames.root}>
       <Styles />
       <Characters />
+      {isMobile && <AnimationsMobile />}
       <div className={classNames.centerContainer}>
         {needShowCloseButton ? (
           <Button

@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import ControlsStore from '../stores/ControlsStore';
 import CharacterStore from '../stores/CharacterStore';
 import StyleStore from '../stores/StyleStore';
+import AnimationStore from '../stores/AnimationStore';
 
 export const useEditorStore = (): EditorStore => {
   const rootContext = useContext(EditorContext);
@@ -23,6 +24,10 @@ export const useCharacterStore = (): CharacterStore => {
 
 export const useStyleStore = (): StyleStore => {
   return useEditorStore().styleStore;
+};
+
+export const useAnimationStore = (): AnimationStore => {
+  return useEditorStore().animationStore;
 };
 
 export default useEditorStore;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Button from '@app/components/Button/Button';
 import { CyberfoxIcon, EmptyIcon, Web3devIcon } from '@app/components/Icons';
 import Card from '@app/components/Card';
@@ -8,6 +8,7 @@ import CharacterSelectButton from '@app/components/CharacterSelectButton';
 import FormInput from '@app/components/FormInput/FormInput';
 import { FieldValues, useForm } from 'react-hook-form';
 import FormTextArea from '@app/components/FormTextArea/FormTextArea';
+import AnimatedButton from '@app/components/AnimatedButton/AnimatedButton';
 
 export interface FormValues extends FieldValues {
   name: string;
@@ -18,6 +19,26 @@ const Components = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [disabled] = useState<boolean>(false);
   const [active, setIsActive] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const timer = useRef<NodeJS.Timer>();
+
+  const playHandler = () => {
+    if (playing) {
+      if (timer.current) clearInterval(timer.current);
+      setPlaying(false);
+      return;
+    }
+    setPlaying(true);
+    timer.current = setInterval(() => {
+      if (progress === 100) {
+        setProgress(0);
+        clearInterval(timer.current);
+        return;
+      }
+      setProgress((oldProgress) => oldProgress + 1);
+    }, 1000);
+  };
 
   const {
     control,
@@ -160,6 +181,15 @@ const Components = () => {
         </div>
         <button type="submit">Send</button>
       </form>
+      <div>
+        <AnimatedButton
+          progress={progress}
+          active={playing}
+          onClick={playHandler}
+        >
+          Animation
+        </AnimatedButton>
+      </div>
     </div>
   );
 };
