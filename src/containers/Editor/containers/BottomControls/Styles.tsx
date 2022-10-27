@@ -28,37 +28,35 @@ const Styles: FC = observer(() => {
   });
 
   return (
-    <>
-      <Fade
-        appear
-        unmountOnExit
-        enable={showStyleSelection}
-        className={classNames.sliderContainer}
-      >
-        <div className={classNames.sliderWrapper}>
-          <Swiper
-            ref={areaRef}
-            freeMode
-            slidesPerView="auto"
-            spaceBetween={6}
-          >
-            {styles.map((style) => (
-              <SwiperSlide
-                key={style.id}
-                className={classNames.slideItem}
-              >
-                <Card
-                  contentType="video"
-                  active={style.id === activeStyle}
-                  video={style.videoUrl}
-                  onClick={() => onStyleChange(style.id)}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-      </Fade>
-    </>
+    <Fade
+      appear
+      unmountOnExit
+      enable={showStyleSelection}
+      className={classNames.sliderContainer}
+    >
+      <div className={classNames.sliderWrapper}>
+        <Swiper
+          ref={areaRef}
+          freeMode
+          slidesPerView="auto"
+          spaceBetween={6}
+        >
+          {styles.map((style) => (
+            <SwiperSlide
+              key={style.id}
+              className={classNames.slideItem}
+            >
+              <Card
+                contentType="video"
+                active={style.id === activeStyle}
+                video={style.videoUrl}
+                onClick={() => onStyleChange(style.id)}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+    </Fade>
   );
 });
 

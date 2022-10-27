@@ -1,0 +1,111 @@
+@import "styles/media.module";
+
+.root {
+  width: 177px;
+  height: 40px;
+  box-sizing: border-box;
+  border: none;
+  padding: 0;
+  outline: none;
+  position: relative;
+  background-color: rgba(23, 26, 48, 0.3);
+  border-radius: 12px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background-color .5s ease, width .2s ease;
+  animation: blur-in 2s forwards;
+  @media (max-width: $mq-mobile-max) {
+    width: auto;
+  }
+
+  &:hover:not(.active) {
+    background: var(--primary-600);
+    .title {
+      color: #FFFFFF;
+    }
+    .icon {
+      opacity: 1;
+    }
+  }
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  z-index: 1;
+}
+
+.title {
+  width: 100%;
+  max-width: 127px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-space-grotesk);
+  font-style: normal;
+  font-weight: bold;
+  line-height: 22px;
+  text-align: left;
+  transition: all .2s ease;
+  color: #FFFFFF;
+  z-index: 2;
+}
+
+.icon {
+  z-index: 2;
+  &:hover {
+    opacity: 1;
+  }
+
+  transition: all .2s ease;
+  svg, path {
+    fill: #FFFFFF;
+  }
+  @media (max-width: $mq-mobile-max) {
+    margin-left: 8px;
+  }
+}
+
+.active {
+  background-color: #FFFFFF;
+  transition: background-color .2s ease;
+
+  .title {
+    color: var(--primary-600);
+  }
+
+  .icon {
+    opacity: 1;
+    svg, path {
+      fill: var(--primary-600);
+    }
+  }
+
+  .track {
+    background-color: #D6D8FF;
+  }
+}
+
+.track {
+  background-color: transparent;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: -100%;
+  height: 100%;
+  transition: transform .1s linear 0s, background-color .2s ease;
+}
+
+@keyframes blur-in {
+  from {
+    backdrop-filter: blur(0px);
+  }
+  to {
+    backdrop-filter: blur(8px);
+  }
+}

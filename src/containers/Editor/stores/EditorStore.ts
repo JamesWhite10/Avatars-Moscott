@@ -7,6 +7,7 @@ import { Maskott } from '../../../types/maskott';
 import CharacterStore from './CharacterStore';
 import StyleStore from './StyleStore';
 import SoundSystem from '../../../sound/SoundSystem';
+import AnimationStore from './AnimationStore';
 
 export default class EditorStore {
   public isReady = false;
@@ -27,6 +28,8 @@ export default class EditorStore {
 
   public styleStore!: StyleStore;
 
+  public animationStore!: AnimationStore;
+
   public soundSystem!: SoundSystem;
 
   constructor(soundSystem: SoundSystem) {
@@ -35,6 +38,7 @@ export default class EditorStore {
     this.controlsStore = new ControlsStore();
     this.charactersStore = new CharacterStore();
     this.styleStore = new StyleStore();
+    this.animationStore = new AnimationStore();
     this.soundSystem = soundSystem;
     this.subscribe();
   }
@@ -53,6 +57,9 @@ export default class EditorStore {
     });
     this.controlsStore.subscribe('characterSelect', () => {
       this.charactersStore.setShowCharacterSelection(!this.charactersStore.showCharacterSelection);
+    });
+    this.controlsStore.subscribe('animationSelect', () => {
+      this.animationStore.setShowAnimationSelection(true);
     });
 
     this.charactersStore.subscribe('characterChange', (id) => {
@@ -74,6 +81,45 @@ export default class EditorStore {
       this.soundSystem.playSound(id, true);
     });
     this.styleStore.subscribe('styleSelectionClosed', () => this.controlsStore.setActiveAvatarPropertyType());
+    let timer: NodeJS.Timer;
+    let activeId: string | undefined;
+    this.animationStore.subscribe('animation_select', (id) => {
+      if (activeId !== id) {
+        this.animationStore.setProgress(0);
+      }
+      activeId = id;
+      clearInterval(timer);
+      timer = setInterval(() => {
+        if (this.animationStore.progress === 100) {
+          this.animationStore.setProgress(0);
+          this.animationStore.setActiveAnimationId();
+          clearInterval(timer);
+          return;
+        }
+        this.animationStore.setProgress(this.animationStore.progress + 1);
+      }, 1000);
+    });
+
+    this.animationStore.subscribe('pause', (paused) => {
+      console.log('pause event. is paused: ', paused);
+      clearInterval(timer);
+      timer = setInterval(() => {
+        if (this.animationStore.progress === 100) {
+          this.animationStore.setProgress(0);
+          clearInterval(timer);
+          return;
+        }
+        this.animationStore.setProgress(this.animationStore.progress + 1);
+      }, 1000);
+    });
+
+    this.animationStore.subscribe('stop', () => {
+      console.log('animation stop');
+    });
+
+    this.animationStore.subscribe('selection_closed', () => {
+      this.controlsStore.setActiveAvatarPropertyType();
+    });
   }
 
   public initialize(): void {

@@ -1,0 +1,40 @@
+.root {
+  position: absolute;
+  right:0;
+  top:50%;
+  pointer-events: none;
+}
+
+.control {
+  position: absolute;
+  right: -8px;
+  top:0;
+  bottom: 0;
+  transform: rotate(-90deg) translate3d(0,100%,0);
+  -webkit-font-smoothing: antialiased;
+  pointer-events: auto;
+}
+
+.controlButton {
+  width: 110px;
+}
+
+.animationsContainer {
+  position: fixed;
+  top: 50%;
+  width: 177px;
+  max-width: 177px;
+  pointer-events: auto;
+  overflow: scroll;
+  max-height: 260px;
+  height: auto;
+  transform: translateY(-50%);
+  right: 64px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overflow: scroll;
+}
