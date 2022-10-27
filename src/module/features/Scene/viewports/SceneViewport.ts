@@ -1,13 +1,11 @@
 import * as THREE from 'three';
-import ResourcesManager from '../../../ResourcesManager';
-import scene from '../../../assets/json/scene/scene.json';
-import CameraControls from 'camera-controls';
-import { MainView } from '../views/MainView';
-import Yuki from '@app/modules/assets/json/scene/maskotts/Yuki.json';
-import Mira from '@app/modules/assets/json/scene/maskotts/Mira.json';
-import { MainScene } from '../../../MaskottScene/views/MainScene';
-
-CameraControls.install({ THREE });
+import ResourcesManager from '../ResourcesManager';
+import scene from '@app/module/assets/json/scene/scene.json';
+import { MainView } from '@app/module/features/Scene/views/MainView';
+import Yuki from '@app/module/assets/json/scene/maskotts/Yuki.json';
+import Mira from '@app/module/assets/json/scene/maskotts/Mira.json';
+import { MaskottAction } from '@app/module/MaskottScene/mainActions/MaskottAction';
+import { MouseControl, TouchControl } from '../CameraControls/index';
 
 class SceneViewport {
   public threeScene: THREE.Scene;
@@ -16,17 +14,19 @@ class SceneViewport {
 
   public threeCamera: THREE.PerspectiveCamera;
 
-  public threeControls: CameraControls;
-
   public clock: THREE.Clock;
 
   public mainView: MainView | null = null;
 
-  public mainScene: MainScene | null = null;
+  public mainScene: MaskottAction | null = null;
 
   public snapshotThreeCamera: THREE.PerspectiveCamera;
 
   public resourcesManager: ResourcesManager;
+
+  public mouseControls!: MouseControl.MouseControls;
+
+  public touchControls!: TouchControl.TouchControls;
 
   constructor() {
     this.threeScene = new THREE.Scene();
@@ -34,26 +34,33 @@ class SceneViewport {
     this.threeCamera = this.makeThreeCamera();
     this.snapshotThreeCamera = this.makeThreeCamera();
     this.resourcesManager = new ResourcesManager();
-    this.threeControls = this.makeThreeControls(this.threeCamera, this.threeRenderer);
     this.clock = new THREE.Clock();
     this.setupEnvironment();
 
-    this.threeRenderer.domElement.addEventListener('click', this.clickHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('click', this.clickMouseHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('mousemove', this.moveMouseHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('mouseup', this.startMouseHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('mousedown', this.endMouseHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('wheel', this.mouseWheel.bind(this));
+
+    this.threeRenderer.domElement.addEventListener('touchmove', this.moveTouchHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('touchstart', this.startTouchHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('touchend', this.endTouchHandler.bind(this));
   }
 
   protected makeThreeRenderer(): THREE.WebGLRenderer {
-    const renderer = new THREE.WebGLRenderer({
+    return new THREE.WebGLRenderer({
       antialias: true,
       preserveDrawingBuffer: true,
       alpha: true,
     });
-    return renderer;
   }
 
   public makeThreeCamera(): THREE.PerspectiveCamera {
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100);
 
-    camera.position.set(-1.3, 1.4, 2.6);
+    camera.position.set(0.4, 1.4, 4);
+    camera.lookAt(1.6, 1, 0);
 
     return camera;
   }
@@ -63,7 +70,6 @@ class SceneViewport {
       this.syncRendererSize();
       this.mainScene?.onUpdate();
       const delta = this.clock.getDelta();
-      this.threeControls.update(delta);
       this.mainView?.onUpdate(delta);
       this.render();
     });
@@ -91,22 +97,6 @@ class SceneViewport {
     container.appendChild(this.threeRenderer.domElement);
   }
 
-  protected makeThreeControls(camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer): CameraControls {
-    const controls = new CameraControls(camera, renderer.domElement);
-
-    controls.maxPolarAngle = Math.PI * 0.53;
-    controls.minPolarAngle = Math.PI * 0.48;
-    controls.maxAzimuthAngle = 0.3;
-    controls.minAzimuthAngle = -0.3;
-
-    controls.mouseButtons.right = CameraControls.ACTION.NONE;
-    controls.dampingFactor = 0.1;
-    controls.dollySpeed = 0.8;
-    controls.minDistance = 2.3;
-    controls.maxDistance = 4;
-    return controls;
-  }
-
   public render(): void {
     this.threeRenderer.render(this.threeScene, this.threeCamera);
   }
@@ -117,23 +107,33 @@ class SceneViewport {
     return Promise.all([this.loadSceneTexture(onProgress)])
       .then(() => {
         this.runRenderCycle();
+        this.controlsInit();
         this.mainView = new MainView({ sceneViewport: this });
         this.mainView.addMaskotts();
         this.mainView.applyTexture();
         this.mainView.applyHdrTexture();
-        this.mainScene = new MainScene({ sceneViewport: this, mainView: this.mainView });
+        this.mainScene = new MaskottAction({ sceneViewport: this, mainView: this.mainView });
         this.mainScene.maskottInit();
 
         this.initLight(
-          new THREE.Vector3(4, 2.8, 1.7),
-          new THREE.Vector3(4, 0, 0),
-        );
-
-        this.initLight(
-          new THREE.Vector3(1.5, 2.8, 1.7),
-          new THREE.Vector3(1.5, 0, 0),
+          new THREE.Vector3(1.1, 2.8, 1.7),
+          new THREE.Vector3(1, 0, 0),
         );
       });
+  }
+
+  public controlsInit(): void {
+    this.mouseControls = new MouseControl.MouseControls({
+      threeCamera: this.threeCamera,
+      height: this.threeRenderer.domElement.clientHeight,
+      width: this.threeRenderer.domElement.clientWidth,
+    });
+
+    this.touchControls = new TouchControl.TouchControls({
+      threeCamera: this.threeCamera,
+      height: this.threeRenderer.domElement.clientHeight,
+      width: this.threeRenderer.domElement.clientWidth,
+    });
   }
 
   public loadSceneTexture(progress: (progress: number) => void): Promise<void> {
@@ -163,7 +163,7 @@ class SceneViewport {
     this.threeRenderer.domElement.setAttribute('tabindex', '0');
 
     this.threeRenderer.setClearColor(0x95b1cc);
-    this.threeRenderer.setPixelRatio(2);
+    this.threeRenderer.setPixelRatio(1);
     this.threeRenderer.setSize(window.innerWidth, window.innerHeight);
 
     this.threeRenderer.physicallyCorrectLights = false;
@@ -171,21 +171,57 @@ class SceneViewport {
     this.threeRenderer.toneMappingExposure = 1;
   }
 
-  public clickHandler(event: MouseEvent): void {
-    if (this.mainScene) this.mainScene.handleMaskottClick(event);
-  }
-
   public initLight(position: THREE.Vector3, target: THREE.Vector3): void {
     const color = 0xFFFFFF;
-    const intensity = 1.3;
+    const intensity = 1;
     const light = new THREE.SpotLight(color, intensity);
     light.position.set(position.x, position.y, position.z);
     light.target.position.set(target.x, target.y, target.z);
-    light.penumbra = 1;
-    light.angle = 0.9;
+    light.penumbra = 0.6;
 
     this.threeScene.add(light);
     light.target.updateMatrixWorld();
+  }
+
+  public clickMouseHandler(event: MouseEvent): void {
+    if (this.mainScene) this.mainScene.handleMaskottClick(event);
+  }
+
+  public moveMouseHandler(event: MouseEvent): void {
+    this.mouseControls.update(event);
+    this.mouseControls.handleTouchStartRotate(event);
+    this.mouseControls.onTouchMove(event);
+  }
+
+  public startMouseHandler(): void {
+    this.mouseControls.onTouchStart();
+  }
+
+  public endMouseHandler(event: MouseEvent): void {
+    this.mouseControls.onTouchEnded(event);
+  }
+
+  public mouseWheel(event: WheelEvent): void {
+    this.mouseControls.onMouseWheel(event);
+  }
+
+  public moveTouchHandler(event: TouchEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.touchControls.update();
+    this.touchControls.onTouchMove(event);
+  }
+
+  public startTouchHandler(event: TouchEvent): void {
+    this.threeRenderer.domElement.focus();
+    this.touchControls.onTouchStart(event);
+    this.mainScene?.handleMaskottTouch(event);
+  }
+
+  public endTouchHandler(event: TouchEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.touchControls.onTouchEnded(event);
   }
 }
 

@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import blendingFragment from './BlendingFragment.glsl';
+import blendingVertex from './BlendingVertex.glsl';
 
 export interface MaterialOptions {
   name: string;
@@ -22,42 +24,6 @@ export class BlendingShader {
 
   public uniforms: UniformOptions[] = [];
 
-  private getVertexShader(): string {
-    return `
-    #include <common>
-    #include <skinning_pars_vertex>
-    varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        #include <skinbase_vertex>
-        #include <begin_vertex>
-        #include <skinning_vertex>
-        #include <project_vertex>
-      }
-    `;
-  }
-
-  private getFragmentShader(): string {
-    return `
-    uniform sampler2D miraTexture;
-    uniform sampler2D yukiTexture;
-    uniform float u_miraBlending;
-    uniform float u_yukiBlending;
-
-    varying vec2 vUv;
-
-    void main(void) {
-      vec3 c;
-      vec4 miraTexture2D = texture2D(miraTexture, vUv);
-      vec4 yukiTexture2D = texture2D(yukiTexture, vUv);
-      if ( miraTexture2D.a < .5 ) discard;
-      if ( yukiTexture2D.a < .5 ) discard;
-      c = miraTexture2D.rgb * u_miraBlending + yukiTexture2D.rgb * u_yukiBlending;
-      gl_FragColor = vec4(c, 1.0);
-    }
-  `;
-  }
-
   public createUniform(textureOne: THREE.Texture, textureSecond: THREE.Texture, name: string): Uniform {
     const uniformOptions: UniformOptions = {
       name,
@@ -77,8 +43,8 @@ export class BlendingShader {
   public createMaterialShader(uniforms: any, name: string): void {
     const shaderMaterial = new THREE.ShaderMaterial({
       uniforms,
-      vertexShader: this.getVertexShader(),
-      fragmentShader: this.getFragmentShader(),
+      vertexShader: blendingVertex,
+      fragmentShader: blendingFragment,
     });
 
     this.materials.push({ material: shaderMaterial, name });

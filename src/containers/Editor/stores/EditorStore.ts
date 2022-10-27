@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
-import SceneViewport from '@app/modules/features/Scene/viewports/SceneViewport';
-import ResourcesManager from '../../../modules/ResourcesManager';
+import SceneViewport from '@app/module/features/Scene/viewports/SceneViewport';
+import ResourcesManager from '../../../module/features/Scene/ResourcesManager';
 import ControlsStore from './ControlsStore';
 import { saveSnapshot } from '../../../helpers/saveSnapshot';
 import { Maskott } from '../../../types/maskott';

@@ -1,15 +1,16 @@
 import * as THREE from 'three';
 import { MaskottEnum } from '../../../../enum/MaskottEnum';
-import { GlbResource, HdrTextureResource, ResourceType } from '../../../ResourcesManager';
+import { GlbResource, HdrTextureResource, ResourceType } from '../ResourcesManager';
 import scene from '../../../assets/json/scene/scene.json';
 import Mira from '../../../assets/json/scene/maskotts/Mira.json';
 import Yuki from '../../../assets/json/scene/maskotts/Yuki.json';
 import { MeshEnum } from '../../../enums/MeshEnum';
-import { BlendingShader } from '../shaders/BlendingShader';
+import { BlendingShader } from '../shaders/index';
 import SceneViewport from '../viewports/SceneViewport';
 import * as ThreeVRM from '@pixiv/three-vrm';
 import { TextureMaskottEnum } from '../../../enums/TextureMaskottEnum';
-import PrimitiveCollider from '../../PrimitiveCollider';
+import PrimitiveCollider from '../../../MaskottScene/PrimitiveCollider';
+import { MeshConstant } from '../../../constans/MeshConstant';
 
 export interface MainViewOptions {
   sceneViewport: SceneViewport;
@@ -20,18 +21,10 @@ export interface TexturesParams {
   baseBlue: THREE.Texture[];
 }
 
-const meshes: string[] = [
-  'mountains_mesh',
-  'planet_mesh',
-  'portal_mesh',
-  'sky_mesh',
-  'floor_mesh',
-];
-
 export class MainView {
   private _sceneViewport: SceneViewport;
 
-  public blendingShader: BlendingShader;
+  public blendingShader: BlendingShader.BlendingShader;
 
   private _texture: TexturesParams = { baseOrange: [], baseBlue: [] };
 
@@ -48,7 +41,7 @@ export class MainView {
 
   constructor(options: MainViewOptions) {
     this._sceneViewport = options.sceneViewport;
-    this.blendingShader = new BlendingShader();
+    this.blendingShader = new BlendingShader.BlendingShader();
   }
 
   public onUpdate(delta: number): void {
@@ -89,8 +82,8 @@ export class MainView {
     });
 
     for (let i = 0; i < 5; i++) {
-      const uniform = this.blendingShader.createUniform(this._texture.baseBlue[i], this._texture.baseOrange[i], meshes[i]);
-      this.blendingShader.createMaterialShader(uniform, meshes[i]);
+      const uniform = this.blendingShader.createUniform(this._texture.baseBlue[i], this._texture.baseOrange[i], MeshConstant[i]);
+      this.blendingShader.createMaterialShader(uniform, MeshConstant[i]);
     }
 
     background.scene.traverse((node) => {
@@ -121,8 +114,8 @@ export class MainView {
     const mira = this._sceneViewport.resourcesManager.getVrmByUrlOrFail(Mira.maskottSkins.baseSkin);
     const yuki = this._sceneViewport.resourcesManager.getVrmByUrlOrFail(Yuki.maskottSkins.baseSkin);
 
-    this.applyMaskott(new THREE.Vector3(1.5, 0, 0), mira.userData.vrm, MaskottEnum.MIRA);
-    this.applyMaskott(new THREE.Vector3(4, 0, 0), yuki.userData.vrm, MaskottEnum.YUKU);
+    this.applyMaskott(new THREE.Vector3(1.3, 0, 0), mira.userData.vrm, MaskottEnum.MIRA);
+    this.applyMaskott(new THREE.Vector3(2.8, 0, 0), yuki.userData.vrm, MaskottEnum.YUKU);
   }
 
   public applyMaskott = (position: THREE.Vector3, model: ThreeVRM.VRM, maskottName: MaskottEnum): void => {
@@ -134,11 +127,15 @@ export class MainView {
     ThreeVRM.VRMUtils.removeUnnecessaryVertices(model.scene);
     ThreeVRM.VRMUtils.removeUnnecessaryJoints(model.scene);
 
+    setInterval(() => {
+      model.springBoneManager?.update(1 / 60);
+      model.update(1 / 60);
+    }, (1 / 60) * 2000);
+
     model.scene.traverse((node) => {
       if (node instanceof THREE.Mesh) {
         node.receiveShadow = false;
         node.castShadow = false;
-        node.material.gradientMap = 'none';
       }
     });
 
