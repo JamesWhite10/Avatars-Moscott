@@ -7,9 +7,19 @@ import { useMedia } from 'react-use';
 import variables from '../../../../../styles/media.module.scss';
 import Button from '@app/components/Button';
 import useSoundSystem from '@app/hooks/useSoundSystem';
+import About from '@app/containers/Editor/containers/About/About';
 
 const LeftControls: FC = observer(() => {
-  const { setActiveAvatarPropertyType, activeProperty } = useControlsStore();
+  const {
+    setActiveAvatarPropertyType,
+    activeProperty,
+    isOpenModal,
+    setIsOpenModal,
+    isOpenMobileForm,
+    setIsOpenMobileForm,
+    isOpenPopup,
+    setIsOpenPopup,
+  } = useControlsStore();
   const { isPrepared, character, characterIsChanging, showCharacterSelection, setControlElement } = useCharacterStore();
   const isMobile = useMedia(`(max-width: ${variables.mqMobileMax}`);
   const soundSystem = useSoundSystem();
@@ -26,6 +36,11 @@ const LeftControls: FC = observer(() => {
   const showCharacterButton = useMemo(() => {
     return isPrepared && character;
   }, [isPrepared, character]);
+
+  const onClickHandler = () => {
+    soundSystem.playSound('click', true);
+    setIsOpenModal(true);
+  };
 
   if (!character) return null;
 
@@ -44,11 +59,19 @@ const LeftControls: FC = observer(() => {
       />}
       <Button
         size={buttonSize}
-        onClick={() => soundSystem.playSound('click', true)}
+        onClick={() => onClickHandler()}
         onMouseEnter={() => soundSystem.playSound('hover', true)}
       >
         About
       </Button>
+      <About
+        openModal={isOpenModal}
+        setOpenModal={setIsOpenModal}
+        openModalForm={isOpenMobileForm}
+        setOpenModalForm={setIsOpenMobileForm}
+        openPopup={isOpenPopup}
+        setOpenPopup={setIsOpenPopup}
+      />
     </div>
   );
 });

@@ -9,6 +9,7 @@ import StyleStore from './StyleStore';
 import SoundSystem from '../../../sound/SoundSystem';
 import AnimationStore from './AnimationStore';
 import { MaskottEnum } from '../../../enum/MaskottEnum';
+import SendingStore from './SendingStore';
 
 export default class EditorStore {
   public isReady = false;
@@ -27,6 +28,8 @@ export default class EditorStore {
 
   public charactersStore!: CharacterStore;
 
+  public sendingStore!: SendingStore;
+
   public styleStore!: StyleStore;
 
   public animationStore!: AnimationStore;
@@ -37,6 +40,7 @@ export default class EditorStore {
     this.resourceManager = new ResourcesManager();
     makeAutoObservable(this, {}, { autoBind: true });
     this.controlsStore = new ControlsStore();
+    this.sendingStore = new SendingStore();
     this.charactersStore = new CharacterStore();
     this.styleStore = new StyleStore();
     this.animationStore = new AnimationStore();

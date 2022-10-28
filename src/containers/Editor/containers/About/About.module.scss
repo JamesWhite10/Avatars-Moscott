@@ -1,3 +1,399 @@
+@import "../../../../../styles/media.module";
+
 .root {
-  
+  position: relative;
+  padding: 0;
+  max-width: 1200px;
+  width: auto;
+  height: auto;
+  margin-top: 154px;
+  min-height: 1312px;
+  box-sizing: border-box;
+  outline: none;
+  overflow: auto;
+  @media (max-width: $mq-tablet-max) {
+    margin-top: 120px;
+  }
+  @media (max-width: $mq-mobile-max) {
+    margin-top: 20px;
+  }
+}
+
+.overlay {
+  background: var(--primary-700);
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  transition: opacity .3s ease;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 30;
+  opacity: 0;
+  box-sizing: border-box;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(23, 26, 48, 0.6);
+    border-radius: 100px;
+  }
+
+  @media (max-width: $mq-tablet-max) {
+    padding: 0 40px 40px 40px;
+  }
+  @media (max-width: $mq-mobile-max) {
+    padding: 0 16px 10px 16px;
+  }
+}
+
+.rootMobileForm {
+  position: relative;
+  padding: 0;
+  width: auto;
+  height: auto;
+  margin-top: 88px;
+  box-sizing: border-box;
+  outline: none;
+  overflow: auto;
+}
+
+.overlayMobileForm {
+  background: var(--primary-700);
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  transition: opacity .3s ease;
+  z-index: 30;
+  opacity: 0;
+  box-sizing: border-box;
+  @media (max-width: $mq-mobile-max) {
+    padding: 0 16px 10px 16px;
+  }
+}
+
+.overlay_afterOpen {
+  opacity: 1;
+  transition: .3s ease;
+}
+
+.overlay_beforeClose {
+  opacity: 0;
+}
+
+.closeContainer {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  padding: 16px;
+  z-index: 40;
+  background: rgba(23, 26, 48, 0.3);
+  border-radius: 12px;
+}
+
+.closeButton {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.closeIcon {
+  fill: #FFFFFF;
+  cursor: pointer;
+  vertical-align: middle;
+  width: 17px;
+  height: 17px;
+}
+
+.backContainer {
+  position: fixed;
+  left: 24px;
+  top: 24px;
+  z-index: 40;
+}
+
+.backButton {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.backIcon {
+  fill: #FFFFFF;
+  cursor: pointer;
+  vertical-align: middle;
+  width: 18px;
+  height: 19px;
+}
+
+.content_wrapper {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  font-family: var(--font-space-grotesk);
+  color: rgba(255, 255, 255, 1);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  text-align: start;
+  margin-bottom: 80px;
+}
+
+.centralBlock {
+  width: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @media (max-width: $mq-tablet-max) {
+    display: block;
+  }
+}
+
+.formBlock {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.title {
+  font-family: var(--font-space-grotesk);
+  color: rgba(255, 255, 255, 1);
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 75px;
+  max-width: 486px;
+  width: auto;
+  @media (max-width: $mq-tablet-max) {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 80px;
+  }
+  @media (max-width: $mq-mobile-max) {
+    font-size: 40px;
+    line-height: 47px;
+    margin-bottom: 40px;
+  }
+}
+
+.image {
+  max-width: 347px;
+  max-height: 347px;
+  width: auto;
+  height: auto;
+  margin-right: 24px;
+  @media (max-width: $mq-tablet-min) {
+    margin: 0 auto;
+    max-width: 278px;
+    max-height: 278px;
+  }
+  @media (max-width: $mq-mobile-min) {
+    max-width: 278px;
+    max-height: 278px;
+  }
+}
+
+.form {
+  width: 282px;
+  display: grid;
+  gap: 8px;
+  margin-right: 3px;
+  @media (max-width: $mq-tablet-max) {
+    width: 50%;
+  }
+  @media (max-width: $mq-mobile-max) {
+    width: 100%;
+  }
+}
+
+.buttonMessage, .buttonContact, .buttonMessageMobileForm {
+  width: 100%;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(107, 112, 242, 1);
+  border: none;
+  margin-top: 16px;
+  font-family: var(--font-space-grotesk);
+  color: rgba(255, 255, 255, 1);
+  padding: 12px 50px 12px 50px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(107, 112, 242, 0.8);
+  }
+}
+
+.buttonContact, .buttonMessageMobileForm {
+  position: fixed;
+  right: 0;
+  bottom: 10px;
+  max-width: 100%;
+}
+
+.footer {
+  font-family: var(--font-space-grotesk);
+  color: rgba(95, 130, 255, 1);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: start;
+}
+
+.footerModal {
+  font-family: var(--font-space-grotesk);
+  color: rgba(95, 130, 255, 1);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: start;
+  margin-bottom: 400px;
+  transition: 1s;
+}
+
+.footerSymbol {
+  color: rgba(255, 255, 255, 1);
+}
+
+.developingBlock {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  align-items: center;
+  @media (max-width: $mq-tablet-max) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: $mq-mobile-max) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.develop {
+  height: auto;
+  border-radius: 16px;
+  padding: 16px 12px 16px 16px;
+  background: rgba(23, 26, 48, 0.3);
+}
+
+.devTitle {
+  margin: 8px 0 8px 0;
+  font-family: var(--font-space-grotesk);
+  color: rgba(255, 255, 255, 1);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+  @media (max-width: $mq-mobile-max) {
+    font-size: 16px;
+    line-height: 22px;
+  }
+}
+
+.devSubTitle {
+  font-family: var(--font-space-grotesk);
+  color: rgba(255, 255, 255, 1);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  opacity: 0.8;
+}
+
+.descriptionBlock {
+  display: flex;
+  margin-bottom: 80px;
+  gap: 40px;
+  @media (max-width: $mq-mobile-max) {
+    display: block;
+    margin-bottom: 40px;
+  }
+}
+
+.titleDeveloping, .titleCompany, .titleMission {
+  font-family: var(--font-space-grotesk);
+  color: rgba(255, 255, 255, 1);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  margin: 80px 0 40px 0;
+  @media (max-width: $mq-mobile-max) {
+    margin: 40px 0 24px 0;
+  }
+}
+
+.subTitleCompany, .subTitleMission {
+  font-family: var(--font-space-grotesk);
+  color: rgba(255, 255, 255, 1);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 20px;
+  flex-wrap: wrap;
+  opacity: 0.8;
+  @media (max-width: $mq-mobile-max) {
+    font-size: 16px;
+    line-height: 22px;
+  }
+}
+
+.contentPopup {
+  display: block;
+}
+
+.emojiPopup {
+  font-family: var(--font-space-grotesk);
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 75px;
+  color: rgba(255, 255, 255, 1);
+}
+
+.textPopup, .textTitlePopup {
+  font-family: var(--font-space-grotesk);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 47px;
+  color: rgba(255, 255, 255, 1);
+}
+
+.textTitlePopup {
+  margin-top: 30px;
+}
+
+.buttonPopup {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 12px 40px 12px 40px;
+  background: rgba(107, 112, 242, 1);
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  color: rgba(255, 255, 255, 1);
+
+  &:hover {
+    background: rgba(107, 112, 242, 0.6);
+  }
 }

@@ -16,6 +16,12 @@ export default class ControlsStore {
 
   public soundDisabled: boolean = false;
 
+  public isOpenModal: boolean = false;
+
+  public isOpenMobileForm: boolean = false;
+
+  public isOpenPopup: boolean = false;
+
   public activeProperty?: AvatarPropertyType = undefined;
 
   public eventEmitter!: EventEmitter<ControlsEventType>;
@@ -39,6 +45,18 @@ export default class ControlsStore {
 
   public setFullScreenMode(enable: boolean): void {
     this.fullScreenMode = enable;
+  }
+
+  public setIsOpenModal(enable: boolean): void {
+    this.isOpenModal = enable;
+  }
+
+  public setIsOpenMobileForm(enable: boolean): void {
+    this.isOpenMobileForm = enable;
+  }
+
+  public setIsOpenPopup(enable: boolean): void {
+    this.isOpenPopup = enable;
   }
 
   public setSoundIsDisabled(enable: boolean): void {

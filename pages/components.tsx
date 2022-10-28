@@ -12,6 +12,8 @@ import AnimatedButton from '@app/components/AnimatedButton/AnimatedButton';
 
 export interface FormValues extends FieldValues {
   name: string;
+  phone: string;
+  email: string;
   comments: string;
 }
 
