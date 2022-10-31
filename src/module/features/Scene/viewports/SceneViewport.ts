@@ -184,7 +184,7 @@ class SceneViewport {
   }
 
   public clickHandler(event: MouseEvent): void {
-    this.characterAction?.handleCharacterClick(event);
+    this.characterAction?.characterClickHandler(event);
   }
 
   public moveMouseHandler(event: MouseEvent): void {
@@ -215,7 +215,7 @@ class SceneViewport {
   public touchStartHandler(event: TouchEvent): void {
     this.threeRenderer.domElement.focus();
     this.touchControls.onTouchStart(event);
-    this.characterAction?.handleCharacterTouch(event);
+    this.characterAction?.characterTouchHandler(event);
   }
 
   public touchEndHandler(event: TouchEvent): void {

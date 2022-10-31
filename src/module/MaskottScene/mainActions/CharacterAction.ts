@@ -143,7 +143,7 @@ export class CharacterAction {
     }
   }
 
-  public handleCharacterClick(event: MouseEvent): void {
+  public characterClickHandler(event: MouseEvent): void {
     this.characters.forEach((character) => {
       const intersects = this.raycastSystem.mouseRaycast(event, character.name);
       if (intersects.length !== 0) {
@@ -153,7 +153,7 @@ export class CharacterAction {
     });
   }
 
-  public handleCharacterTouch(event: TouchEvent): void {
+  public characterTouchHandler(event: TouchEvent): void {
     this.characters.forEach((character) => {
       const intersects = this.raycastSystem.touchRaycast(event, character.name);
       if (intersects.length !== 0) {

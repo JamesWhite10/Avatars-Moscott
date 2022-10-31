@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { CameraControls } from './CameraControls/CameraControls';
+import { CameraControls } from './CameraControls';
 
 export interface ObjectControlsOptions {
   threeCamera: THREE.PerspectiveCamera;
@@ -26,7 +26,7 @@ export class MouseControls extends CameraControls {
 
   public onMouseDown(event: MouseEvent) {
     this.isMoving = false;
-    this.speedRotate = -2;
+    this.speedRotate = 0.3;
     this.prevMousePosition.copy(this.getPosition(event));
   }
 
@@ -68,8 +68,8 @@ export class MouseControls extends CameraControls {
   protected getPosition(event: MouseEvent): THREE.Vector2 {
     const { rendererWidth, rendererHeight } = this;
     const result = new THREE.Vector2();
-    result.x = Math.min(Math.max((event.pageX / rendererWidth) * 2 - 1, -1), 1);
-    result.y = Math.min(Math.max(-(event.pageY / rendererHeight) * 2 + 1, -1), 1);
+    result.x = (event.clientX / rendererWidth) * 2 - 1;
+    result.y = -(event.clientY / rendererHeight) * 2 + 1;
 
     return result;
   }
