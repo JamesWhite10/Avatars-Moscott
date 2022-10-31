@@ -13,10 +13,10 @@ export interface UniformOptions {
 }
 
 export interface Uniform {
-  u_miraBlending: { value: number };
-  u_yukiBlending: { value: number };
-  miraTexture: { value: THREE.Texture };
-  yukiTexture: { value: THREE.Texture };
+  blendingFistTexture: { value: number };
+  blendingSecondTexture: { value: number };
+  firstTexture: { value: THREE.Texture };
+  secondTexture: { value: THREE.Texture };
 }
 
 export class BlendingShader {
@@ -28,10 +28,10 @@ export class BlendingShader {
     const uniformOptions: UniformOptions = {
       name,
       uniform: {
-        u_miraBlending: { value: 0.0 },
-        u_yukiBlending: { value: 1.0 },
-        miraTexture: { value: textureOne },
-        yukiTexture: { value: textureSecond },
+        blendingFistTexture: { value: 0.0 },
+        blendingSecondTexture: { value: 1.0 },
+        firstTexture: { value: textureOne },
+        secondTexture: { value: textureSecond },
       },
     };
 

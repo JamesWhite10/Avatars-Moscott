@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { MaskottDataFromOrTo } from '../MaskottScene/mainActions/MaskottAction';
+import { MaskottDataFromOrTo } from '../MaskottScene/mainActions/CharacterAction';
 
 export interface MoveConstansOptions {
   Mira: {

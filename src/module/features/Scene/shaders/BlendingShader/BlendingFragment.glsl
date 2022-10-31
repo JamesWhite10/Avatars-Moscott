@@ -1,16 +1,16 @@
-uniform sampler2D miraTexture;
-uniform sampler2D yukiTexture;
-uniform float u_miraBlending;
-uniform float u_yukiBlending;
+uniform sampler2D firstTexture;
+uniform sampler2D secondTexture;
+uniform float blendingFistTexture;
+uniform float blendingSecondTexture;
 
 varying vec2 vUv;
 
 void main(void) {
-  vec3 c;
-  vec4 miraTexture2D = texture2D(miraTexture, vUv);
-  vec4 yukiTexture2D = texture2D(yukiTexture, vUv);
-  if ( miraTexture2D.a < .5 ) discard;
-  if ( yukiTexture2D.a < .5 ) discard;
-  c = miraTexture2D.rgb * u_miraBlending + yukiTexture2D.rgb * u_yukiBlending;
-  gl_FragColor = vec4(c, 1.0);
+  vec3 rgb;
+  vec4 firstTexture2D = texture2D(firstTexture, vUv);
+  vec4 secondTexture2D = texture2D(secondTexture, vUv);
+  if ( firstTexture2D.a < .5 ) discard;
+  if ( secondTexture2D.a < .5 ) discard;
+  rgb = firstTexture2D.rgb * blendingFistTexture + secondTexture2D.rgb * blendingSecondTexture;
+  gl_FragColor = vec4(rgb, 1.0);
 }

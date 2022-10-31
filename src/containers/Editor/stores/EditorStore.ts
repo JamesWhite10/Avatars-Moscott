@@ -47,7 +47,7 @@ export default class EditorStore {
   public subscribe(): void {
     this.controlsStore.subscribe('soundChange', () => { console.log('sound change'); });
     this.controlsStore.subscribe('takeScreenShot', () => {
-      const maskottPreview = this.threeScene?.mainScene?.getSnapshot();
+      const maskottPreview = this.threeScene?.characterAction?.getSnapshot();
       if (maskottPreview) this.loadSnapshot(maskottPreview, 'maskott');
     });
     this.controlsStore.subscribe('styleSelect', () => {
@@ -67,7 +67,7 @@ export default class EditorStore {
       const characterCandidate = this.charactersStore.characters.find((character) => character.id === id);
       this.charactersStore.setCharacterIsChanging(true);
       this.charactersStore.setShowCharacterSelection(false);
-      this.threeScene?.mainScene?.changeMaskott(characterCandidate!.name as MaskottEnum)
+      this.threeScene?.characterAction?.changeMaskott(characterCandidate!.name as MaskottEnum)
         .then(() => {
           this.charactersStore.setCharacterIsChanging(false);
           if (characterCandidate) this.soundSystem.playSound(characterCandidate.name.toLowerCase());
@@ -128,7 +128,7 @@ export default class EditorStore {
     this.threeScene.init(this.onProgress.bind(this))
       .then(() => {
         this.setIsReady(true);
-        if (this.threeScene?.mainScene) this.sceneSubscribe();
+        if (this.threeScene?.characterAction) this.sceneSubscribe();
       });
   }
 
@@ -142,7 +142,7 @@ export default class EditorStore {
 
   public setUp(characters: Maskott[]): void {
     const character = this.charactersStore.setUp(characters);
-    if (character && character.name) this.threeScene?.mainScene?.getDefaultMaskott(character.name);
+    if (character && character.name) this.threeScene?.characterAction?.getDefaultCharacter(character.name);
   }
 
   public setProgress(progress: number): void {
@@ -165,13 +165,13 @@ export default class EditorStore {
   }
 
   public sceneSubscribe(): void {
-    this.threeScene?.mainScene?.subscribe('maskottChange', (name) => {
+    this.threeScene?.characterAction?.subscribe('characterChange', (name) => {
       this.charactersStore.setCharacterIsChanging(false);
       this.charactersStore.setCharacter(name);
       this.soundSystem.playSound(name.toLowerCase(), true);
     });
 
-    this.threeScene?.mainScene?.subscribe('loadMaskott', () => {
+    this.threeScene?.characterAction?.subscribe('loadCharacter', () => {
       this.charactersStore.setCharacterIsChanging(true);
     });
   }

@@ -110,7 +110,7 @@ export class MainView {
     this._sceneViewport.threeScene.add(background.scene);
   }
 
-  public addMaskotts(): void {
+  public addCharacters(): void {
     const mira = this._sceneViewport.resourcesManager.getVrmByUrlOrFail(Mira.maskottSkins.baseSkin);
     const yuki = this._sceneViewport.resourcesManager.getVrmByUrlOrFail(Yuki.maskottSkins.baseSkin);
 

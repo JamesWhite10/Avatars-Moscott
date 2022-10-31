@@ -4,7 +4,7 @@ import scene from '@app/module/assets/json/scene/scene.json';
 import { MainView } from '@app/module/features/Scene/views/MainView';
 import Yuki from '@app/module/assets/json/scene/maskotts/Yuki.json';
 import Mira from '@app/module/assets/json/scene/maskotts/Mira.json';
-import { MaskottAction } from '@app/module/MaskottScene/mainActions/MaskottAction';
+import { CharacterAction } from '@app/module/MaskottScene/mainActions/CharacterAction';
 import { MouseControl, TouchControl } from '../CameraControls/index';
 
 class SceneViewport {
@@ -18,7 +18,7 @@ class SceneViewport {
 
   public mainView: MainView | null = null;
 
-  public mainScene: MaskottAction | null = null;
+  public characterAction: CharacterAction | null = null;
 
   public snapshotThreeCamera: THREE.PerspectiveCamera;
 
@@ -37,15 +37,15 @@ class SceneViewport {
     this.clock = new THREE.Clock();
     this.setupEnvironment();
 
-    this.threeRenderer.domElement.addEventListener('click', this.clickMouseHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('click', this.clickHandler.bind(this));
     this.threeRenderer.domElement.addEventListener('mousemove', this.moveMouseHandler.bind(this));
-    this.threeRenderer.domElement.addEventListener('mouseup', this.startMouseHandler.bind(this));
-    this.threeRenderer.domElement.addEventListener('mousedown', this.endMouseHandler.bind(this));
-    this.threeRenderer.domElement.addEventListener('wheel', this.mouseWheel.bind(this));
+    this.threeRenderer.domElement.addEventListener('mouseup', this.mouseUpHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('mousedown', this.mouseDownHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('wheel', this.mouseWheelHandler.bind(this));
 
-    this.threeRenderer.domElement.addEventListener('touchmove', this.moveTouchHandler.bind(this));
-    this.threeRenderer.domElement.addEventListener('touchstart', this.startTouchHandler.bind(this));
-    this.threeRenderer.domElement.addEventListener('touchend', this.endTouchHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('touchmove', this.touchMoveHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('touchstart', this.touchStartHandler.bind(this));
+    this.threeRenderer.domElement.addEventListener('touchend', this.touchEndHandler.bind(this));
   }
 
   protected makeThreeRenderer(): THREE.WebGLRenderer {
@@ -68,7 +68,7 @@ class SceneViewport {
   public runRenderCycle(): void {
     this.threeRenderer.setAnimationLoop(() => {
       this.syncRendererSize();
-      this.mainScene?.onUpdate();
+      this.characterAction?.onUpdate();
       const delta = this.clock.getDelta();
       this.mainView?.onUpdate(delta);
       this.render();
@@ -107,13 +107,13 @@ class SceneViewport {
     return Promise.all([this.loadSceneTexture(onProgress)])
       .then(() => {
         this.runRenderCycle();
-        this.controlsInit();
+        this.initControls();
         this.mainView = new MainView({ sceneViewport: this });
-        this.mainView.addMaskotts();
+        this.mainView.addCharacters();
         this.mainView.applyTexture();
         this.mainView.applyHdrTexture();
-        this.mainScene = new MaskottAction({ sceneViewport: this, mainView: this.mainView });
-        this.mainScene.maskottInit();
+        this.characterAction = new CharacterAction({ sceneViewport: this, mainView: this.mainView });
+        this.characterAction.charactersInit();
 
         this.initLight(
           new THREE.Vector3(1.1, 2.8, 1.7),
@@ -122,7 +122,7 @@ class SceneViewport {
       });
   }
 
-  public controlsInit(): void {
+  public initControls(): void {
     this.mouseControls = new MouseControl.MouseControls({
       threeCamera: this.threeCamera,
       height: this.threeRenderer.domElement.clientHeight,
@@ -183,42 +183,42 @@ class SceneViewport {
     light.target.updateMatrixWorld();
   }
 
-  public clickMouseHandler(event: MouseEvent): void {
-    if (this.mainScene) this.mainScene.handleMaskottClick(event);
+  public clickHandler(event: MouseEvent): void {
+    this.characterAction?.handleCharacterClick(event);
   }
 
   public moveMouseHandler(event: MouseEvent): void {
-    this.mouseControls.update(event);
-    this.mouseControls.handleTouchStartRotate(event);
-    this.mouseControls.onTouchMove(event);
+    this.mouseControls.onMouseMove(event);
+    this.mouseControls.update();
   }
 
-  public startMouseHandler(): void {
-    this.mouseControls.onTouchStart();
+  public mouseUpHandler(): void {
+    this.mouseControls.onMouseStart();
   }
 
-  public endMouseHandler(event: MouseEvent): void {
-    this.mouseControls.onTouchEnded(event);
+  public mouseDownHandler(event: MouseEvent): void {
+    this.mouseControls.onMouseDown(event);
+    this.mouseControls.onStartRotate(event);
   }
 
-  public mouseWheel(event: WheelEvent): void {
+  public mouseWheelHandler(event: WheelEvent): void {
     this.mouseControls.onMouseWheel(event);
   }
 
-  public moveTouchHandler(event: TouchEvent): void {
+  public touchMoveHandler(event: TouchEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    this.touchControls.update();
     this.touchControls.onTouchMove(event);
+    this.touchControls.update();
   }
 
-  public startTouchHandler(event: TouchEvent): void {
+  public touchStartHandler(event: TouchEvent): void {
     this.threeRenderer.domElement.focus();
     this.touchControls.onTouchStart(event);
-    this.mainScene?.handleMaskottTouch(event);
+    this.characterAction?.handleCharacterTouch(event);
   }
 
-  public endTouchHandler(event: TouchEvent): void {
+  public touchEndHandler(event: TouchEvent): void {
     event.preventDefault();
     event.stopPropagation();
     this.touchControls.onTouchEnded(event);
