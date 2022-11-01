@@ -3,7 +3,7 @@ import SceneViewport from '@app/modules/features/Scene/viewports/SceneViewport';
 import ResourcesManager from '../../../modules/ResourcesManager';
 import ControlsStore from './ControlsStore';
 import { saveSnapshot } from '../../../helpers/saveSnapshot';
-import { Maskott } from '../../../types/maskott';
+import { Avatar, EnvironmentConfigType, Style } from '../../../types';
 import CharacterStore from './CharacterStore';
 import StyleStore from './StyleStore';
 import SoundSystem from '../../../sound/SoundSystem';
@@ -123,12 +123,18 @@ export default class EditorStore {
     });
   }
 
-  public initialize(): void {
+  public initialize(characters: Avatar[], styles: Style[], environment: EnvironmentConfigType): void {
     this.threeScene = new SceneViewport();
-    this.threeScene.init(this.onProgress.bind(this))
+    this.threeScene.init({ characters, environment }, this.onProgress.bind(this))
       .then(() => {
         this.setIsReady(true);
-        if (this.threeScene?.mainScene) this.sceneSubscribe();
+        if (!this.threeScene) return;
+        this.sceneSubscribe();
+        // TODO перенести всю инициализацию сюда
+        // this.styleStore.setStyles(styles);
+        // this.styleStore.setActiveStyle() ???
+        // const character = this.charactersStore.setUp(characters);
+        // this.threeScene?.mainScene?.getDefaultMaskott(character.name);
       });
   }
 
@@ -140,7 +146,12 @@ export default class EditorStore {
     this.isReady = isLoading;
   }
 
-  public setUp(characters: Maskott[]): void {
+  /**
+   * @deprecated
+   * TODO убрать
+   * @param characters
+   */
+  public setUp(characters: Avatar[]): void {
     const character = this.charactersStore.setUp(characters);
     if (character && character.name) this.threeScene?.mainScene?.getDefaultMaskott(character.name);
   }
@@ -166,6 +177,7 @@ export default class EditorStore {
 
   public sceneSubscribe(): void {
     this.threeScene?.mainScene?.subscribe('maskottChange', (name) => {
+      this.styleStore.setActiveStyleFilter(name);
       this.charactersStore.setCharacterIsChanging(false);
       this.charactersStore.setCharacter(name);
       this.soundSystem.playSound(name.toLowerCase(), true);

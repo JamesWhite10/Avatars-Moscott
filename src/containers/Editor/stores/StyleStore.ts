@@ -1,30 +1,7 @@
 import { makeAutoObservable } from 'mobx';
-import { MaskottStyle } from '../../../types/maskott';
+import { Style } from '@app/types';
 import { EmitterInterface } from '../../../stores/EmitterInterface';
 import EventEmitter from 'eventemitter3';
-
-const mockStyles: MaskottStyle[] = [
-  {
-    id: 'style_yuki_base',
-    name: 'Style One',
-    videoUrl: '/avatars/mira_style1.MP4',
-  },
-  {
-    id: 'style_yuki_hacker',
-    name: 'Style Two',
-    videoUrl: '/avatars/mira_style2.MP4',
-  },
-  {
-    id: 'style_mira_base',
-    name: 'Style Three',
-    videoUrl: '/avatars/mira_style1.MP4',
-  },
-  {
-    id: 'style_mira_hacker',
-    name: 'Style Four',
-    videoUrl: '/avatars/mira_style2.MP4',
-  },
-];
 
 export type StyleStoreEventsType = {
   styleChange: (id: string) => void;
@@ -34,7 +11,9 @@ export type StyleStoreEventsType = {
 export default class StyleStore implements EmitterInterface<StyleStoreEventsType> {
   public activeStyle?: string = 'style_one';
 
-  public styles: MaskottStyle[] = mockStyles;
+  public activeStyleFilter?: string = undefined;
+
+  public _styles: Style[] = [];
 
   public showStyleSelection = false;
 
@@ -47,12 +26,19 @@ export default class StyleStore implements EmitterInterface<StyleStoreEventsType
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
+  get styles(): Style[] {
+    if (!this.activeStyleFilter) return this._styles;
+    return this._styles.filter((style) => {
+      return style.id.split('_')[0] === (this.activeStyleFilter || '').toLowerCase();
+    });
+  }
+
   public setActiveStyle(style?: string): void {
     this.activeStyle = style;
   }
 
-  public setStyles(styles: MaskottStyle[]): void {
-    this.styles = styles;
+  public setStyles(styles: Style[]): void {
+    this._styles = styles;
   }
 
   public setShowStyleSelection(show: boolean): void {
@@ -75,5 +61,9 @@ export default class StyleStore implements EmitterInterface<StyleStoreEventsType
 
   public subscribe<E extends keyof StyleStoreEventsType>(event: E, handler: StyleStoreEventsType[E]): void {
     this.eventEmitter.on(event, handler as (...args: any) => void);
+  }
+
+  public setActiveStyleFilter(prefix: string): void {
+    this.activeStyleFilter = prefix;
   }
 }

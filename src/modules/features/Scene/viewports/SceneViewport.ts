@@ -6,8 +6,14 @@ import { MainView } from '../views/MainView';
 import Yuki from '@app/modules/assets/json/scene/maskotts/Yuki.json';
 import Mira from '@app/modules/assets/json/scene/maskotts/Mira.json';
 import { MainScene } from '../../../MaskottScene/views/MainScene';
+import { Avatar, EnvironmentConfigType } from '@app/types';
 
 CameraControls.install({ THREE });
+
+export type SceneConfig = {
+  characters: Avatar[]; // TODO возможно перемапать на свои внутренние типы
+  environment: EnvironmentConfigType;
+};
 
 class SceneViewport {
   public threeScene: THREE.Scene;
@@ -42,12 +48,11 @@ class SceneViewport {
   }
 
   protected makeThreeRenderer(): THREE.WebGLRenderer {
-    const renderer = new THREE.WebGLRenderer({
+    return new THREE.WebGLRenderer({
       antialias: true,
       preserveDrawingBuffer: true,
       alpha: true,
     });
-    return renderer;
   }
 
   public makeThreeCamera(): THREE.PerspectiveCamera {
@@ -111,9 +116,8 @@ class SceneViewport {
     this.threeRenderer.render(this.threeScene, this.threeCamera);
   }
 
-  public init(
-    onProgress: (value: number) => void,
-  ): Promise<void> {
+  public init(config: SceneConfig, onProgress: (value: number) => void): Promise<void> {
+    console.log('config', config);
     return Promise.all([this.loadSceneTexture(onProgress)])
       .then(() => {
         this.runRenderCycle();
