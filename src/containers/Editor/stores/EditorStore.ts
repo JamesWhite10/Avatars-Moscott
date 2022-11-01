@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
-import { SceneViewport } from '@app/module/scene/viewports/index';
-import ResourcesManager from '../../../module/scene/ResourcesManager';
+import { SceneViewport } from '@app/modules/editor/scene/viewports/index';
+import ResourcesManager from '../../../modules/editor/scene/ResourcesManager';
 import ControlsStore from './ControlsStore';
 import { saveSnapshot } from '../../../helpers/saveSnapshot';
 import { Avatar, EnvironmentConfigType, Style } from '../../../types';
@@ -63,14 +63,18 @@ export default class EditorStore {
     });
 
     this.charactersStore.subscribe('characterChange', (id) => {
-      const characterCandidate = this.charactersStore.characters.find((character) => character.id === id);
-      this.charactersStore.setCharacterIsChanging(true);
-      this.charactersStore.setShowCharacterSelection(false);
-      this.threeScene?.characterAction?.changeCharacter(characterCandidate!.name as string)
-        .then(() => {
-          this.charactersStore.setCharacterIsChanging(false);
-          if (characterCandidate) this.soundSystem.playSound(characterCandidate.name.toLowerCase());
-        });
+      if (this.threeScene && this.threeScene.characterAction) {
+        const characterCandidate = this.charactersStore.characters.find((character) => character.id === id);
+        this.charactersStore.setCharacterIsChanging(true);
+        this.charactersStore.setShowCharacterSelection(false);
+        if (characterCandidate) {
+          this.threeScene.characterAction.changeData(characterCandidate.name as string)
+            .then(() => {
+              this.charactersStore.setCharacterIsChanging(false);
+              if (characterCandidate) this.soundSystem.playSound(characterCandidate.name.toLowerCase());
+            });
+        }
+      }
     });
     this.charactersStore.subscribe('characterSelectionClosed', () => {
       this.controlsStore.setActiveAvatarPropertyType();
@@ -124,16 +128,23 @@ export default class EditorStore {
 
   public initialize(characters: Avatar[], styles: Style[], environment: EnvironmentConfigType): void {
     this.threeScene = new SceneViewport.SceneViewport();
+    if (!this.threeScene) return;
     this.threeScene.init({ characters, styles, environment }, this.onProgress.bind(this))
       .then(() => {
         this.setIsReady(true);
-        if (this.threeScene?.characterAction) this.sceneSubscribe();
+        if (this.threeScene && this.threeScene.characterAction) this.sceneSubscribe();
         if (!this.threeScene) return;
         this.sceneSubscribe();
         const character = this.charactersStore.setUp(characters);
         if (character && character.name) {
-          const style = character.name === 'Mira' ? 'mira_base' : 'yuki_base';
-          this.threeScene?.characterAction?.getDefaultCharacter(character.name, style);
+          const style = this.findBaseStyle(character.name);
+          if (this.threeScene.characterAction) {
+            this.threeScene.characterAction.setDefaultData(
+              character.name,
+              style.targetTextureName,
+              style.currentTextureName,
+            );
+          }
         }
       });
   }
@@ -176,5 +187,18 @@ export default class EditorStore {
     this.threeScene?.characterAction?.subscribe('loadCharacter', () => {
       this.charactersStore.setCharacterIsChanging(true);
     });
+  }
+
+  public findBaseStyle(characterName: string): Record<string, string> {
+    if (characterName === 'Mira') {
+      return {
+        targetTextureName: 'secondTexture',
+        currentTextureName: 'firstTexture',
+      };
+    }
+    return {
+      targetTextureName: 'firstTexture',
+      currentTextureName: 'secondTexture',
+    };
   }
 }

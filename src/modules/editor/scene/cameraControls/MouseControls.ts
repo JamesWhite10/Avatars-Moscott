@@ -1,11 +1,5 @@
 import * as THREE from 'three';
-import { CameraControls } from './CameraControls';
-
-export interface ObjectControlsOptions {
-  threeCamera: THREE.PerspectiveCamera;
-  width: number;
-  height: number;
-}
+import { CameraControls, ObjectControlsOptions } from './CameraControls';
 
 export class MouseControls extends CameraControls {
   public zoomSpeed: number = 0.1;
@@ -26,7 +20,6 @@ export class MouseControls extends CameraControls {
 
   public onMouseDown(event: MouseEvent) {
     this.isMoving = false;
-    this.speedRotate = 0.3;
     this.prevMousePosition.copy(this.getPosition(event));
   }
 

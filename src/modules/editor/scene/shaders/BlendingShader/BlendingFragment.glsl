@@ -1,7 +1,7 @@
 uniform sampler2D textureFirst;
 uniform sampler2D textureSecond;
 
-uniform float blendingFistTexture;
+uniform float blendingFirstTexture;
 uniform float blendingSecondTexture;
 
 varying vec2 vUv;
@@ -12,6 +12,6 @@ void main(void) {
   vec4 secondTexture2D = texture2D(textureSecond, vUv);
   if (firstTexture2D.a < .5) discard;
   if (secondTexture2D.a < .5) discard;
-  rgb = firstTexture2D.rgb * blendingFistTexture + secondTexture2D.rgb * blendingSecondTexture;
+  rgb = firstTexture2D.rgb * blendingFirstTexture + secondTexture2D.rgb * blendingSecondTexture;
   gl_FragColor = vec4(rgb, 1.0);
 }

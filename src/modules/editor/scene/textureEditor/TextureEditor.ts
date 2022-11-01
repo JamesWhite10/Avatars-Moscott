@@ -4,7 +4,7 @@ import { BlendingShader } from '../shaders/index';
 import { SceneViewport } from '../viewports/index';
 import * as ThreeVRM from '@pixiv/three-vrm';
 import PrimitiveCollider from '../../features/PrimitiveCollider';
-import { Avatar, EnvironmentConfigType } from '../../../types/index';
+import { Avatar, EnvironmentConfigType } from '../../../../types/index';
 
 export interface MainViewOptions {
   sceneViewport: SceneViewport.SceneViewport;
@@ -84,7 +84,6 @@ export class TextureEditor {
     ThreeVRM.VRMUtils.removeUnnecessaryVertices(model.scene);
     ThreeVRM.VRMUtils.removeUnnecessaryJoints(model.scene);
 
-    // todo: надо доработать
     setInterval(() => {
       model.springBoneManager?.update(1 / 60);
       model.update(1 / 60);

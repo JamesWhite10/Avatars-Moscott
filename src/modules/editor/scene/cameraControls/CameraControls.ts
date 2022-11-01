@@ -18,9 +18,9 @@ export class CameraControls {
 
   public diffMousePosition: THREE.Vector2 = new THREE.Vector2();
 
-  public speedRotate = 1.7;
+  public speedRotate = 5;
 
-  public speedParallax = 0.022;
+  public speedParallax = 0.05;
 
   public enableDamping = true;
 
@@ -72,7 +72,7 @@ export class CameraControls {
   public updateObject() {
     if (!this.object) return;
     if (this.enableDamping) {
-      this.object.rotation.y += this.mousePosition.x * this.speedRotate;
+      this.object.rotation.y = this.mousePosition.x * this.speedRotate;
     } else {
       this.object.rotation.y -= this.amplitude * this.diffMousePosition.x;
     }

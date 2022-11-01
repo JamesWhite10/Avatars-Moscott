@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import blendingFragment from './BlendingFragment.glsl';
 import blendingVertex from './BlendingVertex.glsl';
-import { Style } from '../../../../types/index';
+import { Style } from '../../../../../types/index';
 import ResourcesManager from '../../ResourcesManager';
 
 export interface CreateUniformsOptions {
@@ -21,7 +21,7 @@ export interface UniformOptions {
 }
 
 export interface Uniform {
-  blendingFistTexture: { value: number };
+  blendingFirstTexture: { value: number };
   blendingSecondTexture: { value: number };
   textureFirst: { value: THREE.Texture };
   textureSecond: { value: THREE.Texture };
@@ -40,7 +40,7 @@ export class BlendingShader {
     const uniformOptions: UniformOptions = {
       name: options.meshName,
       uniform: {
-        blendingFistTexture: { value: 0.0 },
+        blendingFirstTexture: { value: 0.0 },
         blendingSecondTexture: { value: 0.0 },
         textureFirst: { value: options.textureFirst },
         textureSecond: { value: options.textureSecond },
@@ -82,20 +82,5 @@ export class BlendingShader {
       });
       this.createMaterialShader(uniform, meshName);
     }
-  }
-
-  public changeBlending(id: string, blendingValue: number): void {
-    this.uniforms.forEach((value) => {
-      if (id === 'mira_base') {
-        value.uniform.blendingSecondTexture.value = blendingValue;
-        this.currentTextureName = 'secondTexture';
-        this.additionalTextureName = 'firstTexture';
-      }
-      if (id === 'yuki_base') {
-        value.uniform.blendingFistTexture.value = blendingValue;
-        this.currentTextureName = 'firstTexture';
-        this.additionalTextureName = 'secondTexture';
-      }
-    });
   }
 }

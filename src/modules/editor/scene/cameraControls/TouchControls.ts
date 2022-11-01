@@ -1,11 +1,5 @@
 import * as THREE from 'three';
-import { CameraControls } from './CameraControls';
-
-export interface ObjectControlsOptions {
-  threeCamera: THREE.PerspectiveCamera;
-  width: number;
-  height: number;
-}
+import { CameraControls, ObjectControlsOptions } from './CameraControls';
 
 export class TouchControls extends CameraControls {
   constructor({ threeCamera, width, height }: ObjectControlsOptions) {

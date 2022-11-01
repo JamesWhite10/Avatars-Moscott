@@ -3,7 +3,7 @@ import ResourcesManager from '../ResourcesManager';
 import { TextureEditor } from '../textureEditor/index';
 import { CharacterAction } from '../../features/mainActions/CharacterAction';
 import { MouseControl, TouchControl } from '../cameraControls/index';
-import { Avatar, EnvironmentConfigType, Style } from '../../../types/index';
+import { Avatar, EnvironmentConfigType, Style } from '../../../../types/index';
 
 export type SceneConfig = {
   characters: Avatar[]; // TODO возможно перемапать на свои внутренние типы
@@ -215,7 +215,7 @@ export class SceneViewport {
   public touchStartHandler(event: TouchEvent): void {
     this.threeRenderer.domElement.focus();
     this.touchControls.onTouchStart(event);
-    this.characterAction?.characterTouchHandler(event);
+    if (this.characterAction) this.characterAction.characterTouchHandler(event);
   }
 
   public touchEndHandler(event: TouchEvent): void {

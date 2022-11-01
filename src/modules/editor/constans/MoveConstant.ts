@@ -1,20 +1,16 @@
-export type CharacterDataFromOrTo = {
+export type MoveDirectionType = {
   secondTexture: number;
   firstTexture: number;
 };
 
-export interface MoveConstansOptions {
-  secondTexture: {
-    to: CharacterDataFromOrTo;
-    from: CharacterDataFromOrTo;
-  };
-  firstTexture: {
-    to: CharacterDataFromOrTo;
-    from: CharacterDataFromOrTo;
+export interface MoveConstansOptionsType {
+  [key: string]: {
+    to: MoveDirectionType;
+    from: MoveDirectionType;
   };
 }
 
-export const MoveConstant: MoveConstansOptions = {
+export const MoveConstant: MoveConstansOptionsType = {
   secondTexture: {
     from: {
       secondTexture: 0.0,
