@@ -11,15 +11,11 @@ import RightControls from '@app/containers/Editor/containers/RightControls';
 import { appConfig } from '@app/config/appConfig';
 
 const Editor: FC = observer(() => {
-  const { initialize, threeScene, setUp, isReady, showLoadingScreen } = useEditorStore();
+  const { initialize, threeScene, showLoadingScreen } = useEditorStore();
 
   useEffect(() => {
     if (showLoadingScreen) initialize(appConfig.avatars, appConfig.styles, appConfig.sceneConfig);
   }, [useEditorStore, showLoadingScreen]);
-
-  useEffect(() => {
-    if (isReady) setUp(appConfig.avatars); // TODO убрать этот хук, после унификации конфига
-  }, [isReady]);
 
   const editorRefCallback = useCallback((element: HTMLDivElement) => {
     if (threeScene !== null) threeScene.setContainer(element);

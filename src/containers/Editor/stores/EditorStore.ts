@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
-import SceneViewport from '@app/module/features/Scene/viewports/SceneViewport';
-import ResourcesManager from '../../../module/features/Scene/ResourcesManager';
+import { SceneViewport } from '@app/module/scene/viewports/index';
+import ResourcesManager from '../../../module/scene/ResourcesManager';
 import ControlsStore from './ControlsStore';
 import { saveSnapshot } from '../../../helpers/saveSnapshot';
 import { Avatar, EnvironmentConfigType, Style } from '../../../types';
@@ -8,7 +8,6 @@ import CharacterStore from './CharacterStore';
 import StyleStore from './StyleStore';
 import SoundSystem from '../../../sound/SoundSystem';
 import AnimationStore from './AnimationStore';
-import { MaskottEnum } from '../../../enum/MaskottEnum';
 
 export default class EditorStore {
   public isReady = false;
@@ -19,7 +18,7 @@ export default class EditorStore {
 
   public isLoadErrorModalOpen = false;
 
-  public threeScene: SceneViewport | null = null;
+  public threeScene: SceneViewport.SceneViewport | null = null;
 
   protected resourceManager: ResourcesManager | null;
 
@@ -47,8 +46,8 @@ export default class EditorStore {
   public subscribe(): void {
     this.controlsStore.subscribe('soundChange', () => { console.log('sound change'); });
     this.controlsStore.subscribe('takeScreenShot', () => {
-      const maskottPreview = this.threeScene?.characterAction?.getSnapshot();
-      if (maskottPreview) this.loadSnapshot(maskottPreview, 'maskott');
+      const characterPreview = this.threeScene?.characterAction?.getSnapshot();
+      if (characterPreview) this.loadSnapshot(characterPreview, 'mascott');
     });
     this.controlsStore.subscribe('styleSelect', () => {
       this.styleStore.setShowStyleSelection(true);
@@ -67,7 +66,7 @@ export default class EditorStore {
       const characterCandidate = this.charactersStore.characters.find((character) => character.id === id);
       this.charactersStore.setCharacterIsChanging(true);
       this.charactersStore.setShowCharacterSelection(false);
-      this.threeScene?.characterAction?.changeMaskott(characterCandidate!.name as MaskottEnum)
+      this.threeScene?.characterAction?.changeCharacter(characterCandidate!.name as string)
         .then(() => {
           this.charactersStore.setCharacterIsChanging(false);
           if (characterCandidate) this.soundSystem.playSound(characterCandidate.name.toLowerCase());
@@ -124,18 +123,18 @@ export default class EditorStore {
   }
 
   public initialize(characters: Avatar[], styles: Style[], environment: EnvironmentConfigType): void {
-    this.threeScene = new SceneViewport();
-    this.threeScene.init({ characters, environment }, this.onProgress.bind(this))
+    this.threeScene = new SceneViewport.SceneViewport();
+    this.threeScene.init({ characters, styles, environment }, this.onProgress.bind(this))
       .then(() => {
         this.setIsReady(true);
         if (this.threeScene?.characterAction) this.sceneSubscribe();
         if (!this.threeScene) return;
         this.sceneSubscribe();
-        // TODO перенести всю инициализацию сюда
-        // this.styleStore.setStyles(styles);
-        // this.styleStore.setActiveStyle() ???
-        // const character = this.charactersStore.setUp(characters);
-        // this.threeScene?.mainScene?.getDefaultMaskott(character.name);
+        const character = this.charactersStore.setUp(characters);
+        if (character && character.name) {
+          const style = character.name === 'Mira' ? 'mira_base' : 'yuki_base';
+          this.threeScene?.characterAction?.getDefaultCharacter(character.name, style);
+        }
       });
   }
 
@@ -145,16 +144,6 @@ export default class EditorStore {
 
   public setIsReady(isLoading: boolean): void {
     this.isReady = isLoading;
-  }
-
-  /**
-   * @deprecated
-   * TODO убрать
-   * @param characters
-   */
-  public setUp(characters: Avatar[]): void {
-    const character = this.charactersStore.setUp(characters);
-    if (character && character.name) this.threeScene?.characterAction?.getDefaultCharacter(character.name);
   }
 
   public setProgress(progress: number): void {
@@ -172,8 +161,8 @@ export default class EditorStore {
     this.soundSystem.playSound('background');
   }
 
-  public loadSnapshot(maskottPreview: string, maskottName: string): void {
-    saveSnapshot(maskottPreview, maskottName);
+  public loadSnapshot(characterPreview: string, characterName: string): void {
+    saveSnapshot(characterPreview, characterName);
   }
 
   public sceneSubscribe(): void {

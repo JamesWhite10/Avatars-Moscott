@@ -1,5 +1,3 @@
-import { MaskottEnum } from '../enum/MaskottEnum';
-
 export type AvatarName = 'Mira' | 'Yuki';
 
 export type EnvironmentConfigType = {
@@ -22,7 +20,7 @@ export type IdleAnimationType = {
 
 export type Avatar = {
   id: string;
-  name: MaskottEnum | string;
+  name: string;
   description?: string;
   image: string;
   icon: JSX.Element;
