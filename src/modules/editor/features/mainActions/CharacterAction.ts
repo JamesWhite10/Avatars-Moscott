@@ -84,6 +84,18 @@ export class CharacterAction {
     }
   }
 
+  public moveHead(event: MouseEvent): void {
+    this.startObject?.traverse((node) => {
+      if (node.name === 'Head') {
+        node.rotation.set(
+          (-(event.clientY / window.innerHeight) * 2 + 1) * 0.2,
+          ((event.clientX / window.innerWidth) * 2 - 1) * 0.4,
+          0,
+        );
+      }
+    });
+  }
+
   public changeCharacter(modelObject: THREE.Object3D): void {
     if (this.startObject) this.startObject.position.set(2.8, 0, -1.5);
 

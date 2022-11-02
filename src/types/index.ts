@@ -31,6 +31,7 @@ export type Avatar = {
 export type Style = {
   id: string;
   background: { [key: string]: string };
+  videoBackground: { [key: string]: string };
   name: string;
   model?: string;
   videoUrl: string;

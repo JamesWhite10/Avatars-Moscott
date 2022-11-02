@@ -57,6 +57,7 @@ export class BlendingShader {
       uniforms,
       vertexShader: blendingVertex,
       fragmentShader: blendingFragment,
+      transparent: false,
     });
 
     this.materials.push({ material: shaderMaterial, name });
@@ -67,7 +68,7 @@ export class BlendingShader {
     return materialOptions?.material;
   }
 
-  public sortStyles(resourcesManager: ResourcesManager, styles: Style[], meshName: string): void {
+  public sortTextureStyles(resourcesManager: ResourcesManager, styles: Style[], meshName: string): void {
     const textures = styles.map((style) => {
       const textureUrl = style.background[meshName];
       if (!textureUrl) return;
@@ -79,6 +80,26 @@ export class BlendingShader {
         meshName,
         textureFirst: textures[2].texture,
         textureSecond: textures[0].texture,
+      });
+      this.createMaterialShader(uniform, meshName);
+    }
+  }
+
+  public sortVideoTextureStyles(resourcesManager: ResourcesManager, videos: NodeListOf<Element>, meshName: string): void {
+    const textures = Array.from(videos).map((node) => {
+      (node as HTMLVideoElement).play();
+      return new THREE.VideoTexture(node as HTMLVideoElement);
+    });
+
+    textures.forEach((texture) => {
+      texture.flipY = false;
+    });
+
+    if (textures[0] && textures[2]) {
+      const uniform = this.createUniform({
+        meshName,
+        textureFirst: textures[2],
+        textureSecond: textures[0],
       });
       this.createMaterialShader(uniform, meshName);
     }
