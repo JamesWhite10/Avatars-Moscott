@@ -67,7 +67,7 @@ export class CharacterAction {
     this.changeData(characterName);
   }
 
-  public changeData(characterName: string): Promise<void> {
+  public changeData(characterName: string): void {
     const { threeScene, mainView, mouseControls, touchControls } = this._sceneViewport;
     if (threeScene && mainView) {
       const modelObject = threeScene.getObjectByName(characterName);
@@ -82,7 +82,6 @@ export class CharacterAction {
         this.changeTexture();
       }
     }
-    return Promise.resolve();
   }
 
   public changeCharacter(modelObject: THREE.Object3D): void {

@@ -68,11 +68,9 @@ export default class EditorStore {
         this.charactersStore.setCharacterIsChanging(true);
         this.charactersStore.setShowCharacterSelection(false);
         if (characterCandidate) {
-          this.threeScene.characterAction.changeData(characterCandidate.name as string)
-            .then(() => {
-              this.charactersStore.setCharacterIsChanging(false);
-              if (characterCandidate) this.soundSystem.playSound(characterCandidate.name.toLowerCase());
-            });
+          this.threeScene.characterAction.changeData(characterCandidate.name as string);
+          this.charactersStore.setCharacterIsChanging(false);
+          if (characterCandidate) this.soundSystem.playSound(characterCandidate.name.toLowerCase());
         }
       }
     });
