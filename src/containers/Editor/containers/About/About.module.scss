@@ -3,19 +3,12 @@
 .root {
   position: relative;
   padding: 0;
-  max-width: 1200px;
-  width: auto;
-  height: auto;
-  margin-top: 154px;
-  min-height: 1312px;
+  margin-top: 100px;
   box-sizing: border-box;
   outline: none;
   overflow: auto;
-  @media (max-width: $mq-tablet-max) {
-    margin-top: 120px;
-  }
   @media (max-width: $mq-mobile-max) {
-    margin-top: 20px;
+    margin-top: 15px;
   }
 }
 
@@ -33,16 +26,9 @@
   z-index: 30;
   opacity: 0;
   box-sizing: border-box;
-  overflow-y: auto;
-  scroll-behavior: smooth;
 
   &::-webkit-scrollbar {
-    width: 5px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(23, 26, 48, 0.6);
-    border-radius: 100px;
+    width: 0;
   }
 
   @media (max-width: $mq-tablet-max) {
@@ -97,17 +83,14 @@
   z-index: 40;
   background: rgba(23, 26, 48, 0.3);
   border-radius: 12px;
-}
-
-.closeButton {
-  border: none;
-  background: transparent;
-  padding: 0;
+  cursor: pointer;
+  @media (max-width: $mq-mobile-max) {
+    background: inherit;
+  }
 }
 
 .closeIcon {
   fill: #FFFFFF;
-  cursor: pointer;
   vertical-align: middle;
   width: 17px;
   height: 17px;
@@ -135,9 +118,12 @@
 }
 
 .content_wrapper {
+  max-width: 1200px;
+  width: auto;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  padding: 10px;
 }
 
 .container {
@@ -155,6 +141,10 @@
   line-height: 32px;
   text-align: start;
   margin-bottom: 80px;
+  @media (max-width: $mq-mobile-max) {
+    font-size: 16px;
+    line-height: 24px;
+  }
 }
 
 .centralBlock {
@@ -246,9 +236,11 @@
   }
   @media (max-width: $mq-mobile-max) {
     position: fixed;
-    right: 0;
-    bottom: 10px;
-    max-width: 100%;
+    right: 25px;
+    bottom: 16px;
+    top: auto;
+    left: 25px;
+    width: auto;
   }
 }
 
@@ -260,7 +252,7 @@
   line-height: 20px;
   text-align: start;
   @media (max-width: $mq-mobile-max) {
-    margin-bottom: 400px;
+    margin-bottom: 250px;
     transition: 1s;
   }
 }
@@ -272,12 +264,14 @@
 .developingBlock {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
+  gap: 6px;
   @media (max-width: $mq-tablet-max) {
     grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
   @media (max-width: $mq-mobile-max) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 }
 

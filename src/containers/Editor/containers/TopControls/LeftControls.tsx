@@ -7,7 +7,6 @@ import { useMedia } from 'react-use';
 import variables from '../../../../../styles/media.module.scss';
 import Button from '@app/components/Button';
 import useSoundSystem from '@app/hooks/useSoundSystem';
-import About from '@app/containers/Editor/containers/About/About';
 
 const LeftControls: FC = observer(() => {
   const { setActiveAvatarPropertyType, activeProperty, setAboutModalIsOpen } = useControlsStore();
@@ -28,12 +27,12 @@ const LeftControls: FC = observer(() => {
     return isPrepared && character;
   }, [isPrepared, character]);
 
+  if (!character) return null;
+
   const onClickHandler = () => {
     soundSystem.playSound('click', true);
     setAboutModalIsOpen(true);
   };
-
-  if (!character) return null;
 
   return (
     <div className={classNames.leftGroup}>
@@ -50,12 +49,11 @@ const LeftControls: FC = observer(() => {
       />}
       <Button
         size={buttonSize}
-        onClick={() => onClickHandler()}
+        onClick={onClickHandler}
         onMouseEnter={() => soundSystem.playSound('hover', true)}
       >
         About
       </Button>
-      <About />
     </div>
   );
 });
