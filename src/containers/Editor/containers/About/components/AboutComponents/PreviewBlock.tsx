@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { previewInformation } from '@app/containers/Editor/containers/About/config';
-import classNames from './About.module.scss';
+import classNames from '../../About.module.scss';
 
 interface PreviewBlockProps {
   titleDeveloping?: string;

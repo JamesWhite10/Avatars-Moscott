@@ -49,6 +49,7 @@ const FormTextArea: React.FC<FormTextAreaProps> = (props) => {
           field.onChange(value);
           onChange(value);
         }}
+        name={field.name}
       />
       <div>
         <Fade enable={showHintMessages}>

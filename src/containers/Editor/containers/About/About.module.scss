@@ -37,7 +37,7 @@
   scroll-behavior: smooth;
 
   &::-webkit-scrollbar {
-    width: 10px;
+    width: 5px;
   }
 
   &::-webkit-scrollbar-thumb {
@@ -226,7 +226,7 @@
   }
 }
 
-.buttonMessage, .buttonContact, .buttonMessageMobileForm {
+.buttonMessage, .buttonContact {
   width: 100%;
   height: 48px;
   border-radius: 12px;
@@ -244,13 +244,12 @@
   &:hover {
     background: rgba(107, 112, 242, 0.8);
   }
-}
-
-.buttonContact, .buttonMessageMobileForm {
-  position: fixed;
-  right: 0;
-  bottom: 10px;
-  max-width: 100%;
+  @media (max-width: $mq-mobile-max) {
+    position: fixed;
+    right: 0;
+    bottom: 10px;
+    max-width: 100%;
+  }
 }
 
 .footer {
@@ -260,17 +259,10 @@
   font-weight: 400;
   line-height: 20px;
   text-align: start;
-}
-
-.footerModal {
-  font-family: var(--font-space-grotesk);
-  color: rgba(95, 130, 255, 1);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  text-align: start;
-  margin-bottom: 400px;
-  transition: 1s;
+  @media (max-width: $mq-mobile-max) {
+    margin-bottom: 400px;
+    transition: 1s;
+  }
 }
 
 .footerSymbol {
@@ -281,7 +273,6 @@
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 8px;
-  align-items: center;
   @media (max-width: $mq-tablet-max) {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -353,30 +344,6 @@
     font-size: 16px;
     line-height: 22px;
   }
-}
-
-.contentPopup {
-  display: block;
-}
-
-.emojiPopup {
-  font-family: var(--font-space-grotesk);
-  font-size: 64px;
-  font-weight: 700;
-  line-height: 75px;
-  color: rgba(255, 255, 255, 1);
-}
-
-.textPopup, .textTitlePopup {
-  font-family: var(--font-space-grotesk);
-  font-size: 40px;
-  font-weight: 700;
-  line-height: 47px;
-  color: rgba(255, 255, 255, 1);
-}
-
-.textTitlePopup {
-  margin-top: 30px;
 }
 
 .buttonPopup {

@@ -4,7 +4,7 @@ import React, {
   KeyboardEvent,
   PropsWithChildren,
   useCallback,
-  useEffect,
+  useEffect, useId,
   useMemo,
   useState,
 } from 'react';
@@ -23,6 +23,7 @@ export interface TextareaProps {
   onKeyPress?: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   clearValue?: string;
   placeholder?: string;
+  name: string;
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, PropsWithChildren<TextareaProps>>((props, ref) => {
@@ -37,6 +38,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, PropsWithChildren<TextareaProps
     onFocus = () => undefined,
     onKeyPress = () => undefined,
     placeholder,
+    name,
   } = props;
 
   const [innerValue, setInnerValue] = useState<string>(value);
@@ -69,11 +71,14 @@ const Textarea = forwardRef<HTMLTextAreaElement, PropsWithChildren<TextareaProps
     onKeyPress(e);
   }, [onKeyPress]);
 
+  const nameId = useId();
+
   return (
     <div
       className={classNames.formGroupField}
     >
       <textarea
+        id={nameId + name}
         ref={ref}
         value={innerValue}
         className={classNames.formFieldTextArea}
@@ -87,6 +92,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, PropsWithChildren<TextareaProps
       />
       <label
         className={classNames.formLabel}
+        htmlFor={nameId + name}
       >
         {label}
       </label>

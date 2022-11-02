@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren } from 'react';
-import classNames from './About.module.scss';
+import classNames from '../../About.module.scss';
 
 const Title: FC<PropsWithChildren> = (props) => {
   const {

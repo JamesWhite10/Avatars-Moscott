@@ -10,16 +10,7 @@ import useSoundSystem from '@app/hooks/useSoundSystem';
 import About from '@app/containers/Editor/containers/About/About';
 
 const LeftControls: FC = observer(() => {
-  const {
-    setActiveAvatarPropertyType,
-    activeProperty,
-    isOpenModal,
-    setIsOpenModal,
-    isOpenMobileForm,
-    setIsOpenMobileForm,
-    isOpenPopup,
-    setIsOpenPopup,
-  } = useControlsStore();
+  const { setActiveAvatarPropertyType, activeProperty, setAboutModalIsOpen } = useControlsStore();
   const { isPrepared, character, characterIsChanging, showCharacterSelection, setControlElement } = useCharacterStore();
   const isMobile = useMedia(`(max-width: ${variables.mqMobileMax}`);
   const soundSystem = useSoundSystem();
@@ -39,7 +30,7 @@ const LeftControls: FC = observer(() => {
 
   const onClickHandler = () => {
     soundSystem.playSound('click', true);
-    setIsOpenModal(true);
+    setAboutModalIsOpen(true);
   };
 
   if (!character) return null;
@@ -64,14 +55,7 @@ const LeftControls: FC = observer(() => {
       >
         About
       </Button>
-      <About
-        openModal={isOpenModal}
-        setOpenModal={setIsOpenModal}
-        openModalForm={isOpenMobileForm}
-        setOpenModalForm={setIsOpenMobileForm}
-        openPopup={isOpenPopup}
-        setOpenPopup={setIsOpenPopup}
-      />
+      <About />
     </div>
   );
 });

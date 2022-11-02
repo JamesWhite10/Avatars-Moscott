@@ -9,7 +9,7 @@ import StyleStore from './StyleStore';
 import SoundSystem from '../../../sound/SoundSystem';
 import AnimationStore from './AnimationStore';
 import { MaskottEnum } from '../../../enum/MaskottEnum';
-import SendingStore from './SendingStore';
+import AboutStore from './AboutStore';
 
 export default class EditorStore {
   public isReady = false;
@@ -28,7 +28,7 @@ export default class EditorStore {
 
   public charactersStore!: CharacterStore;
 
-  public sendingStore!: SendingStore;
+  public aboutStore!: AboutStore;
 
   public styleStore!: StyleStore;
 
@@ -40,7 +40,7 @@ export default class EditorStore {
     this.resourceManager = new ResourcesManager();
     makeAutoObservable(this, {}, { autoBind: true });
     this.controlsStore = new ControlsStore();
-    this.sendingStore = new SendingStore();
+    this.aboutStore = new AboutStore();
     this.charactersStore = new CharacterStore();
     this.styleStore = new StyleStore();
     this.animationStore = new AnimationStore();
@@ -66,6 +66,10 @@ export default class EditorStore {
     this.controlsStore.subscribe('animationSelect', () => {
       this.animationStore.setShowAnimationSelection(true);
     });
+    this.controlsStore.subscribe('aboutModalOpen', (enable) => {
+      if (!this.charactersStore.character) return;
+      this.aboutStore.aboutModalIsOpen = enable;
+    });
 
     this.charactersStore.subscribe('characterChange', (id) => {
       const characterCandidate = this.charactersStore.characters.find((character) => character.id === id);
@@ -80,7 +84,6 @@ export default class EditorStore {
     this.charactersStore.subscribe('characterSelectionClosed', () => {
       this.controlsStore.setActiveAvatarPropertyType();
     });
-
     this.styleStore.subscribe('styleChange', (id) => {
       console.log('style change', id);
       this.soundSystem.playSound(id, true);
@@ -146,7 +149,9 @@ export default class EditorStore {
 
   public setUp(characters: Maskott[]): void {
     const character = this.charactersStore.setUp(characters);
-    if (character && character.name) this.threeScene?.mainScene?.getDefaultMaskott(character.name);
+    if (!character) return;
+    this.aboutStore.setCharacterImage(character.name);
+    this.threeScene?.mainScene?.getDefaultMaskott(character.name);
   }
 
   public setProgress(progress: number): void {
@@ -172,6 +177,7 @@ export default class EditorStore {
     this.threeScene?.mainScene?.subscribe('maskottChange', (name) => {
       this.charactersStore.setCharacterIsChanging(false);
       this.charactersStore.setCharacter(name);
+      this.aboutStore.setCharacterImage(name);
       this.soundSystem.playSound(name.toLowerCase(), true);
     });
 

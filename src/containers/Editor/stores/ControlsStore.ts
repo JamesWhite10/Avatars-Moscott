@@ -7,6 +7,7 @@ export type ControlsEventType = {
   styleSelect: () => void;
   characterSelect: () => void;
   animationSelect: () => void;
+  aboutModalOpen: (enable: boolean) => void;
 };
 
 export type AvatarPropertyType = 'style' | 'accessories' | 'character' | 'animations';
@@ -15,12 +16,6 @@ export default class ControlsStore {
   public fullScreenMode: boolean = false;
 
   public soundDisabled: boolean = false;
-
-  public isOpenModal: boolean = false;
-
-  public isOpenMobileForm: boolean = false;
-
-  public isOpenPopup: boolean = false;
 
   public activeProperty?: AvatarPropertyType = undefined;
 
@@ -47,20 +42,12 @@ export default class ControlsStore {
     this.fullScreenMode = enable;
   }
 
-  public setIsOpenModal(enable: boolean): void {
-    this.isOpenModal = enable;
-  }
-
-  public setIsOpenMobileForm(enable: boolean): void {
-    this.isOpenMobileForm = enable;
-  }
-
-  public setIsOpenPopup(enable: boolean): void {
-    this.isOpenPopup = enable;
-  }
-
   public setSoundIsDisabled(enable: boolean): void {
     this.soundDisabled = enable;
+  }
+
+  public setAboutModalIsOpen(enable: boolean): void {
+    this.eventEmitter.emit('aboutModalOpen', enable);
   }
 
   public setActiveAvatarPropertyType(property?: AvatarPropertyType): void {

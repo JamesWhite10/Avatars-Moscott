@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import classNames from './About.module.scss';
+import classNames from '../../About.module.scss';
 
 interface AvatarImageProps {
   image?: string;

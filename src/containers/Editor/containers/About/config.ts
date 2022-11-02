@@ -1,16 +1,12 @@
-import VRM from '@app/assets/vrm.svg';
-import Metaverses from '@app/assets/metaverses.svg';
-import WebXR from '@app/assets/webxr.svg';
-import Modeling from '@app/assets/modeling.svg';
-import Configurators from '@app/assets/configurators.svg';
-import Customizers from '@app/assets/customizers.svg';
+import VRM from '../../../../config/aboutIcon/vrm.svg';
+import Metaverses from '../../../../config/aboutIcon/metaverses.svg';
+import WebXR from '../../../../config/aboutIcon/webxr.svg';
+import Modeling from '../../../../config/aboutIcon/modeling.svg';
+import Configurators from '../../../../config/aboutIcon/configurators.svg';
+import Customizers from '../../../../config/aboutIcon/customizers.svg';
 import * as Yup from 'yup';
 
-export enum EStatus {
-  success = 'success',
-  errorRetry = 'errorRetry',
-  errorReload = 'errorReload',
-}
+export type SendFormResultStatus = 'success' | 'errorRetry' | 'errorReload';
 
 interface PreviewType {
   image: string;

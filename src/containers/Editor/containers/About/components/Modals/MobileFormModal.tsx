@@ -1,17 +1,15 @@
-import React, { FC } from 'react';
-import Form from '@app/containers/Editor/containers/About/Form';
+import React, { FC, PropsWithChildren } from 'react';
 import classNames from '@app/containers/Editor/containers/About/About.module.scss';
 import ReactModal from 'react-modal';
 import BackIcon from '@app/components/Icons/BackIcon';
-import Title from '@app/containers/Editor/containers/About/Title';
 
-interface MobileModalFormProps {
+interface MobileFormModalProps {
   openModalForm?: boolean;
   setOpenModalForm?: (enable: boolean) => void;
 }
 
-const MobileModalForm: FC<MobileModalFormProps> = (props) => {
-  const { openModalForm = false, setOpenModalForm } = props;
+const MobileFormModal: FC<PropsWithChildren<MobileFormModalProps>> = (props) => {
+  const { openModalForm = false, setOpenModalForm, children } = props;
 
   const onClickMobileFormHandler = () => {
     if (setOpenModalForm) {
@@ -43,14 +41,11 @@ const MobileModalForm: FC<MobileModalFormProps> = (props) => {
       </div>
       <div className={classNames.content_wrapper}>
         <div className={classNames.container}>
-          <Title>
-            Contact us
-          </Title>
-          <Form />
+          {children}
         </div>
       </div>
     </ReactModal>
   );
 };
 
-export default MobileModalForm;
+export default MobileFormModal;

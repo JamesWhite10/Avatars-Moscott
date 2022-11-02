@@ -2,13 +2,12 @@ import React, { FC, useEffect } from 'react';
 import FormInput from '@app/components/FormInput/FormInput';
 import FormTextArea from '@app/components/FormTextArea/FormTextArea';
 import { useForm } from 'react-hook-form';
-import { FormValues } from '../../../../../pages/components';
-import classNames from './About.module.scss';
+import { FormValues } from '../../../../../../../pages/components';
+import classNames from '../../About.module.scss';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { schema } from '@app/containers/Editor/containers/About/config';
-import { useMedia } from 'react-use';
-import { screenSizes } from '@app/config/media';
-import { useControlsStore, useSendingStore } from '@app/containers/Editor/hooks/useEditorStore';
+import { useAboutStore } from '@app/containers/Editor/hooks/useEditorStore';
+import { observer } from 'mobx-react';
 
 export interface UserData {
   name: string;
@@ -24,9 +23,8 @@ const InitialData: UserData = {
   comments: '',
 };
 
-const Form: FC = () => {
-  const { setIsOpenPopup } = useControlsStore();
-  const { send } = useSendingStore();
+const Form: FC = observer(() => {
+  const { sendForm, setFormResultModalIsOpen } = useAboutStore();
   const {
     control,
     handleSubmit,
@@ -38,13 +36,11 @@ const Form: FC = () => {
     defaultValues: InitialData,
   });
 
-  const isMobile = useMedia(screenSizes.mqMobile, false);
-
   const submit = async (data: UserData) => {
     console.log(data);
     const { name, phone, email, comments } = data;
-    await send(name, phone, email, comments);
-    setIsOpenPopup(true);
+    await sendForm(name, phone, email, comments);
+    setFormResultModalIsOpen(true);
   };
 
   useEffect(() => {
@@ -91,13 +87,13 @@ const Form: FC = () => {
         clearable
       />
       <button
-        className={`${isMobile ? classNames.buttonMessageMobileForm : classNames.buttonMessage}`}
+        className={classNames.buttonMessage}
         type="submit"
       >
         Send message
       </button>
     </form>
   );
-};
+});
 
 export default Form;
