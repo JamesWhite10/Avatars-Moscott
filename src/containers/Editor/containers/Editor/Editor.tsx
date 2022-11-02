@@ -8,38 +8,14 @@ import WorkArea from '@app/containers/Editor/containers/WorkArea';
 import TopControls from '@app/containers/Editor/containers/TopControls';
 import BottomControls from '@app/containers/Editor/containers/BottomControls';
 import RightControls from '@app/containers/Editor/containers/RightControls';
-import { Maskott } from '@app/types/maskott';
-import MiraImage from '@app/assets/mira.png';
-import { CyberfoxIcon, Web3devIcon } from '@app/components/Icons';
-import YukiImage from '@app/assets/yuki.png';
-
-const mockCharacters: Maskott[] = [
-  {
-    id: 'mira',
-    image: MiraImage.src,
-    name: 'Mira',
-    description: 'Cyberfox',
-    icon: <CyberfoxIcon />,
-  },
-  {
-    id: 'Yuki',
-    image: YukiImage.src,
-    name: 'Yuki',
-    description: 'web3dev',
-    icon: <Web3devIcon />,
-  },
-];
+import { appConfig } from '@app/config/appConfig';
 
 const Editor: FC = observer(() => {
-  const { initialize, threeScene, setUp, isReady, showLoadingScreen } = useEditorStore();
+  const { initialize, threeScene, showLoadingScreen } = useEditorStore();
 
   useEffect(() => {
-    if (showLoadingScreen) initialize();
+    if (showLoadingScreen) initialize(appConfig.avatars, appConfig.styles, appConfig.sceneConfig);
   }, [useEditorStore, showLoadingScreen]);
-
-  useEffect(() => {
-    if (isReady) setUp(mockCharacters); // TODO унести отсюда в редактор
-  }, [isReady]);
 
   const editorRefCallback = useCallback((element: HTMLDivElement) => {
     if (threeScene !== null) threeScene.setContainer(element);

@@ -1,14 +1,13 @@
 import { makeAutoObservable } from 'mobx';
-import SceneViewport from '@app/modules/features/Scene/viewports/SceneViewport';
-import ResourcesManager from '../../../modules/ResourcesManager';
+import { SceneViewport } from '@app/modules/editor/scene/viewports/index';
+import ResourcesManager from '../../../modules/editor/scene/ResourcesManager';
 import ControlsStore from './ControlsStore';
 import { saveSnapshot } from '../../../helpers/saveSnapshot';
-import { Maskott } from '../../../types/maskott';
+import { Avatar, EnvironmentConfigType, Style } from '../../../types';
 import CharacterStore from './CharacterStore';
 import StyleStore from './StyleStore';
 import SoundSystem from '../../../sound/SoundSystem';
 import AnimationStore from './AnimationStore';
-import { MaskottEnum } from '../../../enum/MaskottEnum';
 
 export default class EditorStore {
   public isReady = false;
@@ -19,7 +18,7 @@ export default class EditorStore {
 
   public isLoadErrorModalOpen = false;
 
-  public threeScene: SceneViewport | null = null;
+  public threeScene: SceneViewport.SceneViewport | null = null;
 
   protected resourceManager: ResourcesManager | null;
 
@@ -47,8 +46,8 @@ export default class EditorStore {
   public subscribe(): void {
     this.controlsStore.subscribe('soundChange', () => { console.log('sound change'); });
     this.controlsStore.subscribe('takeScreenShot', () => {
-      const maskottPreview = this.threeScene?.mainScene?.getSnapshot();
-      if (maskottPreview) this.loadSnapshot(maskottPreview, 'maskott');
+      const characterPreview = this.threeScene?.characterAction?.getSnapshot();
+      if (characterPreview) this.loadSnapshot(characterPreview, 'mascott');
     });
     this.controlsStore.subscribe('styleSelect', () => {
       this.styleStore.setShowStyleSelection(true);
@@ -64,14 +63,16 @@ export default class EditorStore {
     });
 
     this.charactersStore.subscribe('characterChange', (id) => {
-      const characterCandidate = this.charactersStore.characters.find((character) => character.id === id);
-      this.charactersStore.setCharacterIsChanging(true);
-      this.charactersStore.setShowCharacterSelection(false);
-      this.threeScene?.mainScene?.changeMaskott(characterCandidate!.name as MaskottEnum)
-        .then(() => {
+      if (this.threeScene && this.threeScene.characterAction) {
+        const characterCandidate = this.charactersStore.characters.find((character) => character.id === id);
+        this.charactersStore.setCharacterIsChanging(true);
+        this.charactersStore.setShowCharacterSelection(false);
+        if (characterCandidate) {
+          this.threeScene.characterAction.changeData(characterCandidate.name as string);
           this.charactersStore.setCharacterIsChanging(false);
           if (characterCandidate) this.soundSystem.playSound(characterCandidate.name.toLowerCase());
-        });
+        }
+      }
     });
     this.charactersStore.subscribe('characterSelectionClosed', () => {
       this.controlsStore.setActiveAvatarPropertyType();
@@ -123,12 +124,26 @@ export default class EditorStore {
     });
   }
 
-  public initialize(): void {
-    this.threeScene = new SceneViewport();
-    this.threeScene.init(this.onProgress.bind(this))
+  public initialize(characters: Avatar[], styles: Style[], environment: EnvironmentConfigType): void {
+    this.threeScene = new SceneViewport.SceneViewport();
+    if (!this.threeScene) return;
+    this.threeScene.init({ characters, styles, environment }, this.onProgress.bind(this))
       .then(() => {
         this.setIsReady(true);
-        if (this.threeScene?.mainScene) this.sceneSubscribe();
+        if (this.threeScene && this.threeScene.characterAction) this.sceneSubscribe();
+        if (!this.threeScene) return;
+        this.sceneSubscribe();
+        const character = this.charactersStore.setUp(characters);
+        if (character && character.name) {
+          const style = this.findBaseStyle(character.name);
+          if (this.threeScene.characterAction) {
+            this.threeScene.characterAction.setDefaultData(
+              character.name,
+              style.targetTextureName,
+              style.currentTextureName,
+            );
+          }
+        }
       });
   }
 
@@ -138,11 +153,6 @@ export default class EditorStore {
 
   public setIsReady(isLoading: boolean): void {
     this.isReady = isLoading;
-  }
-
-  public setUp(characters: Maskott[]): void {
-    const character = this.charactersStore.setUp(characters);
-    if (character && character.name) this.threeScene?.mainScene?.getDefaultMaskott(character.name);
   }
 
   public setProgress(progress: number): void {
@@ -160,19 +170,33 @@ export default class EditorStore {
     this.soundSystem.playSound('background');
   }
 
-  public loadSnapshot(maskottPreview: string, maskottName: string): void {
-    saveSnapshot(maskottPreview, maskottName);
+  public loadSnapshot(characterPreview: string, characterName: string): void {
+    saveSnapshot(characterPreview, characterName);
   }
 
   public sceneSubscribe(): void {
-    this.threeScene?.mainScene?.subscribe('maskottChange', (name) => {
+    this.threeScene?.characterAction?.subscribe('characterChange', (name) => {
+      this.styleStore.setActiveStyleFilter(name);
       this.charactersStore.setCharacterIsChanging(false);
       this.charactersStore.setCharacter(name);
       this.soundSystem.playSound(name.toLowerCase(), true);
     });
 
-    this.threeScene?.mainScene?.subscribe('loadMaskott', () => {
+    this.threeScene?.characterAction?.subscribe('loadCharacter', () => {
       this.charactersStore.setCharacterIsChanging(true);
     });
+  }
+
+  public findBaseStyle(characterName: string): Record<string, string> {
+    if (characterName === 'Mira') {
+      return {
+        targetTextureName: 'secondTexture',
+        currentTextureName: 'firstTexture',
+      };
+    }
+    return {
+      targetTextureName: 'firstTexture',
+      currentTextureName: 'secondTexture',
+    };
   }
 }
