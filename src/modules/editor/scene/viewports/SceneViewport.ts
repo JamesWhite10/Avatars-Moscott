@@ -55,8 +55,8 @@ export class SceneViewport {
   protected makeThreeRenderer(): THREE.WebGLRenderer {
     return new THREE.WebGLRenderer({
       antialias: true,
-      preserveDrawingBuffer: true,
       alpha: true,
+      preserveDrawingBuffer: true,
     });
   }
 
@@ -114,6 +114,7 @@ export class SceneViewport {
         this.mainView = new TextureEditor.TextureEditor({ sceneViewport: this });
         this.mainView.addCharacters(config.characters);
         this.mainView.applyTexture(config);
+        this.mainView.applyVideoTexture(config);
         this.mainView.applyHdrTexture(config.environment);
         this.characterAction = new CharacterAction({ sceneViewport: this, mainView: this.mainView });
         this.characterAction.charactersInit(config.characters);
@@ -188,6 +189,7 @@ export class SceneViewport {
   }
 
   public moveMouseHandler(event: MouseEvent): void {
+    if (this.characterAction) this.characterAction.moveHead(event);
     this.mouseControls.onMouseMove(event);
     this.mouseControls.update();
   }

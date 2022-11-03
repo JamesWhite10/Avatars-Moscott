@@ -39,6 +39,29 @@ export class TextureEditor {
     pmremGenerator.dispose();
   }
 
+  public applyVideoTexture = (config: SceneViewport.SceneConfig) => {
+    const { environment, styles } = config;
+
+    const background = this._sceneViewport.resourcesManager.getGlbByUrlOrFail(environment.background);
+    let videos: NodeListOf<Element>;
+
+    styles.forEach((style) => {
+      Object.keys(style.videoBackground).forEach((id) => {
+        videos = document.querySelectorAll(`#${id}`);
+      });
+    });
+
+    background.scene.traverse((node) => {
+      if (node instanceof THREE.Mesh) {
+        this.blendingShader.sortVideoTextureStyles(this._sceneViewport.resourcesManager, videos, 'portal_video');
+        const material = this.blendingShader.getMaterialByName('portal_video');
+        if (material) {
+          node.material = this.blendingShader.getMaterialByName(node.name);
+        }
+      }
+    });
+  };
+
   public applyTexture(config: SceneViewport.SceneConfig): void {
     const { styles, environment } = config;
 
@@ -53,14 +76,18 @@ export class TextureEditor {
 
     background.scene.traverse((node) => {
       if (node instanceof THREE.Mesh) {
-        this.blendingShader.sortStyles(this._sceneViewport.resourcesManager, styles, node.name);
-        node.material = this.blendingShader.getMaterialByName(node.name);
+        this.blendingShader.sortTextureStyles(this._sceneViewport.resourcesManager, styles, node.name);
+        const material = this.blendingShader.getMaterialByName(node.name);
+        if (material) node.material = this.blendingShader.getMaterialByName(node.name);
+        // todo: стенд уберут совсем
+        if (node.name === 'stand') node.visible = false;
       }
     });
 
     const animation = background.animations[0];
 
     this._mixer = new THREE.AnimationMixer(background.scene);
+    this._mixer.timeScale = 0.2;
     this._mixer.clipAction(animation).play();
 
     this._sceneViewport.threeScene.add(background.scene);
@@ -86,7 +113,6 @@ export class TextureEditor {
 
     setInterval(() => {
       model.springBoneManager?.update(1 / 60);
-      model.update(1 / 60);
     }, (1 / 60) * 2000);
 
     model.scene.traverse((node) => {

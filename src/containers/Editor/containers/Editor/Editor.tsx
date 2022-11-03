@@ -9,6 +9,7 @@ import TopControls from '@app/containers/Editor/containers/TopControls';
 import BottomControls from '@app/containers/Editor/containers/BottomControls';
 import RightControls from '@app/containers/Editor/containers/RightControls';
 import { appConfig } from '@app/config/appConfig';
+import VideoMaterials from '@app/containers/Editor/containers/VideoMaterials/index';
 
 const Editor: FC = observer(() => {
   const { initialize, threeScene, showLoadingScreen } = useEditorStore();
@@ -24,6 +25,10 @@ const Editor: FC = observer(() => {
   return (
     <>
       <SceneLoad />
+      <VideoMaterials
+        items={appConfig.styles}
+        videoId="portal_video"
+      />
       <div className={classNames.root}>
         <div
           ref={editorRefCallback}
