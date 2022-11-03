@@ -33,6 +33,7 @@ const styles: Style[] = [
       portal_mesh: '/3d/assets/texture/miraBase/portal_blue_color.jpg',
       sky_mesh: '/3d/assets/texture/miraBase/sky_blue_color.jpg',
       floor_mesh: '/3d/assets/texture/miraBase/floor_blue_color.jpg',
+      Plane: '/3d/assets/texture/miraBase/transparentsmoke_blue.png',
     },
     videoBackground: {
       portal_video: '/3d/assets/texture/video/Bear.mp4',
@@ -48,6 +49,7 @@ const styles: Style[] = [
       portal_mesh: '/3d/assets/texture/retro/portal_retro_color.jpg',
       sky_mesh: '/3d/assets/texture/retro/sky_retro_color.jpg',
       floor_mesh: '/3d/assets/texture/retro/floor_retro_color.jpg',
+      Plane: '/3d/assets/texture/retro/transparentsmoke_retro.png',
     },
     videoBackground: {
       portal_video: '',
@@ -64,6 +66,7 @@ const styles: Style[] = [
       portal_mesh: '/3d/assets/texture/YukiBase/portal_orange_color.jpg',
       sky_mesh: '/3d/assets/texture/YukiBase/sky_orange_color.jpg',
       floor_mesh: '/3d/assets/texture/YukiBase/floor_orange_color.jpg',
+      Plane: '/3d/assets/texture/YukiBase/transparentsmoke_orange.png',
     },
     videoBackground: {
       portal_video: '/3d/assets/texture/video/Bear.mp4',
@@ -79,6 +82,7 @@ const styles: Style[] = [
       portal_mesh: '/3d/assets/texture/hacker/portal_hacker_color.jpg',
       sky_mesh: '/3d/assets/texture/hacker/sky_hacker_color.jpg',
       floor_mesh: '/3d/assets/texture/hacker/floor_hacker_color.jpg',
+      Plane: '/3d/assets/texture/hacker/transparentsmoke_hacker.png',
     },
     videoBackground: {
       portal_video: '',

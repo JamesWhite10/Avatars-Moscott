@@ -60,7 +60,7 @@ export class BlendingShader {
       uniforms,
       vertexShader: blendingVertex,
       fragmentShader: blendingFragment,
-      transparent: false,
+      transparent: true,
     });
 
     this.materials.push({ material: shaderMaterial, name });
@@ -82,8 +82,8 @@ export class BlendingShader {
       const uniform = this.createUniform({
         meshName,
         isPortal: false,
-        textureFirst: textures[0].texture,
-        textureSecond: textures[2].texture,
+        textureFirst: textures[2].texture,
+        textureSecond: textures[0].texture,
       });
       this.createMaterialShader(uniform, meshName);
     }
