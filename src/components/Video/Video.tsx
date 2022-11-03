@@ -1,23 +1,23 @@
-import { FC, ReactNode } from 'react';
+import { FC } from 'react';
 import cn from 'classnames';
 import classNames from './Video.module.scss';
 
 export interface VideoProps {
   isVisible: boolean;
-  children: ReactNode;
   error?: string;
   isLoop?: true;
   isMuted?: boolean;
   isPlayVideo?: boolean;
   id?: string;
+  sourceUrl: string;
 }
 
 const Video: FC<VideoProps> = (props) => {
   const {
     isVisible = true,
-    children,
     isLoop = true,
     isMuted = true,
+    sourceUrl,
     isPlayVideo = true,
     id = 'video',
     error = 'Sorry, your browser doesnt support this video.',
@@ -34,7 +34,10 @@ const Video: FC<VideoProps> = (props) => {
       crossOrigin="anonymous"
       className={cn({ [classNames.videoHide]: !isVisible })}
     >
-      {children}
+      <source
+        src={sourceUrl}
+        type="video/mp4"
+      />
       {error}
     </video>
   );

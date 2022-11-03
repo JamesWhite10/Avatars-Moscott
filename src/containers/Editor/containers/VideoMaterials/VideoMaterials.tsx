@@ -18,16 +18,12 @@ export const VideoMaterials: FC<VideoMaterialsProps> = (props) => {
       {items.map((style) => {
         return (
           <Video
+            sourceUrl={style.videoBackground[videoId]}
             isPlayVideo={false}
             key={style.id}
             isVisible={false}
             id={videoId}
-          >
-            <source
-              src={style.videoBackground[videoId]}
-              type="video/mp4"
-            />
-          </Video>
+          />
         );
       })}
     </>
