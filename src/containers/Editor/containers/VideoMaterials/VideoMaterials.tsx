@@ -25,7 +25,7 @@ export const VideoMaterials: FC<VideoMaterialsProps> = (props) => {
           >
             <source
               src={style.videoBackground[videoId]}
-              type="video/webm"
+              type="video/mp4"
             />
           </Video>
         );

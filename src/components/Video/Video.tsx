@@ -28,6 +28,7 @@ const Video: FC<VideoProps> = (props) => {
       id={id}
       autoPlay={isPlayVideo}
       loop={isLoop}
+      playsInline
       muted={isMuted}
       preload="metadata"
       crossOrigin="anonymous"

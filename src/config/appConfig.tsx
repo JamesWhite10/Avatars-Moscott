@@ -35,7 +35,7 @@ const styles: Style[] = [
       floor_mesh: '/3d/assets/texture/miraBase/floor_blue_color.jpg',
     },
     videoBackground: {
-      portal_video: '/3d/assets/texture/video/portal_video.webm',
+      portal_video: '/3d/assets/texture/video/Bear.mp4',
     },
   },
   {
@@ -66,7 +66,7 @@ const styles: Style[] = [
       floor_mesh: '/3d/assets/texture/YukiBase/floor_orange_color.jpg',
     },
     videoBackground: {
-      portal_video: '/3d/assets/texture/video/portal_video.webm',
+      portal_video: '/3d/assets/texture/video/Bear.mp4',
     },
   },
   {
