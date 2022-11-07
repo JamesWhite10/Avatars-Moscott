@@ -78,6 +78,7 @@ export class TextureEditor {
 
     background.scene.traverse((node) => {
       if (node instanceof THREE.Mesh) {
+        node.name = node.name.toLowerCase();
         this.blendingShader.sortTextureStyles(this._sceneViewport.resourcesManager, styles, node.name);
         const material = this.blendingShader.getMaterialByName(node.name);
         if (material) {
