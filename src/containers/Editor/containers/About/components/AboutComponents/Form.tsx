@@ -24,7 +24,7 @@ const InitialData: UserData = {
 };
 
 const Form: FC = observer(() => {
-  const { sendForm, setFormResultModalIsOpen } = useAboutStore();
+  const { setFormResultModalIsOpen } = useAboutStore();
   const {
     control,
     handleSubmit,
@@ -38,8 +38,6 @@ const Form: FC = observer(() => {
 
   const submit = async (data: UserData) => {
     console.log(data);
-    const { name, phone, email, comments } = data;
-    await sendForm(name, phone, email, comments);
     setFormResultModalIsOpen(true);
   };
 
