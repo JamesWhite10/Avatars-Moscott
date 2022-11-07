@@ -23,6 +23,7 @@ export type Avatar = {
   name: string;
   description?: string;
   image: string;
+  renderImage?: string;
   icon: JSX.Element;
   model: string;
   animations?: IdleAnimationType[];

@@ -2,11 +2,14 @@ import { Avatar, EnvironmentConfigType, Style } from '@app/types';
 import MiraImage from '../assets/mira.png';
 import { CyberfoxIcon, Web3devIcon } from '../components/Icons/index';
 import YukiImage from '@app/assets/yuki.png';
+import MiraImageRender from '@app/assets/about/MiraAbout.png';
+import YukiImageRender from '@app/assets/about/YukiAbout.png';
 
 const avatars: Avatar[] = [
   {
     id: 'mira',
     image: MiraImage.src,
+    renderImage: MiraImageRender.src,
     model: '/3d/assets/models/miraBase.vrm',
     name: 'Mira',
     description: 'Cyberfox',
@@ -15,6 +18,7 @@ const avatars: Avatar[] = [
   {
     id: 'yuki',
     image: YukiImage.src,
+    renderImage: YukiImageRender.src,
     model: '/3d/assets/models/yukiBase.vrm',
     name: 'Yuki',
     description: 'web3dev',

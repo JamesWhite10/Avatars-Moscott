@@ -186,7 +186,8 @@ export default class EditorStore {
       this.styleStore.setActiveStyleFilter(name);
       this.charactersStore.setCharacterIsChanging(false);
       this.charactersStore.setCharacter(name);
-      this.aboutStore.setCharacterImage(name);
+      const { character } = this.charactersStore;
+      if (character) this.aboutStore.setCharacterImage(character.renderImage);
       this.soundSystem.playSound(name.toLowerCase(), true);
     });
 

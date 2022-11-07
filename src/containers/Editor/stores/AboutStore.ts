@@ -1,7 +1,5 @@
 import { makeAutoObservable } from 'mobx';
 import { SendFormResultStatus } from '../containers/About/config';
-import MiraImage from '@app/assets/about/MiraAbout.png';
-import YukiImage from '@app/assets/about/YukiAbout.png';
 
 export default class AboutStore {
   public characterImage = '';
@@ -22,9 +20,8 @@ export default class AboutStore {
     this.sendFormResultStatus = sendFormResultStatus;
   }
 
-  setCharacterImage(characterName: string) {
-    if (characterName === 'Mira') this.characterImage = MiraImage.src;
-    if (characterName === 'Yuki') this.characterImage = YukiImage.src;
+  setCharacterImage(image: string = '') {
+    this.characterImage = image;
   }
 
   public setMobileFormIsOpen(enable: boolean): void {
