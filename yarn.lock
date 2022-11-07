@@ -964,9 +964,9 @@ eslint-config-airbnb@^18.2.1:
     object.assign "^4.1.2"
     object.entries "^1.1.2"
 
-"eslint-config-avs@git+ssh://git@gitlab.web3dev.ru:library/eslint-config-avs.git#develop":
+"eslint-config-avs@git+ssh://git@gitlab.web3dev.group:library/eslint-config-avs.git#develop":
   version "0.0.1"
-  resolved "git+ssh://git@gitlab.web3dev.ru:library/eslint-config-avs.git#2fcc0c762659900638018484349a97edffcbc786"
+  resolved "git+ssh://git@gitlab.web3dev.group:library/eslint-config-avs.git#2fcc0c762659900638018484349a97edffcbc786"
   dependencies:
     eslint-config-airbnb "^18.2.1"
     eslint-config-airbnb-typescript "^14.0.1"

@@ -4,6 +4,7 @@ import { TextureEditor } from '../textureEditor/index';
 import { CharacterAction } from '../../features/mainActions/CharacterAction';
 import { MouseControl, TouchControl } from '../cameraControls/index';
 import { Avatar, EnvironmentConfigType, Style } from '../../../../types/index';
+import { NOISE } from '../../constans/TextureUrl';
 
 export type SceneConfig = {
   characters: Avatar[]; // TODO возможно перемапать на свои внутренние типы
@@ -140,6 +141,7 @@ export class SceneViewport {
 
     this.resourcesManager.addGlb(environment.background);
     this.resourcesManager.addHdrTexture(environment.environment);
+    this.resourcesManager.addTexture(NOISE);
 
     characters.forEach((character) => {
       this.resourcesManager.addVrm(character.model);
@@ -179,6 +181,11 @@ export class SceneViewport {
     light.position.set(1.1, 2.8, 1.7);
     light.target.position.set(1, 0, 0);
     light.penumbra = 0.6;
+
+    light.shadow.camera.near = 0.5;
+    light.shadow.camera.far = 5000;
+
+    light.castShadow = true;
 
     this.threeScene.add(light);
     light.target.updateMatrixWorld();
