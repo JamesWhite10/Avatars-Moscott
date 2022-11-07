@@ -1,24 +1,14 @@
 import * as THREE from 'three';
-import blendingFragment from './BlendingFragment.glsl';
-import blendingVertex from './BlendingVertex.glsl';
 import { Style } from '../../../../../types/index';
 import ResourcesManager from '../../ResourcesManager';
+import { ShadersType } from '../types/shadersType';
+import { Shader, ShaderOptions } from '../Shader';
 
 export interface CreateUniformsOptions {
   textureFirst: THREE.Texture;
   textureSecond: THREE.Texture;
   meshName: string;
   isPortal: boolean;
-}
-
-export interface MaterialOptions {
-  name: string;
-  material: THREE.ShaderMaterial;
-}
-
-export interface UniformOptions {
-  name: string;
-  uniform: Uniform;
 }
 
 export interface Uniform {
@@ -29,17 +19,19 @@ export interface Uniform {
   textureSecond: { value: THREE.Texture };
 }
 
-export class BlendingShader {
-  public materials: MaterialOptions[] = [];
-
-  public uniforms: UniformOptions[] = [];
+export class BlendingShader extends Shader {
+  public uniforms: ShadersType<Uniform>[] = [];
 
   public currentTextureName: string = '';
 
   public additionalTextureName: string = '';
 
+  constructor({ fragmentShader, vertexShader }: ShaderOptions) {
+    super({ vertexShader, fragmentShader });
+  }
+
   public createUniform(options: CreateUniformsOptions): Uniform {
-    const uniformOptions: UniformOptions = {
+    const uniformOptions: ShadersType<Uniform> = {
       name: options.meshName,
       uniform: {
         isPortal: { value: options.isPortal },
@@ -53,22 +45,6 @@ export class BlendingShader {
     this.uniforms.push(uniformOptions);
 
     return uniformOptions.uniform;
-  }
-
-  public createMaterialShader(uniforms: any, name: string): void {
-    const shaderMaterial = new THREE.ShaderMaterial({
-      uniforms,
-      vertexShader: blendingVertex,
-      fragmentShader: blendingFragment,
-      transparent: true,
-    });
-
-    this.materials.push({ material: shaderMaterial, name });
-  }
-
-  public getMaterialByName(value: string): THREE.ShaderMaterial | undefined {
-    const materialOptions = this.materials.find((item) => item.name === value);
-    return materialOptions?.material;
   }
 
   public sortTextureStyles(resourcesManager: ResourcesManager, styles: Style[], meshName: string): void {

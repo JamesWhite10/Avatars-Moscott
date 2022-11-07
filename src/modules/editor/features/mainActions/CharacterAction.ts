@@ -97,12 +97,44 @@ export class CharacterAction {
   }
 
   public changeCharacter(modelObject: THREE.Object3D): void {
-    if (this.startObject) this.startObject.position.set(2.8, 0, -1.5);
+    const { mainView } = this._sceneViewport;
+    if (mainView) {
+      const dissolveTo = { dissolve: 1.0 };
+      const dissolveFrom = { dissolve: 0.0 };
 
-    this.startObject = modelObject;
-    modelObject.position.set(this.startPosition.x, this.startPosition.y, this.startPosition.z);
+      const dissolveTween = new TWEEN.Tween(dissolveFrom)
+        .to(dissolveTo, 900)
+        .onUpdate(({ dissolve }) => {
+          mainView.dissolveShader.uniforms.forEach((value) => {
+            value.uniform.uTime.value = dissolve;
+          });
+        });
 
-    this.eventEmitter.emit('characterChange', modelObject.name);
+      const moveTween = new TWEEN.Tween(modelObject.position)
+        .to(this.startPosition, 0)
+        .onUpdate(({ x, z }) => {
+          if (this.startObject) this.startObject.position.set(2.8, 0, -1.5);
+
+          this.startObject = modelObject;
+          modelObject.position.set(x, this.startPosition.y, z);
+
+          this.eventEmitter.emit('characterChange', modelObject.name);
+        });
+
+      const appearanceFrom = { appearance: 1.0 };
+      const appearanceTo = { appearance: 0.0 };
+
+      const appearanceTween = new TWEEN.Tween(appearanceFrom)
+        .to(appearanceTo, 900)
+        .onUpdate(({ appearance }) => {
+          mainView.dissolveShader.uniforms.forEach((value) => {
+            value.uniform.uTime.value = appearance;
+          });
+        });
+
+      dissolveTween.chain(moveTween.chain(appearanceTween));
+      dissolveTween.start();
+    }
   }
 
   public changeTexture(): void {
