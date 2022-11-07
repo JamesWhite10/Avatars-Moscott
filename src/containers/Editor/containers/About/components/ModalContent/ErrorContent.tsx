@@ -1,5 +1,5 @@
 import Content from '@app/components/Modal/Content';
-import Reload from '@app/config/aboutIcon/reload.svg';
+import Reload from '@app/assets/about/reload.svg';
 import Footer from '@app/components/Modal/Footer';
 import classNames from '@app/containers/Editor/containers/About/About.module.scss';
 import Header from '@app/components/Modal/Header';

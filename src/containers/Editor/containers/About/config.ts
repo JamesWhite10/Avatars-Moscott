@@ -1,9 +1,9 @@
-import VRM from '../../../../config/aboutIcon/vrm.svg';
-import Metaverses from '../../../../config/aboutIcon/metaverses.svg';
-import WebXR from '../../../../config/aboutIcon/webxr.svg';
-import Modeling from '../../../../config/aboutIcon/modeling.svg';
-import Configurators from '../../../../config/aboutIcon/configurators.svg';
-import Customizers from '../../../../config/aboutIcon/customizers.svg';
+import VRM from '../../../../assets/about/vrm.svg';
+import Metaverses from '../../../../assets/about/metaverses.svg';
+import WebXR from '../../../../assets/about/webxr.svg';
+import Modeling from '../../../../assets/about/modeling.svg';
+import Configurators from '../../../../assets/about/configurators.svg';
+import Customizers from '../../../../assets/about/customizers.svg';
 import * as Yup from 'yup';
 
 export type SendFormResultStatus = 'success' | 'errorRetry' | 'errorReload';

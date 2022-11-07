@@ -1,5 +1,5 @@
 import Content from '@app/components/Modal/Content';
-import Success from '@app/config/aboutIcon/success.svg';
+import Success from '@app/assets/about/success.svg';
 import Footer from '@app/components/Modal/Footer';
 import classNames from '@app/containers/Editor/containers/About/About.module.scss';
 import Header from '@app/components/Modal/Header';
