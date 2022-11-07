@@ -3,13 +3,12 @@
 .root {
   position: relative;
   padding: 0;
-  margin-top: 100px;
   box-sizing: border-box;
   outline: none;
   overflow: auto;
-  @media (max-width: $mq-mobile-max) {
-    margin-top: 15px;
-  }
+  top: 0;
+  left: 0;
+  transition: opacity .3s ease;
 }
 
 .overlay {
@@ -20,23 +19,9 @@
   top: 0;
   left: 0;
   transition: opacity .3s ease;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
   z-index: 30;
   opacity: 0;
   box-sizing: border-box;
-
-  &::-webkit-scrollbar {
-    width: 0;
-  }
-
-  @media (max-width: $mq-tablet-max) {
-    padding: 0 40px 40px 40px;
-  }
-  @media (max-width: $mq-mobile-max) {
-    padding: 0 16px 10px 16px;
-  }
 }
 
 .rootMobileForm {
@@ -48,22 +33,6 @@
   box-sizing: border-box;
   outline: none;
   overflow: auto;
-}
-
-.overlayMobileForm {
-  background: var(--primary-700);
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  transition: opacity .3s ease;
-  z-index: 30;
-  opacity: 0;
-  box-sizing: border-box;
-  @media (max-width: $mq-mobile-max) {
-    padding: 0 16px 10px 16px;
-  }
 }
 
 .overlay_afterOpen {
@@ -94,6 +63,10 @@
   vertical-align: middle;
   width: 17px;
   height: 17px;
+  @media (max-width: $mq-mobile-max) {
+    width: 23px;
+    height: 23px;
+  }
 }
 
 .backContainer {
@@ -120,10 +93,16 @@
 .content_wrapper {
   max-width: 1200px;
   width: auto;
+  height: 100%;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
+  margin: 0 auto;
+  background: var(--primary-700);
+  @media (max-width: $mq-tablet-max) {
+    padding: 0 40px 40px 40px;
+  }
+  @media (max-width: $mq-mobile-max) {
+    padding: 0 16px 10px 16px;
+  }
 }
 
 .container {
@@ -131,6 +110,10 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  margin-top: 100px;
+  @media (max-width: $mq-mobile-max) {
+    margin-top: 25px;
+  }
 }
 
 .header {
@@ -236,10 +219,10 @@
   }
   @media (max-width: $mq-mobile-max) {
     position: fixed;
-    right: 25px;
+    right: 10px;
     bottom: 16px;
     top: auto;
-    left: 25px;
+    left: 10px;
     width: auto;
   }
 }

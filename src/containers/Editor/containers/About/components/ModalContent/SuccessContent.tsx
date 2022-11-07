@@ -6,13 +6,14 @@ import Header from '@app/components/Modal/Header';
 import { FC } from 'react';
 
 interface SuccessContentProps {
-  onClickPopupHandler: () => void;
+  onHeaderClick: () => void;
+  onButtonClick: () => void;
 }
 
-const SuccessContent: FC<SuccessContentProps> = ({ onClickPopupHandler }) => {
+const SuccessContent: FC<SuccessContentProps> = ({ onHeaderClick, onButtonClick }) => {
   return (
     <>
-      <Header onCloseClick={onClickPopupHandler} />
+      <Header onCloseClick={onHeaderClick} />
       <Content>
         <img
           src={Success.src}
@@ -21,7 +22,7 @@ const SuccessContent: FC<SuccessContentProps> = ({ onClickPopupHandler }) => {
       </Content>
       <Footer>
         <button
-          onClick={onClickPopupHandler}
+          onClick={onButtonClick}
           type="button"
           className={classNames.buttonPopup}
         >

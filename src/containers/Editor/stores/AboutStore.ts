@@ -1,14 +1,9 @@
 import { makeAutoObservable } from 'mobx';
-import { AxiosResponse } from 'axios';
-import { UserData } from '../containers/About/components/AboutComponents/Form';
 import { SendFormResultStatus } from '../containers/About/config';
-import instance from '../../../api/client';
 import MiraImage from '@app/config/aboutIcon/MiraAbout.png';
 import YukiImage from '@app/config/aboutIcon/YukiAbout.png';
 
 export default class AboutStore {
-  sendData: AxiosResponse<UserData> = {} as AxiosResponse;
-
   public characterImage = '';
 
   public sendFormResultStatus?: string | undefined = undefined as unknown as SendFormResultStatus;
@@ -27,17 +22,9 @@ export default class AboutStore {
     this.sendFormResultStatus = sendFormResultStatus;
   }
 
-  setSendData(data: AxiosResponse<UserData>) {
-    this.sendData = data;
-  }
-
-  setCharacterImage(characterImage: string) {
-    this.characterImage = characterImage;
-    if (characterImage === 'Mira') {
-      this.setCharacterImage(MiraImage.src);
-    } if (characterImage === 'Yuki') {
-      this.setCharacterImage(YukiImage.src);
-    }
+  setCharacterImage(characterName: string) {
+    if (characterName === 'Mira') this.characterImage = MiraImage.src;
+    if (characterName === 'Yuki') this.characterImage = YukiImage.src;
   }
 
   public setMobileFormIsOpen(enable: boolean): void {
@@ -48,11 +35,9 @@ export default class AboutStore {
     this.formResultModalIsOpen = enable;
   }
 
-  public async sendForm(name: string, phone: string, email: string, comments: string) {
+  public async sendForm() {
     try {
-      const response = await instance.post('/', { name, phone, email, comments });
       this.setSendFormResultStatus('success');
-      this.setSendData(response);
     } catch (error) {
       console.log(error);
       this.setSendFormResultStatus('errorRetry');

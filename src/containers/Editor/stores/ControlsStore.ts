@@ -46,7 +46,7 @@ export default class ControlsStore {
     this.soundDisabled = enable;
   }
 
-  public setAboutModalIsOpen(enable: boolean): void {
+  public isOpen(enable: boolean): void {
     this.eventEmitter.emit('aboutModalOpen', enable);
   }
 

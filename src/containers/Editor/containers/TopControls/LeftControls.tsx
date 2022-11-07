@@ -9,7 +9,7 @@ import Button from '@app/components/Button';
 import useSoundSystem from '@app/hooks/useSoundSystem';
 
 const LeftControls: FC = observer(() => {
-  const { setActiveAvatarPropertyType, activeProperty, setAboutModalIsOpen } = useControlsStore();
+  const { setActiveAvatarPropertyType, activeProperty, isOpen } = useControlsStore();
   const { isPrepared, character, characterIsChanging, showCharacterSelection, setControlElement } = useCharacterStore();
   const isMobile = useMedia(`(max-width: ${variables.mqMobileMax}`);
   const soundSystem = useSoundSystem();
@@ -29,9 +29,9 @@ const LeftControls: FC = observer(() => {
 
   if (!character) return null;
 
-  const onClickHandler = () => {
+  const clickHandler = () => {
     soundSystem.playSound('click', true);
-    setAboutModalIsOpen(true);
+    isOpen(true);
   };
 
   return (
@@ -49,7 +49,7 @@ const LeftControls: FC = observer(() => {
       />}
       <Button
         size={buttonSize}
-        onClick={onClickHandler}
+        onClick={clickHandler}
         onMouseEnter={() => soundSystem.playSound('hover', true)}
       >
         About

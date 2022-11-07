@@ -6,13 +6,13 @@ import Header from '@app/components/Modal/Header';
 import { FC } from 'react';
 
 interface ErrorContentProps {
-  onClickPopupHandler: () => void;
+  onHeaderClick: () => void;
 }
 
-const ErrorContent: FC<ErrorContentProps> = ({ onClickPopupHandler }) => {
+const ErrorContent: FC<ErrorContentProps> = ({ onHeaderClick }) => {
   return (
     <>
-      <Header onCloseClick={onClickPopupHandler} />
+      <Header onCloseClick={onHeaderClick} />
       <Content>
         <img
           src={Reload.src}

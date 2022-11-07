@@ -6,13 +6,14 @@ import Header from '@app/components/Modal/Header';
 import { FC } from 'react';
 
 interface RetryContentProps {
-  onClickPopupHandler: () => void;
+  onHeaderClick: () => void;
+  onButtonClick: () => void;
 }
 
-const RetryContent: FC<RetryContentProps> = ({ onClickPopupHandler }) => {
+const RetryContent: FC<RetryContentProps> = ({ onHeaderClick, onButtonClick }) => {
   return (
     <>
-      <Header onCloseClick={onClickPopupHandler} />
+      <Header onCloseClick={onHeaderClick} />
       <Content>
         <img
           src={Retry.src}
@@ -21,7 +22,7 @@ const RetryContent: FC<RetryContentProps> = ({ onClickPopupHandler }) => {
       </Content>
       <Footer>
         <button
-          onClick={onClickPopupHandler}
+          onClick={onButtonClick}
           type="button"
           className={classNames.buttonPopup}
         >

@@ -1,6 +1,7 @@
 import { FC, PropsWithChildren } from 'react';
 import ReactModal from 'react-modal';
 import classNames from '../../About.module.scss';
+import Scrollbars from 'react-custom-scrollbars-2';
 
 if (typeof window !== 'undefined') {
   const rootElement = document.getElementById('__next') || document.getElementById('root');
@@ -30,7 +31,13 @@ const AboutModal: FC<PropsWithChildren<AboutModalProps>> = (props) => {
         beforeClose: classNames.overlay_beforeClose,
       }}
     >
-      {children}
+      <Scrollbars
+        autoHeight
+        autoHeightMax={970}
+        autoHide
+      >
+        {children}
+      </Scrollbars>
     </ReactModal>
   );
 };
