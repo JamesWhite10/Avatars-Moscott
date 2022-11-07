@@ -22,7 +22,7 @@ export class TextureEditor {
 
   public dissolveShader: DissolveShader.DissolveShader;
 
-  private _mixer!: null | THREE.AnimationMixer;
+  private _mixers: THREE.AnimationMixer[] = [];
 
   constructor(options: MainViewOptions) {
     this._sceneViewport = options.sceneViewport;
@@ -31,7 +31,9 @@ export class TextureEditor {
   }
 
   public onUpdate(delta: number): void {
-    this._mixer?.update(delta);
+    this._mixers?.forEach((mixer) => {
+      mixer.update(delta);
+    });
   }
 
   public applyHdrTexture(environment: EnvironmentConfigType): void {
@@ -63,7 +65,7 @@ export class TextureEditor {
       if (node instanceof THREE.Mesh) {
         this.blendingShader.sortVideoTextureStyles(this._sceneViewport.resourcesManager, videos, 'portal_video');
         const material = this.blendingShader.getMaterialByName('portal_video');
-        if (material) {
+        if (material && node.name === 'portal_video') {
           node.material = this.blendingShader.getMaterialByName(node.name);
         }
       }
@@ -84,19 +86,26 @@ export class TextureEditor {
 
     background.scene.traverse((node) => {
       if (node instanceof THREE.Mesh) {
+        node.name = node.name.toLowerCase();
         this.blendingShader.sortTextureStyles(this._sceneViewport.resourcesManager, styles, node.name);
         const material = this.blendingShader.getMaterialByName(node.name);
-        if (material) node.material = this.blendingShader.getMaterialByName(node.name);
-        // todo: стенд уберут совсем
-        if (node.name === 'stand') node.visible = false;
+        if (material) {
+          if (node.name === 'plane') {
+            material.depthTest = true;
+            material.depthWrite = true;
+          }
+          node.material = material;
+        }
       }
     });
 
-    const animation = background.animations[0];
+    const { animations } = background;
 
-    this._mixer = new THREE.AnimationMixer(background.scene);
-    this._mixer.timeScale = 0.2;
-    this._mixer.clipAction(animation).play();
+    animations.forEach((animation, index) => {
+      this._mixers[index] = new THREE.AnimationMixer(background.scene);
+      this._mixers[index].timeScale = 0.3;
+      this._mixers[index].clipAction(animation).play();
+    });
 
     this._sceneViewport.threeScene.add(background.scene);
   }

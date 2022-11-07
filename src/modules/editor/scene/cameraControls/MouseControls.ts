@@ -8,7 +8,7 @@ export class MouseControls extends CameraControls {
 
   public minZoom: number = 4;
 
-  public maxZoom: number = 4.8;
+  public maxZoom: number = 4.6;
 
   constructor({ threeCamera, width, height }: ObjectControlsOptions) {
     super({ threeCamera, width, height });

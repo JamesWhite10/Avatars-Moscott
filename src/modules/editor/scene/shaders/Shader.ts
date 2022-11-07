@@ -28,6 +28,7 @@ export class Shader {
       uniforms,
       vertexShader: this.vertexShader,
       fragmentShader: this.fragmentShader,
+      transparent: true,
     });
 
     this.materials.push({ material: shaderMaterial, name });
