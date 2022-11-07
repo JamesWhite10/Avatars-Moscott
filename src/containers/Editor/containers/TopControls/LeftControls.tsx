@@ -9,7 +9,7 @@ import Button from '@app/components/Button';
 import useSoundSystem from '@app/hooks/useSoundSystem';
 
 const LeftControls: FC = observer(() => {
-  const { setActiveAvatarPropertyType, activeProperty } = useControlsStore();
+  const { setActiveAvatarPropertyType, activeProperty, isOpen } = useControlsStore();
   const { isPrepared, character, characterIsChanging, showCharacterSelection, setControlElement } = useCharacterStore();
   const isMobile = useMedia(`(max-width: ${variables.mqMobileMax}`);
   const soundSystem = useSoundSystem();
@@ -29,6 +29,11 @@ const LeftControls: FC = observer(() => {
 
   if (!character) return null;
 
+  const clickHandler = () => {
+    soundSystem.playSound('click', true);
+    isOpen(true);
+  };
+
   return (
     <div className={classNames.leftGroup}>
       {showCharacterButton && <CharacterSelectButton
@@ -44,7 +49,7 @@ const LeftControls: FC = observer(() => {
       />}
       <Button
         size={buttonSize}
-        onClick={() => soundSystem.playSound('click', true)}
+        onClick={clickHandler}
         onMouseEnter={() => soundSystem.playSound('hover', true)}
       >
         About

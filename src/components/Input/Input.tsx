@@ -7,7 +7,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  useMemo,
+  useMemo, useId,
 } from 'react';
 import classNames from './Input.module.scss';
 import cn from 'classnames';
@@ -27,6 +27,7 @@ export interface InputProps {
   clearValue?: string;
   placeholder?: string;
   error?: FieldError;
+  name: string;
 }
 
 const Input = forwardRef<HTMLInputElement, PropsWithChildren<InputProps>>((props, ref) => {
@@ -42,6 +43,7 @@ const Input = forwardRef<HTMLInputElement, PropsWithChildren<InputProps>>((props
     onKeyPress = () => undefined,
     placeholder,
     error,
+    name,
   } = props;
 
   const [innerValue, setInnerValue] = useState<string>(value);
@@ -76,9 +78,12 @@ const Input = forwardRef<HTMLInputElement, PropsWithChildren<InputProps>>((props
     onKeyPress(e);
   }, [onKeyPress]);
 
+  const nameId = useId();
+
   return (
     <div className={classNames.formGroupField}>
       <input
+        id={nameId + name}
         ref={ref}
         value={innerValue}
         type="text"
@@ -93,6 +98,7 @@ const Input = forwardRef<HTMLInputElement, PropsWithChildren<InputProps>>((props
       />
       <label
         className={classNames.formLabel}
+        htmlFor={nameId + name}
       >
         {label}
       </label>

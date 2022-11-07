@@ -7,6 +7,7 @@ export type ControlsEventType = {
   styleSelect: () => void;
   characterSelect: () => void;
   animationSelect: () => void;
+  aboutModalOpen: (enable: boolean) => void;
 };
 
 export type AvatarPropertyType = 'style' | 'accessories' | 'character' | 'animations';
@@ -43,6 +44,10 @@ export default class ControlsStore {
 
   public setSoundIsDisabled(enable: boolean): void {
     this.soundDisabled = enable;
+  }
+
+  public isOpen(enable: boolean): void {
+    this.eventEmitter.emit('aboutModalOpen', enable);
   }
 
   public setActiveAvatarPropertyType(property?: AvatarPropertyType): void {

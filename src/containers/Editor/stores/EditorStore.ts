@@ -8,6 +8,7 @@ import CharacterStore from './CharacterStore';
 import StyleStore from './StyleStore';
 import SoundSystem from '../../../sound/SoundSystem';
 import AnimationStore from './AnimationStore';
+import AboutStore from './AboutStore';
 
 export default class EditorStore {
   public isReady = false;
@@ -26,6 +27,8 @@ export default class EditorStore {
 
   public charactersStore!: CharacterStore;
 
+  public aboutStore!: AboutStore;
+
   public styleStore!: StyleStore;
 
   public animationStore!: AnimationStore;
@@ -36,6 +39,7 @@ export default class EditorStore {
     this.resourceManager = new ResourcesManager();
     makeAutoObservable(this, {}, { autoBind: true });
     this.controlsStore = new ControlsStore();
+    this.aboutStore = new AboutStore();
     this.charactersStore = new CharacterStore();
     this.styleStore = new StyleStore();
     this.animationStore = new AnimationStore();
@@ -61,6 +65,10 @@ export default class EditorStore {
     this.controlsStore.subscribe('animationSelect', () => {
       this.animationStore.setShowAnimationSelection(true);
     });
+    this.controlsStore.subscribe('aboutModalOpen', (enable) => {
+      if (!this.charactersStore.character) return;
+      this.aboutStore.aboutModalIsOpen = enable;
+    });
 
     this.charactersStore.subscribe('characterChange', (id) => {
       if (this.threeScene && this.threeScene.characterAction) {
@@ -77,7 +85,6 @@ export default class EditorStore {
     this.charactersStore.subscribe('characterSelectionClosed', () => {
       this.controlsStore.setActiveAvatarPropertyType();
     });
-
     this.styleStore.subscribe('styleChange', (id) => {
       console.log('style change', id);
       this.soundSystem.playSound(id, true);
@@ -179,6 +186,8 @@ export default class EditorStore {
       this.styleStore.setActiveStyleFilter(name);
       this.charactersStore.setCharacterIsChanging(false);
       this.charactersStore.setCharacter(name);
+      const { character } = this.charactersStore;
+      if (character) this.aboutStore.setCharacterImage(character.renderImage);
       this.soundSystem.playSound(name.toLowerCase(), true);
     });
 

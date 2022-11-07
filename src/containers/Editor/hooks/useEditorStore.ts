@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import ControlsStore from '../stores/ControlsStore';
 import CharacterStore from '../stores/CharacterStore';
 import StyleStore from '../stores/StyleStore';
+import AboutStore from '../stores/AboutStore';
 import AnimationStore from '../stores/AnimationStore';
 
 export const useEditorStore = (): EditorStore => {
@@ -24,6 +25,10 @@ export const useCharacterStore = (): CharacterStore => {
 
 export const useStyleStore = (): StyleStore => {
   return useEditorStore().styleStore;
+};
+
+export const useAboutStore = (): AboutStore => {
+  return useEditorStore().aboutStore;
 };
 
 export const useAnimationStore = (): AnimationStore => {

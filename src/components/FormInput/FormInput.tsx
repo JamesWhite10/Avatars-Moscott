@@ -64,6 +64,7 @@ const FormInput: React.FC<FormInputProps> = (props) => {
           onChange(value);
         }}
         error={fieldState.error}
+        name={field.name}
       />
       <div>
         <Hint
