@@ -1,7 +1,8 @@
-import { FC, PropsWithChildren, useRef } from 'react';
+import { FC, PropsWithChildren, useMemo, useRef } from 'react';
 import classNames from './Transition.module.scss';
 import { CSSTransition } from 'react-transition-group';
 import cn from 'classnames';
+import { CSSTransitionClassNames } from 'react-transition-group/CSSTransition';
 
 export interface PageTransitionProps {
   onExited?: () => void;
@@ -12,6 +13,7 @@ export interface PageTransitionProps {
   appear?: boolean;
   mountOnEnter?: boolean;
   unmountOnExit?: boolean;
+  customAnimationClassNames?: CSSTransitionClassNames;
 }
 
 const Fade: FC<PropsWithChildren<PageTransitionProps>> = (props) => {
@@ -24,9 +26,21 @@ const Fade: FC<PropsWithChildren<PageTransitionProps>> = (props) => {
     appear = true,
     mountOnEnter = false,
     unmountOnExit = false,
+    customAnimationClassNames,
     children,
   } = props;
   const nodeRef = useRef<HTMLDivElement>(null);
+
+  const animationClassNames = useMemo(() => {
+    return customAnimationClassNames ?? {
+      enter: classNames.root_FadeEnter,
+      enterActive: classNames.root_FadeEnterActive,
+      enterDone: classNames.root_FadeEnterDone,
+      exit: classNames.root_FadeExit,
+      exitActive: classNames.root_FadeExitActive,
+      exitDone: classNames.root_FadeExitDone,
+    };
+  }, [customAnimationClassNames]);
 
   return (
     <CSSTransition
@@ -38,14 +52,7 @@ const Fade: FC<PropsWithChildren<PageTransitionProps>> = (props) => {
       mountOnEnter={mountOnEnter}
       unmountOnExit={unmountOnExit}
       appear={appear}
-      classNames={{
-        enter: classNames.root_FadeEnter,
-        enterActive: classNames.root_FadeEnterActive,
-        enterDone: classNames.root_FadeEnterDone,
-        exit: classNames.root_FadeExit,
-        exitActive: classNames.root_FadeExitActive,
-        exitDone: classNames.root_FadeExitDone,
-      }}
+      classNames={animationClassNames}
     >
       <div
         ref={nodeRef}

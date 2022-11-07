@@ -43,6 +43,9 @@ export type AppVariableType = {
   '--error-700': string;
   '--error-800': string;
   '--error-900': string;
+
+  // Other properties
+  '--start-scale': string;
 };
 
 /**

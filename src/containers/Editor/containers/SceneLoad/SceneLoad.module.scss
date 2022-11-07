@@ -93,6 +93,49 @@
   font-weight: 700;
   font-size: 40px;
   line-height: 47px;
-  //color: rgba(255, 255, 255, 0.5);
   color: #FFFFFF;
+}
+
+.fadeEnter {
+  opacity: 0 !important;
+  transition: opacity 1s ease;
+}
+
+.fadeEnterActive {
+  opacity: 1 !important;
+  transition: opacity 1s ease;
+}
+
+.fadeEnterDone {
+  opacity: 1 !important;
+  transition: all 1s ease;
+}
+
+.fadeExit {
+  opacity: 1 !important;
+  transition: all 1s ease;
+}
+
+.fadeExitActive {
+  opacity: 0 !important;
+  transition: all 1s ease;
+}
+
+.fadeExitDone {
+  opacity: 0 !important;
+  transition: all 1s ease;
+}
+
+.fixedContainer {
+  position: fixed;
+  z-index: 2;
+  transition: opacity 0s ease-in-out !important;
+}
+
+.fade_container {
+  transition: opacity 1s ease-in-out !important;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }

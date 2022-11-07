@@ -1,15 +1,18 @@
 import { FC, PropsWithChildren, useMemo } from 'react';
 import classNames from './CircularProgress.module.scss';
+import cn from 'classnames';
 
 export interface CircularProgressProps {
   progress?: number;
   size: number;
+  startAnimation?: boolean;
 }
 
 const CircularProgress: FC<PropsWithChildren<CircularProgressProps>> = (props) => {
   const {
     size = 150,
     progress = 0,
+    startAnimation = false,
     children,
   } = props;
 
@@ -20,7 +23,7 @@ const CircularProgress: FC<PropsWithChildren<CircularProgressProps>> = (props) =
 
   return (
     <div
-      className={classNames.root}
+      className={cn(classNames.root, { [classNames.animated]: startAnimation })}
       style={{ width: size, height: size }}
     >
       <div className={classNames.outer_border} />

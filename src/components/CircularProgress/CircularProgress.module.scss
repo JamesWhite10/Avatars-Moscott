@@ -10,13 +10,57 @@
 
 .progress_container {
   transform: rotate(-90deg);
+  border-radius: 100%;
+}
+
+.animated {
+  z-index: 2;
+
+  .outer_border {
+    box-shadow: none;
+  }
+
+  .progress_container {
+    animation: scaleUp 0.6s ease-out;
+    transform: scale(var(--start-scale));
+    circle:first-child {
+      stroke: transparent;
+    }
+    circle:nth-child(2) {
+      fill: white;
+      animation: fillTransparent .4s ease-out;
+      stroke: transparent;
+    }
+  }
+
+  button {
+    box-shadow: none;
+    background: transparent;
+    border:none;
+    cursor: default !important;
+    transition: opacity;
+    animation: opacityDown .3s ease-in;
+    animation-delay: .1s;
+    opacity: 0;
+    transition-delay: .1s;
+    &:disabled {
+      background: white;
+    }
+    span {
+      color: var(--gray-600);
+    }
+  }
+
+  .outer_border {
+    box-shadow: none;
+  }
 }
 
 .outer_border {
   border: 7px solid transparent;
   border-radius: 100%;
   z-index: 2;
-  box-shadow: inset 0px 1px 3px rgb(65 69 167 / 25%);
+  box-shadow: inset 0 1px 3px rgb(65 69 167 / 25%);
   width: 100%;
   height: 100%;
   position: absolute;
@@ -48,4 +92,34 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2;
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(var(--start-scale));
+  }
+}
+
+@keyframes opacityDown {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fillTransparent {
+  from {
+    stroke: var(--primary-600);
+    fill: #E1EBFF;
+  }
+  to {
+    stroke: transparent;
+    fill: white;
+  }
 }
