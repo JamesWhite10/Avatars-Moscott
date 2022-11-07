@@ -10,7 +10,7 @@ export interface ObjectControlsOptions {
 export class CameraControls {
   public velocityMousePosition: Vector2 = new Vector2();
 
-  public amplitude = 1;
+  public amplitude = 4;
 
   public mousePosition: THREE.Vector2 = new THREE.Vector2();
 
@@ -72,7 +72,7 @@ export class CameraControls {
   public updateObject() {
     if (!this.object) return;
     if (this.enableDamping) {
-      this.object.rotation.y = this.mousePosition.x * this.speedRotate;
+      this.object.rotation.y += this.amplitude * this.diffMousePosition.x * (1 - this.dampingFactor);
     } else {
       this.object.rotation.y -= this.amplitude * this.diffMousePosition.x;
     }

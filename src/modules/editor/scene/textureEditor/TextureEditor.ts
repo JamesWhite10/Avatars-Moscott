@@ -1,10 +1,15 @@
 import * as THREE from 'three';
 import { HdrTextureResource, ResourceType } from '../ResourcesManager';
-import { BlendingShader } from '../shaders/index';
+import { BlendingShader, DissolveShader } from '../shaders/index';
 import { SceneViewport } from '../viewports/index';
 import * as ThreeVRM from '@pixiv/three-vrm';
 import PrimitiveCollider from '../../features/PrimitiveCollider';
 import { Avatar, EnvironmentConfigType } from '../../../../types/index';
+import blendingFragment from '../shaders/BlendingShader/BlendingFragment.glsl';
+import blendingVertex from '../shaders/BlendingShader/BlendingVertex.glsl';
+import dissolveFragment from '../shaders/DissolveShader/DissolveFragment.glsl';
+import dissolveVertex from '../shaders/DissolveShader/DissolveVertex.glsl';
+import { NOISE } from '../../constans/TextureUrl';
 
 export interface MainViewOptions {
   sceneViewport: SceneViewport.SceneViewport;
@@ -15,11 +20,14 @@ export class TextureEditor {
 
   public blendingShader: BlendingShader.BlendingShader;
 
+  public dissolveShader: DissolveShader.DissolveShader;
+
   private _mixer!: null | THREE.AnimationMixer;
 
   constructor(options: MainViewOptions) {
     this._sceneViewport = options.sceneViewport;
-    this.blendingShader = new BlendingShader.BlendingShader();
+    this.blendingShader = new BlendingShader.BlendingShader({ fragmentShader: blendingFragment, vertexShader: blendingVertex });
+    this.dissolveShader = new DissolveShader.DissolveShader({ vertexShader: dissolveVertex, fragmentShader: dissolveFragment });
   }
 
   public onUpdate(delta: number): void {
@@ -115,10 +123,23 @@ export class TextureEditor {
       model.springBoneManager?.update(1 / 60);
     }, (1 / 60) * 2000);
 
+    const noiseTexture = this._sceneViewport.resourcesManager.getTextureByUrlOrFail(NOISE);
+
     model.scene.traverse((node) => {
       if (node instanceof THREE.Mesh) {
         node.receiveShadow = false;
         node.castShadow = false;
+        if (node.material.uniforms && node.material.uniforms.map) {
+          const map = node.material.uniforms.map.value;
+          const uniform = this.dissolveShader.createUniform({ uDiffuseMap: map, uHeightMap: noiseTexture }, characterName);
+          node.material = this.dissolveShader.createMaterialShader(uniform, characterName);
+        } else {
+          node.material.forEach((material: THREE.ShaderMaterial) => {
+            const map = material.uniforms.map.value;
+            const uniform = this.dissolveShader.createUniform({ uDiffuseMap: map, uHeightMap: noiseTexture }, characterName);
+            node.material = this.dissolveShader.createMaterialShader(uniform, characterName);
+          });
+        }
       }
     });
 
