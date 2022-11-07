@@ -1,6 +1,6 @@
 import { Avatar, EnvironmentConfigType, Style } from '@app/types';
-import MiraImage from '../assets/mira.png';
 import { CyberfoxIcon, Web3devIcon } from '../components/Icons/index';
+import MiraImage from '@app/assets/mira.png';
 import YukiImage from '@app/assets/yuki.png';
 import MiraImageRender from '@app/assets/about/MiraAbout.png';
 import YukiImageRender from '@app/assets/about/YukiAbout.png';

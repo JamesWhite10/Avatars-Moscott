@@ -51,4 +51,7 @@
 
   /** Fonts **/
   --font-space-grotesk: 'Space Grotesk', serif;
+
+  /** Other **/
+  --start-scale: 12;
 }

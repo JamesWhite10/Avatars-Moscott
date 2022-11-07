@@ -41,7 +41,6 @@ const Editor: FC = observer(() => {
         </WorkArea>
         <About />
       </div>
-
     </>
   );
 });
