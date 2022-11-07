@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import EventEmitter from 'eventemitter3';
-import { Maskott } from '../../../types/maskott';
+import { Avatar } from '../../../types';
 import { EmitterInterface } from '../../../stores/EmitterInterface';
 
 export type CharacterStoreEventsType = {
@@ -13,9 +13,9 @@ export default class CharacterStore implements EmitterInterface<CharacterStoreEv
 
   public isPrepared = false;
 
-  public characters: Maskott[] = [];
+  public characters: Avatar[] = [];
 
-  public character?: Maskott = undefined;
+  public character?: Avatar = undefined;
 
   public characterIsChanging = false;
 
@@ -28,7 +28,7 @@ export default class CharacterStore implements EmitterInterface<CharacterStoreEv
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
-  public setUp(characters: Maskott[]): Maskott | void {
+  public setUp(characters: Avatar[]): Avatar | void {
     if (this.isPrepared) return;
     this.characters = characters;
     this.isPrepared = true;
@@ -70,7 +70,7 @@ export default class CharacterStore implements EmitterInterface<CharacterStoreEv
     this.eventEmitter.emit('characterChange', id);
   }
 
-  public setCharacter(maskottName: string): void {
-    this.character = this.characters.find((character) => character.name === maskottName);
+  public setCharacter(avatarName: string): void {
+    this.character = this.characters.find((character) => character.name === avatarName);
   }
 }
