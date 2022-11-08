@@ -40,18 +40,19 @@ export class CharacterAction {
   }
 
   public changeData(characterName: string): void {
+    const { mouseControls, touchControls } = this._sceneViewport;
     const modelObject = this._sceneViewport.threeScene.children.find((node) => node.name.includes(characterName) && node.visible);
     if (modelObject) {
-      const { threeScene, mainView, mouseControls, touchControls } = this._sceneViewport;
+      const { threeScene, mainView } = this._sceneViewport;
       if (threeScene && mainView && this.action) {
         const startObjectName = !this.action.startObject ? '' : this.action.startObject.name;
-
         if (modelObject && startObjectName !== characterName) {
-          mouseControls.setObject(modelObject);
-          touchControls.setObject(modelObject);
-
-          this.changeCharacter(modelObject);
+          if (this.action.startObject) {
+            mouseControls.clearData();
+            touchControls.clearData();
+          }
           this.changeTexture();
+          this.changeCharacter(modelObject);
         }
       }
     }
@@ -72,7 +73,7 @@ export class CharacterAction {
   }
 
   public changeCharacter(modelObject: THREE.Object3D): void {
-    const { mainView } = this._sceneViewport;
+    const { mainView, mouseControls, touchControls } = this._sceneViewport;
     if (!this.action) return;
     if (mainView) {
       const dissolveTo = { dissolve: 1.0 };
@@ -110,6 +111,10 @@ export class CharacterAction {
         .onUpdate(({ appearance }) => {
           mainView.dissolveShader.uniforms.forEach((value) => {
             value.uniform.uTime.value = appearance;
+            if (this.action && appearance === 0) {
+              if (!mouseControls.object) mouseControls.setObject(this.action.startObject);
+              if (!touchControls.object) touchControls.setObject(this.action.startObject);
+            }
           });
         });
 

@@ -26,7 +26,7 @@ export class CameraControls {
 
   public rendererHeight: number;
 
-  public object?: THREE.Object3D = undefined;
+  public object: THREE.Object3D | null = null;
 
   public threeCamera: THREE.PerspectiveCamera;
 
@@ -50,7 +50,7 @@ export class CameraControls {
     this.rotateObject();
   }
 
-  public setObject(object: THREE.Object3D) {
+  public setObject(object: THREE.Object3D | null) {
     this.object = object;
   }
 
@@ -72,5 +72,10 @@ export class CameraControls {
     if (this.object) {
       this.object.rotation.y += (this.targetRotationX - this.object.rotation.y) * 0.01;
     }
+  }
+
+  public clearData(): void {
+    this.targetRotationX = 0;
+    this.setObject(null);
   }
 }

@@ -28,10 +28,10 @@ export class TouchControls extends CameraControls {
       this.setPosition(event);
       this.setPrevPosition();
 
-      if (this.isMovingCamera) {
+      if (this.isMovingCamera && this.object) {
         const mouseX = event.targetTouches[0].clientX - window.innerWidth / 2;
 
-        this.targetRotationX = this.targetRotationOnMouseDownX + (mouseX - this.clientXClickDown) * 0.05;
+        this.targetRotationX = this.targetRotationOnMouseDownX + (mouseX - this.clientXClickDown) * -0.01;
       }
     }
   }

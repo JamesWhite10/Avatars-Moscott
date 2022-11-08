@@ -75,11 +75,10 @@ export class StylesAction {
                 this.action.startObject = modelObject;
                 this.action.startObject.visible = true;
                 this.action.startObject.position.set(x, y, z);
+                this._sceneViewport.mouseControls.setObject(modelObject);
+                this._sceneViewport.touchControls.setObject(modelObject);
               }
             }
-
-            this._sceneViewport.mouseControls.setObject(modelObject);
-            this._sceneViewport.touchControls.setObject(modelObject);
           });
 
         const appearanceFrom = { appearance: 1.0 };
