@@ -37,4 +37,8 @@ export class DissolveShader extends Shader {
 
     return uniformOptions.uniform;
   }
+
+  public getUniformByName(value: string): ShadersType<Uniform> | undefined {
+    return this.uniforms.find((item) => item.name === value);
+  }
 }

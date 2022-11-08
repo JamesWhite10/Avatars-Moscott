@@ -23,12 +23,12 @@ export class Shader {
     return materialOptions?.material;
   }
 
-  public createMaterialShader(uniforms: any, name: string): THREE.ShaderMaterial {
+  public createMaterialShader(uniforms: any, name: string, transparent = true): THREE.ShaderMaterial {
     const shaderMaterial = new THREE.ShaderMaterial({
       uniforms,
       vertexShader: this.vertexShader,
       fragmentShader: this.fragmentShader,
-      transparent: true,
+      transparent,
     });
 
     this.materials.push({ material: shaderMaterial, name });
