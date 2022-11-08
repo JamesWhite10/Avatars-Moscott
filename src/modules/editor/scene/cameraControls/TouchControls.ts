@@ -9,25 +9,35 @@ export class TouchControls extends CameraControls {
   public onTouchStart(event: TouchEvent) {
     if (event.touches.length === 1) {
       this.speedRotate = 0.1;
+      this.isMovingCamera = false;
       this.handleTouchStartRotate(event);
+
+      this.clientXClickDown = event.targetTouches[0].clientX - (window.innerWidth / 2);
+
+      this.targetRotationOnMouseDownX = this.targetRotationX;
     }
   }
 
   public onTouchEnded(event: TouchEvent) {
-    this.isMoving = false;
+    this.isMovingCamera = true;
     this.prevMousePosition.copy(this.getMousePosition(event));
   }
 
   public onTouchMove(event: TouchEvent) {
     if (event.touches.length === 1) {
-      this.isMoving = true;
       this.setPosition(event);
       this.setPrevPosition();
+
+      if (this.isMovingCamera) {
+        const mouseX = event.targetTouches[0].clientX - window.innerWidth / 2;
+
+        this.targetRotationX = this.targetRotationOnMouseDownX + (mouseX - this.clientXClickDown) * 0.05;
+      }
     }
   }
 
   public setPosition(event: TouchEvent) {
-    if (!this.isMoving) return;
+    if (!this.isMovingCamera) return;
     this.mousePosition.copy(this.getMousePosition(event));
     this.diffMousePosition = this.prevMousePosition.clone().sub(this.mousePosition);
     this.velocityMousePosition = this.velocityMousePosition.add(this.diffMousePosition.clone().multiplyScalar(1));
@@ -35,7 +45,7 @@ export class TouchControls extends CameraControls {
 
   public handleTouchStartRotate(event: TouchEvent) {
     this.prevMousePosition.copy(this.getMousePosition(event));
-    this.isMoving = true;
+    this.isMovingCamera = true;
   }
 
   protected getMousePosition(event: TouchEvent): THREE.Vector2 {

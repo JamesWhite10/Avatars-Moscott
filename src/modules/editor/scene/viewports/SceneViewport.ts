@@ -76,6 +76,8 @@ export class SceneViewport {
       this.characterAction?.onUpdate();
       const delta = this.clock.getDelta();
       this.mainView?.onUpdate(delta);
+      this.mouseControls.onUpdate();
+      this.touchControls.onUpdate();
       this.render();
     });
   }
@@ -192,17 +194,17 @@ export class SceneViewport {
   }
 
   public clickHandler(event: MouseEvent): void {
-    this.characterAction?.characterClickHandler(event);
+    if (this.characterAction) this.characterAction.characterClickHandler(event);
   }
 
   public moveMouseHandler(event: MouseEvent): void {
     if (this.characterAction) this.characterAction.moveHead(event);
     this.mouseControls.onMouseMove(event);
-    this.mouseControls.update();
+    this.mouseControls.updateCameraParallax();
   }
 
   public mouseUpHandler(): void {
-    this.mouseControls.onMouseStart();
+    this.mouseControls.onMouseUp();
   }
 
   public mouseDownHandler(event: MouseEvent): void {
@@ -218,7 +220,7 @@ export class SceneViewport {
     event.preventDefault();
     event.stopPropagation();
     this.touchControls.onTouchMove(event);
-    this.touchControls.update();
+    this.touchControls.updateCameraParallax();
   }
 
   public touchStartHandler(event: TouchEvent): void {

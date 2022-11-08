@@ -14,18 +14,27 @@ export class MouseControls extends CameraControls {
     super({ threeCamera, width, height });
   }
 
-  public onMouseStart() {
-    this.isMoving = true;
+  public onMouseUp() {
+    this.isMovingCamera = true;
   }
 
   public onMouseDown(event: MouseEvent) {
-    this.isMoving = false;
+    this.isMovingCamera = false;
     this.prevMousePosition.copy(this.getPosition(event));
+
+    this.clientXClickDown = event.clientX - (window.innerWidth / 2);
+
+    this.targetRotationOnMouseDownX = this.targetRotationX;
   }
 
   public onMouseMove(event: MouseEvent) {
     this.setPosition(event);
     this.setPrevPosition();
+
+    if (!this.isMovingCamera) {
+      const clientX = event.clientX - window.innerWidth / 2;
+      this.targetRotationX = this.targetRotationOnMouseDownX + (clientX - this.clientXClickDown) * 0.02;
+    }
   }
 
   public onMouseWheel(event: WheelEvent): void {
@@ -65,10 +74,5 @@ export class MouseControls extends CameraControls {
     result.y = -(event.clientY / rendererHeight) * 2 + 1;
 
     return result;
-  }
-
-  public update(): void {
-    if (!this.isMoving) this.updateObject();
-    this.updateCameraParallax();
   }
 }
