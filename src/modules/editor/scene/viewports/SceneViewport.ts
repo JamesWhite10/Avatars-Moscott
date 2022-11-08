@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import ResourcesManager from '../ResourcesManager';
 import { TextureEditor } from '../textureEditor/index';
-import { CharacterAction } from '../../features/mainActions/CharacterAction';
 import { MouseControl, TouchControl } from '../cameraControls/index';
 import { Avatar, EnvironmentConfigType, Style } from '../../../../types/index';
 import { NOISE } from '../../constans/TextureUrl';
+import { Actions } from '../../features/mainActions/index';
 
 export type SceneConfig = {
   characters: Avatar[]; // TODO возможно перемапать на свои внутренние типы
@@ -23,7 +23,7 @@ export class SceneViewport {
 
   public mainView: TextureEditor.TextureEditor | null = null;
 
-  public characterAction: CharacterAction | null = null;
+  public actions: Actions.Actions | null = null;
 
   public snapshotThreeCamera: THREE.PerspectiveCamera;
 
@@ -73,8 +73,8 @@ export class SceneViewport {
   public runRenderCycle(): void {
     this.threeRenderer.setAnimationLoop(() => {
       this.syncRendererSize();
-      this.characterAction?.onUpdate();
       const delta = this.clock.getDelta();
+      this.actions?.onUpdate();
       this.mainView?.onUpdate(delta);
       this.mouseControls.onUpdate();
       this.touchControls.onUpdate();
@@ -115,12 +115,12 @@ export class SceneViewport {
         this.initControls();
         this.initLight();
         this.mainView = new TextureEditor.TextureEditor({ sceneViewport: this });
-        this.mainView.addCharacters(config.characters);
+        this.mainView.addCharacters(config);
         this.mainView.applyTexture(config);
         this.mainView.applyVideoTexture(config);
         this.mainView.applyHdrTexture(config.environment);
-        this.characterAction = new CharacterAction({ sceneViewport: this, mainView: this.mainView });
-        this.characterAction.charactersInit(config.characters);
+        this.actions = new Actions.Actions({ sceneViewport: this, mainView: this.mainView });
+        this.actions.init(config.styles);
       });
   }
 
@@ -139,20 +139,20 @@ export class SceneViewport {
   }
 
   public loadSceneTexture(progress: (progress: number) => void, config: SceneConfig): Promise<void> {
-    const { styles, environment, characters } = config;
+    const { styles, environment } = config;
 
     this.resourcesManager.addGlb(environment.background);
     this.resourcesManager.addHdrTexture(environment.environment);
     this.resourcesManager.addTexture(NOISE);
 
-    characters.forEach((character) => {
-      this.resourcesManager.addVrm(character.model);
-    });
-
     styles.forEach((style) => {
       Object.values(style.background).forEach((texture) => {
         this.resourcesManager.addTexture(texture);
       });
+    });
+
+    styles.forEach((style) => {
+      this.resourcesManager.addVrm(style.model || '');
     });
 
     return this.resourcesManager.load(progress);
@@ -194,11 +194,11 @@ export class SceneViewport {
   }
 
   public clickHandler(event: MouseEvent): void {
-    if (this.characterAction) this.characterAction.characterClickHandler(event);
+    if (this.actions && this.actions.characterAction) this.actions.characterAction.characterClickHandler(event);
   }
 
   public moveMouseHandler(event: MouseEvent): void {
-    if (this.characterAction) this.characterAction.moveHead(event);
+    if (this.actions && this.actions.characterAction) this.actions.characterAction.moveHead(event);
     this.mouseControls.onMouseMove(event);
     this.mouseControls.updateCameraParallax();
   }
@@ -226,7 +226,7 @@ export class SceneViewport {
   public touchStartHandler(event: TouchEvent): void {
     this.threeRenderer.domElement.focus();
     this.touchControls.onTouchStart(event);
-    if (this.characterAction) this.characterAction.characterTouchHandler(event);
+    if (this.actions && this.actions.characterAction) this.actions.characterAction.characterTouchHandler(event);
   }
 
   public touchEndHandler(event: TouchEvent): void {

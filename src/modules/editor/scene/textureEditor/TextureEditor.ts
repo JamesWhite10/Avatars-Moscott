@@ -4,7 +4,7 @@ import { BlendingShader, DissolveShader } from '../shaders/index';
 import { SceneViewport } from '../viewports/index';
 import * as ThreeVRM from '@pixiv/three-vrm';
 import PrimitiveCollider from '../../features/PrimitiveCollider';
-import { Avatar, EnvironmentConfigType } from '../../../../types/index';
+import { EnvironmentConfigType } from '../../../../types/index';
 import blendingFragment from '../shaders/BlendingShader/BlendingFragment.glsl';
 import blendingVertex from '../shaders/BlendingShader/BlendingVertex.glsl';
 import dissolveFragment from '../shaders/DissolveShader/DissolveFragment.glsl';
@@ -92,7 +92,8 @@ export class TextureEditor {
         if (material) {
           if (node.name === 'plane') {
             material.depthTest = true;
-            material.depthWrite = true;
+
+            material.depthWrite = false;
           }
           node.material = material;
         }
@@ -110,17 +111,18 @@ export class TextureEditor {
     this._sceneViewport.threeScene.add(background.scene);
   }
 
-  public addCharacters(characters: Avatar[]): void {
-    characters.forEach((character) => {
-      const characterModel = this._sceneViewport.resourcesManager.getVrmByUrlOrFail(character.model);
-      this.applyCharacter(characterModel.userData.vrm, character.name);
+  public addCharacters(config: SceneViewport.SceneConfig): void {
+    const { styles } = config;
+    styles.forEach((style) => {
+      const characterModel = this._sceneViewport.resourcesManager.getVrmByUrlOrFail(style.model || '');
+      this.applyCharacterTexture(characterModel.userData.vrm, style.id);
     });
   }
 
-  public applyCharacter = (model: ThreeVRM.VRM, characterName: string): void => {
+  public applyCharacterTexture = (model: ThreeVRM.VRM, textureName: string): void => {
     // todo: при нажатии на руку не работает райкст
     const primitiveCollider = new PrimitiveCollider();
-    primitiveCollider.object.name = characterName;
+    primitiveCollider.object.name = textureName;
     model.springBoneManager?.reset();
 
     primitiveCollider.object.position.set(2.8, 0, -1.5);
@@ -140,13 +142,13 @@ export class TextureEditor {
         node.castShadow = false;
         if (node.material.uniforms && node.material.uniforms.map) {
           const map = node.material.uniforms.map.value;
-          const uniform = this.dissolveShader.createUniform({ uDiffuseMap: map, uHeightMap: noiseTexture }, characterName);
-          node.material = this.dissolveShader.createMaterialShader(uniform, characterName);
+          const uniform = this.dissolveShader.createUniform({ uDiffuseMap: map, uHeightMap: noiseTexture }, textureName);
+          node.material = this.dissolveShader.createMaterialShader(uniform, textureName, false);
         } else {
           node.material.forEach((material: THREE.ShaderMaterial) => {
             const map = material.uniforms.map.value;
-            const uniform = this.dissolveShader.createUniform({ uDiffuseMap: map, uHeightMap: noiseTexture }, characterName);
-            node.material = this.dissolveShader.createMaterialShader(uniform, characterName);
+            const uniform = this.dissolveShader.createUniform({ uDiffuseMap: map, uHeightMap: noiseTexture }, textureName);
+            node.material = this.dissolveShader.createMaterialShader(uniform, textureName, false);
           });
         }
       }
@@ -156,4 +158,9 @@ export class TextureEditor {
 
     this._sceneViewport.threeScene.add(primitiveCollider.object);
   };
+
+  public hideObjects(objectName: string, isVisible: boolean): void {
+    const objectModel = this._sceneViewport.threeScene.getObjectByName(objectName);
+    if (objectModel) objectModel.visible = isVisible;
+  }
 }

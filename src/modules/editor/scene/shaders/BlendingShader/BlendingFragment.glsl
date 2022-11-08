@@ -1,10 +1,14 @@
 uniform sampler2D textureFirst;
 uniform sampler2D textureSecond;
+uniform sampler2D textureThird;
+uniform sampler2D textureFourth;
 
 uniform bool isPortal;
 
 uniform float blendingFirstTexture;
 uniform float blendingSecondTexture;
+uniform float blendingThirdTexture;
+uniform float blendingFourthTexture;
 
 varying vec2 vUv;
 
@@ -13,15 +17,23 @@ void main(void) {
   float a;
   vec4 firstTexture2D = texture2D(textureFirst, vUv);
   vec4 secondTexture2D = texture2D(textureSecond, vUv);
+  vec4 thirdTexture2D = texture2D(textureThird, vUv);
+  vec4 fourthTexture2D = texture2D(textureFourth, vUv);
 
-  if (firstTexture2D.a < .02) discard;
-  if (secondTexture2D.a < .02) discard;
+  if (firstTexture2D.a < .001) discard;
+  if (secondTexture2D.a < .001) discard;
 
   if (isPortal == true) {
     if (firstTexture2D.r < 0.07) discard;
     if (secondTexture2D.r < 0.07) discard;
+    if (thirdTexture2D.r < 0.07) discard;
+    if (fourthTexture2D.r < 0.07) discard;
   }
 
-  rgba = firstTexture2D.rgba * blendingFirstTexture + secondTexture2D.rgba * blendingSecondTexture;
+  rgba =
+  firstTexture2D.rgba * blendingFirstTexture +
+  secondTexture2D.rgba * blendingSecondTexture +
+  thirdTexture2D.rgba * blendingThirdTexture +
+  fourthTexture2D.rgba * blendingFourthTexture;
   gl_FragColor = vec4(rgba);
 }

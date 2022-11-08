@@ -7,16 +7,17 @@ import { Shader, ShaderOptions } from '../Shader';
 export interface CreateUniformsOptions {
   textureFirst: THREE.Texture;
   textureSecond: THREE.Texture;
+  textureThird: THREE.Texture;
+  textureFourth: THREE.Texture;
+
   meshName: string;
   isPortal: boolean;
 }
 
+export type UniformValueType = { value: THREE.Texture | number | boolean };
+
 export interface Uniform {
-  isPortal: { value: boolean };
-  blendingFirstTexture: { value: number };
-  blendingSecondTexture: { value: number };
-  textureFirst: { value: THREE.Texture };
-  textureSecond: { value: THREE.Texture };
+  [key: string]: UniformValueType;
 }
 
 export class BlendingShader extends Shader {
@@ -37,8 +38,13 @@ export class BlendingShader extends Shader {
         isPortal: { value: options.isPortal },
         blendingFirstTexture: { value: 0.0 },
         blendingSecondTexture: { value: 0.0 },
+        blendingThirdTexture: { value: 0.0 },
+        blendingFourthTexture: { value: 0.0 },
+
         textureFirst: { value: options.textureFirst },
         textureSecond: { value: options.textureSecond },
+        textureThird: { value: options.textureThird },
+        textureFourth: { value: options.textureFourth },
       },
     };
 
@@ -54,14 +60,16 @@ export class BlendingShader extends Shader {
       return { texture: resourcesManager.getTextureByUrlOrFail(textureUrl), name: style.name };
     });
 
-    if (textures[0] && textures[2]) {
+    if (textures[0] && textures[2] && textures[3] && textures[1]) {
       const uniform = this.createUniform({
         meshName,
         isPortal: false,
         textureFirst: textures[2].texture,
         textureSecond: textures[0].texture,
+        textureThird: textures[1].texture,
+        textureFourth: textures[3].texture,
       });
-      this.createMaterialShader(uniform, meshName);
+      this.createMaterialShader(uniform, meshName, true);
     }
   }
 
@@ -75,14 +83,14 @@ export class BlendingShader extends Shader {
       texture.flipY = false;
     });
 
-    if (textures[0] && textures[2]) {
-      const uniform = this.createUniform({
-        meshName,
-        isPortal: true,
-        textureFirst: textures[0],
-        textureSecond: textures[2],
-      });
-      this.createMaterialShader(uniform, meshName);
-    }
+    const uniform = this.createUniform({
+      meshName,
+      isPortal: true,
+      textureFirst: textures[2],
+      textureSecond: textures[0],
+      textureThird: textures[1],
+      textureFourth: textures[3],
+    });
+    this.createMaterialShader(uniform, meshName);
   }
 }

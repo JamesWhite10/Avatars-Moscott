@@ -30,6 +30,7 @@ const styles: Style[] = [
   {
     id: 'mira_base',
     name: 'Base',
+    model: '/3d/assets/models/miraBase.vrm',
     videoUrl: '/avatars/mira_style1.MP4',
     background: {
       mountains_mesh: '/3d/assets/texture/miraBase/mountains_blue_color.png',
@@ -46,6 +47,7 @@ const styles: Style[] = [
   {
     id: 'mira_retro',
     name: 'Retro',
+    model: '/3d/assets/models/mira_space.vrm',
     videoUrl: '/avatars/mira_style2.MP4',
     background: {
       mountains_mesh: '/3d/assets/texture/retro/mountains_retro_color.png',
@@ -56,13 +58,13 @@ const styles: Style[] = [
       plane: '/3d/assets/texture/retro/transparentsmoke_retro.png',
     },
     videoBackground: {
-      portal_video: '',
+      portal_video: '/3d/assets/texture/video/Bear.mp4',
     },
-    model: '',
   },
   {
     id: 'yuki_base',
     name: 'Base',
+    model: '/3d/assets/models/yukiBase.vrm',
     videoUrl: '/avatars/mira_style1.MP4',
     background: {
       mountains_mesh: '/3d/assets/texture/YukiBase/mountains_orange_color.png',
@@ -79,6 +81,7 @@ const styles: Style[] = [
   {
     id: 'yuki_hacker',
     name: 'Hacker',
+    model: '/3d/assets/models/yuki_hacker.vrm',
     videoUrl: '/avatars/mira_style2.MP4',
     background: {
       mountains_mesh: '/3d/assets/texture/hacker/mountains_hacker_color.png',
@@ -89,7 +92,7 @@ const styles: Style[] = [
       plane: '/3d/assets/texture/hacker/transparentsmoke_hacker.png',
     },
     videoBackground: {
-      portal_video: '',
+      portal_video: '/3d/assets/texture/video/Bear.mp4',
     },
   },
 ];

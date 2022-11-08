@@ -50,8 +50,10 @@ export default class EditorStore {
   public subscribe(): void {
     this.controlsStore.subscribe('soundChange', () => { console.log('sound change'); });
     this.controlsStore.subscribe('takeScreenShot', () => {
-      const characterPreview = this.threeScene?.characterAction?.getSnapshot();
-      if (characterPreview) this.loadSnapshot(characterPreview, 'mascott');
+      if (this.threeScene && this.threeScene.actions) {
+        const characterPreview = this.threeScene.actions.getSnapshot();
+        if (characterPreview) this.loadSnapshot(characterPreview, 'mascott');
+      }
     });
     this.controlsStore.subscribe('styleSelect', () => {
       this.styleStore.setShowStyleSelection(true);
@@ -71,12 +73,12 @@ export default class EditorStore {
     });
 
     this.charactersStore.subscribe('characterChange', (id) => {
-      if (this.threeScene && this.threeScene.characterAction) {
+      if (this.threeScene && this.threeScene.actions && this.threeScene.actions.characterAction) {
         const characterCandidate = this.charactersStore.characters.find((character) => character.id === id);
         this.charactersStore.setCharacterIsChanging(true);
         this.charactersStore.setShowCharacterSelection(false);
         if (characterCandidate) {
-          this.threeScene.characterAction.changeData(characterCandidate.name as string);
+          this.threeScene.actions.characterAction.changeData(characterCandidate?.id as string);
           this.charactersStore.setCharacterIsChanging(false);
           if (characterCandidate) this.soundSystem.playSound(characterCandidate.name.toLowerCase());
         }
@@ -86,8 +88,11 @@ export default class EditorStore {
       this.controlsStore.setActiveAvatarPropertyType();
     });
     this.styleStore.subscribe('styleChange', (id) => {
-      console.log('style change', id);
-      this.soundSystem.playSound(id, true);
+      if (this.threeScene && this.threeScene.actions && this.threeScene.actions.stylesAction) {
+        const texture = this.findTexture(id);
+        this.threeScene.actions.stylesAction.changeStyle(texture || '', id);
+        this.soundSystem.playSound(id, true);
+      }
     });
     this.styleStore.subscribe('styleSelectionClosed', () => this.controlsStore.setActiveAvatarPropertyType());
     let timer: NodeJS.Timer;
@@ -137,18 +142,25 @@ export default class EditorStore {
     this.threeScene.init({ characters, styles, environment }, this.onProgress.bind(this))
       .then(() => {
         this.setIsReady(true);
-        if (this.threeScene && this.threeScene.characterAction) this.sceneSubscribe();
+        if (this.threeScene && this.threeScene.actions?.characterAction) this.sceneSubscribe();
         if (!this.threeScene) return;
         this.sceneSubscribe();
+        this.styleStore.setStyles(styles);
         const character = this.charactersStore.setUp(characters);
         if (character && character.name) {
           const style = this.findBaseStyle(character.name);
-          if (this.threeScene.characterAction) {
-            this.threeScene.characterAction.setDefaultData(
-              character.name,
+          const characterStyle = this.styleStore.styles.find((item) => item.id.includes(character.name.toLowerCase()));
+          if (this.threeScene.actions?.characterAction && characterStyle) {
+            this.threeScene.actions.characterAction.setDefaultData(
+              characterStyle.id,
               style.targetTextureName,
               style.currentTextureName,
             );
+            this.styleStore.styles.forEach((item) => {
+              if (item.name !== 'Base') {
+                if (this.threeScene && this.threeScene.mainView) this.threeScene.mainView.hideObjects(item.id, false);
+              }
+            });
           }
         }
       });
@@ -182,18 +194,23 @@ export default class EditorStore {
   }
 
   public sceneSubscribe(): void {
-    this.threeScene?.characterAction?.subscribe('characterChange', (name) => {
-      this.styleStore.setActiveStyleFilter(name);
-      this.charactersStore.setCharacterIsChanging(false);
-      this.charactersStore.setCharacter(name);
-      const { character } = this.charactersStore;
-      if (character) this.aboutStore.setCharacterImage(character.renderImage);
-      this.soundSystem.playSound(name.toLowerCase(), true);
-    });
+    if (this.threeScene && this.threeScene.actions) {
+      this.threeScene.actions.subscribe('characterChange', (name) => {
+        const avatarName = this.charactersStore.characters.find((character) => name.includes(character.id));
+        if (!avatarName) return;
+        this.styleStore.setActiveStyleFilter(avatarName.name);
+        this.charactersStore.setCharacterIsChanging(false);
+        this.charactersStore.setCharacter(avatarName.name);
+        const { character } = this.charactersStore;
+        if (character) this.aboutStore.setCharacterImage(character.renderImage);
 
-    this.threeScene?.characterAction?.subscribe('loadCharacter', () => {
-      this.charactersStore.setCharacterIsChanging(true);
-    });
+        this.soundSystem.playSound(avatarName.name.toLowerCase(), true);
+      });
+
+      this.threeScene.actions.subscribe('loadCharacter', () => {
+        this.charactersStore.setCharacterIsChanging(true);
+      });
+    }
   }
 
   public findBaseStyle(characterName: string): Record<string, string> {
@@ -207,5 +224,12 @@ export default class EditorStore {
       targetTextureName: 'firstTexture',
       currentTextureName: 'secondTexture',
     };
+  }
+
+  public findTexture(styleId: string): string | undefined {
+    if (styleId === 'mira_base') return 'secondTexture';
+    if (styleId === 'mira_retro') return 'thirdTexture';
+    if (styleId === 'yuki_base') return 'firstTexture';
+    if (styleId === 'yuki_hacker') return 'fourthTexture';
   }
 }
