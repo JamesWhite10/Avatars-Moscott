@@ -11,8 +11,8 @@ import FormTextArea from '@app/components/FormTextArea/FormTextArea';
 import AnimatedButton from '@app/components/AnimatedButton/AnimatedButton';
 
 export interface FormValues extends FieldValues {
-  name: string;
-  phone: string;
+  userName: string;
+  phoneNumber: string;
   email: string;
   comments: string;
 }

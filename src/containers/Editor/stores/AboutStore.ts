@@ -1,10 +1,12 @@
 import { makeAutoObservable } from 'mobx';
-import { SendFormResultStatus } from '../containers/About/config';
+import { sendBotMessage } from '../../../api/sender/index';
+
+type SendFormResultStatusType = 'success' | 'errorRetry' | 'errorReload';
 
 export default class AboutStore {
   public characterImage = '';
 
-  public sendFormResultStatus?: string | undefined = undefined as unknown as SendFormResultStatus;
+  public sendFormResultStatus?: SendFormResultStatusType = undefined;
 
   public aboutModalIsOpen: boolean = false;
 
@@ -12,12 +14,10 @@ export default class AboutStore {
 
   public formResultModalIsOpen: boolean = false;
 
+  public formIsSending: boolean = false;
+
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
-  }
-
-  setSendFormResultStatus(sendFormResultStatus: string | undefined) {
-    this.sendFormResultStatus = sendFormResultStatus;
   }
 
   setCharacterImage(image: string = '') {
@@ -32,14 +32,17 @@ export default class AboutStore {
     this.formResultModalIsOpen = enable;
   }
 
-  public async sendForm() {
-    try {
-      this.setSendFormResultStatus('success');
-    } catch (error) {
-      console.log(error);
-      this.setSendFormResultStatus('errorRetry');
-    } finally {
-      this.setSendFormResultStatus('errorReload');
-    }
+  public setFormIsSending(enable: boolean): void {
+    this.formIsSending = enable;
+  }
+
+  public async sendForm(userName: string, phoneNumber: string, email: string, comments: string) {
+    this.setFormIsSending(true);
+    await sendBotMessage.post({ userName, phoneNumber, email, comments }).then(() => {
+      this.sendFormResultStatus = 'success';
+      this.setFormIsSending(false);
+    }).catch(() => {
+      this.sendFormResultStatus = 'errorReload';
+    });
   }
 }
