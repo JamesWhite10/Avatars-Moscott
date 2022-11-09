@@ -12,5 +12,5 @@ void main(void)
   if (color.a < .7) discard;
   if (height < uTime) discard;
   if (height < (uTime + 0.0000001)) color = vec4(0.0, 0.0, 0.0, 1.0);
-  gl_FragColor = vec4(color.rgb, 0.8);
+  gl_FragColor = vec4(color.rgb * 1.3, color.a);
 }
