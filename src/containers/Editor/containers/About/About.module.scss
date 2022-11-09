@@ -213,9 +213,19 @@
   font-weight: 700;
   line-height: 24px;
   cursor: pointer;
+  box-sizing: border-box;
+  overflow: hidden;
+  outline: none;
+  color: #FFFFFF;
+  position: relative;
+  transition: all .2s ease;
 
   &:hover {
     background: rgba(107, 112, 242, 0.8);
+  }
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
   }
   @media (max-width: $mq-mobile-max) {
     position: fixed;
@@ -225,6 +235,15 @@
     left: 10px;
     width: auto;
   }
+}
+
+.submitButton {
+  transition: opacity .3s ease;
+  opacity: 1;
+}
+
+.submitButton_loading {
+  opacity: 0;
 }
 
 .footer {

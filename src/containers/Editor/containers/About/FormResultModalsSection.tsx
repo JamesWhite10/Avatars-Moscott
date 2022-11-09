@@ -24,7 +24,7 @@ const FormResultModalsSection: FC<FormResultProps> = observer((props) => {
   const content = useMemo(() => {
     const isErrorStatus = sendFormResultStatus !== 'success';
     if (isErrorStatus) {
-      return sendFormResultStatus === 'error' ? <ErrorContent onHeaderClick={popupCloseHandler} />
+      return sendFormResultStatus === 'errorReload' ? <ErrorContent onHeaderClick={popupCloseHandler} />
         : <RetryContent
             onHeaderClick={popupCloseHandler}
             onButtonClick={popupCloseHandler}

@@ -8,23 +8,19 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { schema } from '@app/containers/Editor/containers/About/config';
 import { useAboutStore } from '@app/containers/Editor/hooks/useEditorStore';
 import { observer } from 'mobx-react';
+import { SendBotMessageRequest } from '@app/api/sender/sendBotMessage';
+import Spin from '@app/components/Spin/Spin';
+import cn from 'classnames';
 
-export interface UserData {
-  name: string;
-  phone: string;
-  email: string;
-  comments: string;
-}
-
-const InitialData: UserData = {
-  name: '',
-  phone: '',
+const InitialData: SendBotMessageRequest = {
+  userName: '',
+  phoneNumber: '',
   email: '',
   comments: '',
 };
 
 const Form: FC = observer(() => {
-  const { setFormResultModalIsOpen } = useAboutStore();
+  const { setFormResultModalIsOpen, sendForm, formIsSending } = useAboutStore();
   const {
     control,
     handleSubmit,
@@ -36,8 +32,9 @@ const Form: FC = observer(() => {
     defaultValues: InitialData,
   });
 
-  const submit = async (data: UserData) => {
-    console.log(data);
+  const submit = async (data: SendBotMessageRequest) => {
+    const { userName, phoneNumber, email, comments } = data;
+    await sendForm(userName, phoneNumber, email, comments);
     setFormResultModalIsOpen(true);
   };
 
@@ -54,7 +51,7 @@ const Form: FC = observer(() => {
     >
       <FormInput
         control={control}
-        name="name"
+        name="userName"
         label="Name*"
         placeholder="Name*"
         showValidationMessages
@@ -62,7 +59,7 @@ const Form: FC = observer(() => {
       />
       <FormInput
         control={control}
-        name="phone"
+        name="phoneNumber"
         label="Phone number"
         placeholder="Phone number"
         showValidationMessages
@@ -87,8 +84,18 @@ const Form: FC = observer(() => {
       <button
         className={classNames.buttonMessage}
         type="submit"
+        disabled={formIsSending}
       >
-        Send message
+        <Spin
+          isActive={formIsSending}
+          color="#FFFFFF"
+          borderRadius={12}
+          overlayBackgroundColor="initial"
+          position="stretch"
+        />
+        <div className={cn(classNames.submitButton, { [classNames.submitButton_loading]: formIsSending })}>
+          Send message
+        </div>
       </button>
     </form>
   );
