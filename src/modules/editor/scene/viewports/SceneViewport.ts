@@ -177,17 +177,11 @@ export class SceneViewport {
   }
 
   public initLight(): void {
-    const color = 0xFFFFFF;
-    const intensity = 1;
-    const light = new THREE.SpotLight(color, intensity);
-    light.position.set(1.1, 2.8, 1.7);
-    light.target.position.set(1, 0, 0);
-    light.penumbra = 0.6;
-
-    light.shadow.camera.near = 0.5;
-    light.shadow.camera.far = 5000;
-
-    light.castShadow = true;
+    const color = 0xBFBEBD;
+    const intensity = 1.0;
+    const light = new THREE.DirectionalLight(color, intensity);
+    light.position.set(0, 7, 3);
+    light.target.position.set(0, 0, 0);
 
     this.threeScene.add(light);
     light.target.updateMatrixWorld();

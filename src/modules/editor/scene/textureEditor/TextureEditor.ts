@@ -143,13 +143,15 @@ export class TextureEditor {
         if (node.material.uniforms && node.material.uniforms.map) {
           const map = node.material.uniforms.map.value;
           const uniform = this.dissolveShader.createUniform({ uDiffuseMap: map, uHeightMap: noiseTexture }, textureName);
-          node.material = this.dissolveShader.createMaterialShader(uniform, textureName, false);
+          node.material = this.dissolveShader.createMaterialShader(uniform, textureName, false, true);
         } else {
+          const materials: THREE.ShaderMaterial[] = [];
           node.material.forEach((material: THREE.ShaderMaterial) => {
             const map = material.uniforms.map.value;
             const uniform = this.dissolveShader.createUniform({ uDiffuseMap: map, uHeightMap: noiseTexture }, textureName);
-            node.material = this.dissolveShader.createMaterialShader(uniform, textureName, false);
+            materials.push(this.dissolveShader.createMaterialShader(uniform, textureName, false, true));
           });
+          node.material = materials;
         }
       }
     });
