@@ -194,7 +194,11 @@ export class SceneViewport {
   }
 
   public clickHandler(event: MouseEvent): void {
-    if (this.actions && this.actions.characterAction) this.actions.characterAction.characterClickHandler(event);
+    if (this.actions && this.actions.characterAction) {
+      if (this.mouseControls.object && this.touchControls.object) {
+        this.actions.characterAction.characterClickHandler(event);
+      }
+    }
   }
 
   public moveMouseHandler(event: MouseEvent): void {
@@ -208,8 +212,10 @@ export class SceneViewport {
   }
 
   public mouseDownHandler(event: MouseEvent): void {
-    this.mouseControls.onMouseDown(event);
-    this.mouseControls.onStartRotate(event);
+    if (this.mouseControls.object && this.touchControls.object) {
+      this.mouseControls.onMouseDown(event);
+      this.mouseControls.onStartRotate(event);
+    }
   }
 
   public mouseWheelHandler(event: WheelEvent): void {
@@ -226,7 +232,11 @@ export class SceneViewport {
   public touchStartHandler(event: TouchEvent): void {
     this.threeRenderer.domElement.focus();
     this.touchControls.onTouchStart(event);
-    if (this.actions && this.actions.characterAction) this.actions.characterAction.characterTouchHandler(event);
+    if (this.actions && this.actions.characterAction) {
+      if (this.mouseControls.object && this.touchControls.object) {
+        this.actions.characterAction.characterTouchHandler(event);
+      }
+    }
   }
 
   public touchEndHandler(event: TouchEvent): void {
