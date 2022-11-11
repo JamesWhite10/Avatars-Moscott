@@ -41,7 +41,7 @@ const styles: Style[] = [
       plane: '/3d/assets/texture/miraBase/transparentsmoke_blue.png',
     },
     videoBackground: {
-      portal_video: '/3d/assets/texture/video/Bear.mp4',
+      portal_video: '/3d/assets/texture/video/mira_base_portal.mp4',
     },
   },
   {
@@ -58,7 +58,7 @@ const styles: Style[] = [
       plane: '/3d/assets/texture/retro/transparentsmoke_retro.png',
     },
     videoBackground: {
-      portal_video: '/3d/assets/texture/video/Bear.mp4',
+      portal_video: '/3d/assets/texture/video/mira_retro_portal.mp4',
     },
   },
   {
@@ -75,7 +75,7 @@ const styles: Style[] = [
       plane: '/3d/assets/texture/YukiBase/transparentsmoke_orange.png',
     },
     videoBackground: {
-      portal_video: '/3d/assets/texture/video/Bear.mp4',
+      portal_video: '/3d/assets/texture/video/yuki_base_portal.mp4',
     },
   },
   {
@@ -92,7 +92,7 @@ const styles: Style[] = [
       plane: '/3d/assets/texture/hacker/transparentsmoke_hacker.png',
     },
     videoBackground: {
-      portal_video: '/3d/assets/texture/video/Bear.mp4',
+      portal_video: '/3d/assets/texture/video/yuki_hacker_portal.mp4',
     },
   },
 ];
