@@ -3,8 +3,6 @@ uniform sampler2D textureSecond;
 uniform sampler2D textureThird;
 uniform sampler2D textureFourth;
 
-uniform bool isPortal;
-
 uniform float blendingFirstTexture;
 uniform float blendingSecondTexture;
 uniform float blendingThirdTexture;
@@ -22,13 +20,6 @@ void main(void) {
 
   if (firstTexture2D.a < .001) discard;
   if (secondTexture2D.a < .001) discard;
-
-  if (isPortal == true) {
-    if (firstTexture2D.r < 0.07) discard;
-    if (secondTexture2D.r < 0.07) discard;
-    if (thirdTexture2D.r < 0.07) discard;
-    if (fourthTexture2D.r < 0.07) discard;
-  }
 
   rgba =
   firstTexture2D.rgba * blendingFirstTexture +

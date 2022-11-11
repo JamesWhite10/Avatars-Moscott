@@ -11,7 +11,6 @@ export interface CreateUniformsOptions {
   textureFourth: THREE.Texture;
 
   meshName: string;
-  isPortal: boolean;
 }
 
 export type UniformValueType = { value: THREE.Texture | number | boolean };
@@ -35,7 +34,6 @@ export class BlendingShader extends Shader {
     const uniformOptions: ShadersType<Uniform> = {
       name: options.meshName,
       uniform: {
-        isPortal: { value: options.isPortal },
         blendingFirstTexture: { value: 0.0 },
         blendingSecondTexture: { value: 0.0 },
         blendingThirdTexture: { value: 0.0 },
@@ -63,7 +61,6 @@ export class BlendingShader extends Shader {
     if (textures[0] && textures[2] && textures[3] && textures[1]) {
       const uniform = this.createUniform({
         meshName,
-        isPortal: false,
         textureFirst: textures[2].texture,
         textureSecond: textures[0].texture,
         textureThird: textures[1].texture,
@@ -85,7 +82,6 @@ export class BlendingShader extends Shader {
 
     const uniform = this.createUniform({
       meshName,
-      isPortal: true,
       textureFirst: textures[2],
       textureSecond: textures[0],
       textureThird: textures[1],
