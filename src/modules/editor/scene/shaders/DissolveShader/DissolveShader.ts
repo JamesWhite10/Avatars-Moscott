@@ -26,11 +26,14 @@ export class DissolveShader extends Shader {
 
   public createUniform(options: CreateUniformsOptions, uniformName: string): Uniform {
     const uniformOptions: ShadersType<Uniform> = {
-      uniform: {
-        uTime: { value: 0.0 },
-        uDiffuseMap: { value: options.uDiffuseMap },
-        uHeightMap: { value: options.uHeightMap },
-      },
+      uniform: THREE.UniformsUtils.merge([
+        THREE.UniformsLib.lights,
+        {
+          uTime: { value: 0.0 },
+          uDiffuseMap: { value: options.uDiffuseMap },
+          uHeightMap: { value: options.uHeightMap },
+        },
+      ]),
     };
 
     this.uniforms.push({ uniform: uniformOptions.uniform, name: uniformName });
