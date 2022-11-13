@@ -11,14 +11,26 @@ deploy.dev:
     INT_PORT: 3000
     DOCKERFILE: .docker/Dockerfile
     DOCKER_PROJECT_DIR: "."
+  before_script:
+    - |
+      {
+        echo "@avs:registry=${CI_API_V4_URL}/packages/npm/"
+        echo "${CI_API_V4_URL#https?}/packages/npm/:_authToken=${CI_JOB_TOKEN}"
+        echo "${CI_API_V4_URL#https?}/projects/339/packages/npm/:_authToken=${CI_JOB_TOKEN}"
+      } | tee -a .npmrc
+    - |
+      {
+        echo "\"@avs:registry\" \"${CI_API_V4_URL}/packages/npm/\""
+        echo "always-auth true"        
+      } | tee -a .yarnrc
   script:
     - echo "${ENV_FILE}" | envsubst > .env
-    - echo $CI_SERVER_HOST
-    - echo $CI_JOB_TOKEN
     - docker build --build-arg CI_SERVER_HOST=$CI_SERVER_HOST --build-arg CI_JOB_TOKEN=$CI_JOB_TOKEN -t "${PROJECT_NAME?}" -f "${DOCKERFILE?}" "${DOCKER_PROJECT_DIR?}"    
     - docker stop "${PROJECT_NAME?}" || true
     - docker rm "${PROJECT_NAME?}" || true
     - docker run ${DOCKER_OPTS} -d -p ${EXT_PORT?}:${INT_PORT?} --name "${PROJECT_NAME}" "${PROJECT_NAME}"
+  after_script:
+    - rm .yarnrc .npmrc
   tags:
     - web3dev-dev
   only:
