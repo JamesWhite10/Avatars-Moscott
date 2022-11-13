@@ -36,4 +36,5 @@ export type Style = {
   name: string;
   model?: string;
   videoUrl: string;
+  animations: IdleAnimationType[];
 };

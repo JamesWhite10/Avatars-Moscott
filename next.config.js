@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
+
+const withTM = require('next-transpile-modules')(['@avs/vrm-avatar']);
+
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  assetPrefix: '/',
   webpack: (config) => {
     config.module.rules.push({
       test: /\.(glsl)$/,
@@ -13,4 +17,4 @@ const nextConfig = {
   }
 }
 
-module.exports = nextConfig
+module.exports = withTM(nextConfig);

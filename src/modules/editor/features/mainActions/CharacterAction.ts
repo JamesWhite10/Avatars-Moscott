@@ -9,16 +9,16 @@ import { SceneViewport } from '../../scene/viewports/index';
 export class CharacterAction {
   public _sceneViewport: SceneViewport.SceneViewport;
 
-  public _mainView: TextureEditor;
+  private _textureEditor: TextureEditor;
 
-  public action: Actions | null = null;
+  public _actions: Actions | null = null;
 
   public characters: CharacterOptions[] = [];
 
   constructor(options: ActionOptions) {
     this._sceneViewport = options.sceneViewport;
-    this._mainView = options.mainView;
-    this.action = options.action || null;
+    this._textureEditor = options.textureEditor;
+    this._actions = options.actions || null;
   }
 
   public charactersInit(styles: Style[]): void {
@@ -34,8 +34,8 @@ export class CharacterAction {
   }
 
   public setDefaultData(characterName: string, targetTextureName: string, currentTextureName: string): void {
-    this._mainView.blendingShader.currentTextureName = currentTextureName;
-    this._mainView.blendingShader.additionalTextureName = targetTextureName;
+    this._textureEditor.blendingShader.currentTextureName = currentTextureName;
+    this._textureEditor.blendingShader.additionalTextureName = targetTextureName;
     this.changeData(characterName);
   }
 
@@ -43,63 +43,66 @@ export class CharacterAction {
     const { mouseControls, touchControls } = this._sceneViewport;
     const modelObject = this._sceneViewport.threeScene.children.find((node) => node.name.includes(characterName) && node.visible);
     if (modelObject) {
-      const { threeScene, mainView } = this._sceneViewport;
-      if (threeScene && mainView && this.action) {
-        const startObjectName = !this.action.startObject ? '' : this.action.startObject.name;
+      const { threeScene } = this._sceneViewport;
+      if (threeScene && this._actions) {
+        const startObjectName = !this._actions.startObject ? '' : this._actions.startObject.name;
         if (modelObject && startObjectName !== characterName) {
-          if (this.action.startObject) {
+          if (this._actions.startObject) {
             mouseControls.clearData();
             touchControls.clearData();
           }
-          this.changeTexture();
-          this.changeCharacter(modelObject);
+
+          mouseControls.setObject(modelObject);
+          touchControls.setObject(modelObject);
+
+          this._actions.eventEmitter.emit('loadNewCharacter', characterName, modelObject);
         }
       }
     }
   }
 
   public moveHead(event: MouseEvent): void {
-    if (this.action) {
-      this.action.startObject?.traverse((node) => {
-        if (node.name === 'Head') {
-          node.rotation.set(
-            (-(event.clientY / window.innerHeight) * 2 + 1) * 0.2,
-            ((event.clientX / window.innerWidth) * 2 - 1) * 0.4,
+    if (this._actions) {
+      this._textureEditor.vrmAvatars.forEach((vrmAvatar) => {
+        if (vrmAvatar.vrm.lookAt) {
+          vrmAvatar.vrm.lookAt.lookAt(new THREE.Vector3(
+            (event.clientX / window.innerWidth) * 2,
+            -(event.clientY / window.innerHeight),
             0,
-          );
+          ));
         }
       });
     }
   }
 
   public changeCharacter(modelObject: THREE.Object3D): void {
-    const { mainView, mouseControls, touchControls } = this._sceneViewport;
-    if (!this.action) return;
-    if (mainView) {
+    const { mouseControls, touchControls } = this._sceneViewport;
+    if (!this._actions) return;
+    if (this._textureEditor) {
       const dissolveTo = { dissolve: 1.0 };
       const dissolveFrom = { dissolve: 0.0 };
 
       const dissolveTween = new TWEEN.Tween(dissolveFrom)
         .to(dissolveTo, 900)
         .onUpdate(({ dissolve }) => {
-          mainView.dissolveShader.uniforms.forEach((value) => {
+          this._textureEditor.dissolveShader.uniforms.forEach((value) => {
             value.uniform.uTime.value = dissolve;
           });
         });
 
       const moveTween = new TWEEN.Tween(modelObject.position)
-        .to(this.action.startPosition, 0)
+        .to(this._actions.startPosition, 0)
         .onUpdate(({ x, z }) => {
-          if (this.action && this.action.startObject) {
-            this.action.startObject.rotation.y = 0;
-            this.action.startObject.position.set(2.8, 0.05, -1.5);
+          if (this._actions && this._actions.startObject) {
+            this._actions.startObject.rotation.y = 0;
+            this._actions.startObject.position.set(2.8, 0.2, -1.5);
           }
 
-          if (this.action) {
-            this.action.startObject = modelObject;
-            modelObject.position.set(x, this.action.startPosition.y, z);
+          if (this._actions) {
+            this._actions.startObject = modelObject;
+            modelObject.position.set(x, this._actions.startPosition.y, z);
 
-            this.action.eventEmitter.emit('characterChange', modelObject.name);
+            this._actions.eventEmitter.emit('characterChange', modelObject.name);
           }
         });
 
@@ -109,11 +112,11 @@ export class CharacterAction {
       const appearanceTween = new TWEEN.Tween(appearanceFrom)
         .to(appearanceTo, 900)
         .onUpdate(({ appearance }) => {
-          mainView.dissolveShader.uniforms.forEach((value) => {
+          this._textureEditor.dissolveShader.uniforms.forEach((value) => {
             value.uniform.uTime.value = appearance;
-            if (this.action && appearance === 0) {
-              if (!mouseControls.object) mouseControls.setObject(this.action.startObject);
-              if (!touchControls.object) touchControls.setObject(this.action.startObject);
+            if (this._actions && appearance === 0) {
+              if (!mouseControls.object) mouseControls.setObject(this._actions.startObject);
+              if (!touchControls.object) touchControls.setObject(this._actions.startObject);
             }
           });
         });
@@ -124,37 +127,36 @@ export class CharacterAction {
   }
 
   public changeTexture(): void {
-    const { mainView } = this._sceneViewport;
-    if (mainView) {
+    if (this._textureEditor) {
       const currentBlending = { from: 1.0, to: 0.0 };
       const additionalBlending = { from: 0.0, to: 1.0 };
 
-      const { currentTextureName } = mainView.blendingShader;
+      const { currentTextureName } = this._textureEditor.blendingShader;
 
-      const { additionalTextureName } = mainView.blendingShader;
+      const { additionalTextureName } = this._textureEditor.blendingShader;
 
       const additionalBlendingName = textures[additionalTextureName];
       const currentBlendingName = textures[currentTextureName];
 
-      new TWEEN.Tween({ current: currentBlending.from, add: additionalBlending.from })
-        .to({ current: currentBlending.to, add: additionalBlending.to }, 2000)
-        .onUpdate(({ add, current }) => {
-          this._mainView.blendingShader.uniforms.forEach((value) => {
+      new TWEEN.Tween({ current: currentBlending.from, additional: additionalBlending.from })
+        .to({ current: currentBlending.to, additional: additionalBlending.to }, 2000)
+        .onUpdate(({ additional, current }) => {
+          this._textureEditor.blendingShader.uniforms.forEach((value) => {
             value.uniform[currentBlendingName].value = current;
-            value.uniform[additionalBlendingName].value = add;
+            value.uniform[additionalBlendingName].value = additional;
           });
         })
         .start();
 
-      mainView.blendingShader.currentTextureName = additionalTextureName;
-      mainView.blendingShader.additionalTextureName = currentTextureName;
+      this._textureEditor.blendingShader.currentTextureName = additionalTextureName;
+      this._textureEditor.blendingShader.additionalTextureName = currentTextureName;
     }
   }
 
   public characterClickHandler(event: MouseEvent): void {
     this.characters.forEach((character) => {
-      if (this.action) {
-        const intersects = this.action.raycastSystem.mouseRaycast(event, character.name);
+      if (this._actions && !this._actions.isLoadingCharacter) {
+        const intersects = this._actions.raycastSystem.mouseRaycast(event, character.name);
         if (intersects.length !== 0) this.changeData(intersects[0].object.parent?.name || '');
       }
     });
@@ -162,8 +164,8 @@ export class CharacterAction {
 
   public characterTouchHandler(event: TouchEvent): void {
     this.characters.forEach((character) => {
-      if (this.action) {
-        const intersects = this.action.raycastSystem.touchRaycast(event, character.name);
+      if (this._actions && !this._actions.isLoadingCharacter) {
+        const intersects = this._actions.raycastSystem.touchRaycast(event, character.name);
         if (intersects.length !== 0) this.changeData(intersects[0].object.parent?.name || '');
       }
     });

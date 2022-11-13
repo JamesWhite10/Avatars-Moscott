@@ -10,6 +10,7 @@ import blendingVertex from '../shaders/BlendingShader/BlendingVertex.glsl';
 import dissolveFragment from '../shaders/DissolveShader/DissolveFragment.glsl';
 import dissolveVertex from '../shaders/DissolveShader/DissolveVertex.glsl';
 import { NOISE } from '../../constans/TextureUrl';
+import { VrmAvatar } from '@avs/vrm-avatar';
 
 export interface MainViewOptions {
   sceneViewport: SceneViewport.SceneViewport;
@@ -23,6 +24,8 @@ export class TextureEditor {
   public dissolveShader: DissolveShader.DissolveShader;
 
   private _mixers: THREE.AnimationMixer[] = [];
+
+  public vrmAvatars: VrmAvatar[] = [];
 
   constructor(options: MainViewOptions) {
     this._sceneViewport = options.sceneViewport;
@@ -125,14 +128,7 @@ export class TextureEditor {
     primitiveCollider.object.name = textureName;
     model.springBoneManager?.reset();
 
-    primitiveCollider.object.position.set(2.8, 0, -1.5);
-
-    ThreeVRM.VRMUtils.removeUnnecessaryVertices(model.scene);
-    ThreeVRM.VRMUtils.removeUnnecessaryJoints(model.scene);
-
-    setInterval(() => {
-      model.springBoneManager?.update(1 / 60);
-    }, (1 / 60) * 2000);
+    primitiveCollider.object.position.set(2.8, 0.2, -1.5);
 
     const noiseTexture = this._sceneViewport.resourcesManager.getTextureByUrlOrFail(NOISE);
 
@@ -153,6 +149,8 @@ export class TextureEditor {
         }
       }
     });
+    model.scene.name = textureName;
+    this.vrmAvatars.push(new VrmAvatar(model));
 
     primitiveCollider.object.add(model.scene);
 

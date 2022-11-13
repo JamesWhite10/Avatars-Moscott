@@ -11,6 +11,10 @@ const avatars: Avatar[] = [
     image: MiraImage.src,
     renderImage: MiraImageRender.src,
     model: '/3d/assets/models/miraBase.vrm',
+    animations: [
+      { id: 'forgivenessMira', idle: true, name: 'forgiveness' },
+      { id: 'inActiveMira', idle: true, name: 'inActive' },
+    ],
     name: 'Mira',
     description: 'Cyberfox',
     icon: <CyberfoxIcon />,
@@ -19,6 +23,10 @@ const avatars: Avatar[] = [
     id: 'yuki',
     image: YukiImage.src,
     renderImage: YukiImageRender.src,
+    animations: [
+      { id: 'forgivenessYuki', idle: true, name: 'forgiveness' },
+      { id: 'inActiveYuki', idle: true, name: 'inActive' },
+    ],
     model: '/3d/assets/models/yukiBase.vrm',
     name: 'Yuki',
     description: 'web3dev',
@@ -32,6 +40,11 @@ const styles: Style[] = [
     name: 'Base',
     model: '/3d/assets/models/miraBase.vrm',
     videoUrl: '/avatars/mira_style1.MP4',
+    animations: [
+      { id: 'activeMiraStart', idle: true, name: 'activeStart' },
+      { id: 'activeMiraBack', idle: true, name: 'activeBack' },
+      { id: 'lookAroundMiraBase', idle: true, name: 'switchCharacter' },
+    ],
     background: {
       mountains_mesh: '/3d/assets/texture/miraBase/mountains_blue_color.png',
       planet_mesh: '/3d/assets/texture/miraBase/planet_blue_color.png',
@@ -47,6 +60,11 @@ const styles: Style[] = [
   {
     id: 'mira_retro',
     name: 'Retro',
+    animations: [
+      { id: 'activeMiraStart', idle: true, name: 'activeStart' },
+      { id: 'activeMiraBack', idle: true, name: 'activeBack' },
+      { id: 'lookAroundMiraRetro', idle: true, name: 'switchCharacter' },
+    ],
     model: '/3d/assets/models/mira_space.vrm',
     videoUrl: '/avatars/mira_style2.MP4',
     background: {
@@ -64,6 +82,11 @@ const styles: Style[] = [
   {
     id: 'yuki_base',
     name: 'Base',
+    animations: [
+      { id: 'activeYukiStart', idle: true, name: 'activeStart' },
+      { id: 'activeYukiBack', idle: true, name: 'activeBack' },
+      { id: 'lookAroundYukiBase', idle: true, name: 'switchCharacter' },
+    ],
     model: '/3d/assets/models/yukiBase.vrm',
     videoUrl: '/avatars/mira_style1.MP4',
     background: {
@@ -81,6 +104,11 @@ const styles: Style[] = [
   {
     id: 'yuki_hacker',
     name: 'Hacker',
+    animations: [
+      { id: 'activeYukiStart', idle: true, name: 'activeStart' },
+      { id: 'activeYukiBack', idle: true, name: 'activeBack' },
+      { id: 'lookAroundYukiHacker', idle: true, name: 'switchCharacter' },
+    ],
     model: '/3d/assets/models/yuki_hacker.vrm',
     videoUrl: '/avatars/mira_style2.MP4',
     background: {
