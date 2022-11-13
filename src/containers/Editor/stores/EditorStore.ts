@@ -158,7 +158,7 @@ export default class EditorStore {
             );
             this.styleStore.styles.forEach((item) => {
               if (item.name !== 'Base') {
-                if (this.threeScene && this.threeScene.mainView) this.threeScene.mainView.hideObjects(item.id, false);
+                if (this.threeScene && this.threeScene.textureEditor) this.threeScene.textureEditor.hideObjects(item.id, false);
               }
             });
           }
@@ -187,6 +187,9 @@ export default class EditorStore {
   public setShowLoadingScreen(show: boolean): void {
     this.showLoadingScreen = show;
     this.soundSystem.playSound('background');
+    if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
+      this.threeScene.actions.animationAction.startAnimationAction();
+    }
   }
 
   public loadSnapshot(characterPreview: string, characterName: string): void {

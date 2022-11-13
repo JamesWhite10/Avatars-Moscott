@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@avs/vrm-avatar@^0.1.1":
+  version "0.1.1"
+  resolved "https://gitlab.web3dev.group/api/v4/projects/339/packages/npm/@avs/vrm-avatar/-/@avs/vrm-avatar-0.1.1.tgz#5864e4c78787aa22f0ccf093fc23ed53a6b88ce1"
+  integrity sha1-WGTkx4eHqiLwzPCT/CPtU6a4jOE=
+
 "@babel/code-frame@7.12.11":
   version "7.12.11"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.12.11.tgz#f4ad435aa263db935b8f10f2c552d23fb716a63f"
@@ -177,63 +182,63 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@pixiv/three-vrm-core@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm-core/-/three-vrm-core-1.0.3.tgz#56c0753b57abebfc37c1b3c3b401d4c976991041"
-  integrity sha512-QNpVUl4hN96XbiOEMprkq8Z8u+sKcfwUaI7aELRD54TFhgKxw5sFjRTaCcpZFIoTKP9GVd1Rld7vovyTbrj/IQ==
+"@pixiv/three-vrm-core@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm-core/-/three-vrm-core-1.0.4.tgz#800fee380b6b71a545f5099ffe1c484b2911ad24"
+  integrity sha512-2OQOVs57TDx2oXZHvJjRVP37L3CDTFC6k+HpIy7ogEW6RFbauHKg2uR2o3erLt0sRCSX0na/KqexbkkEoP/S9w==
   dependencies:
     "@pixiv/types-vrm-0.0" "1.0.0"
     "@pixiv/types-vrmc-vrm-1.0" "1.0.0"
 
-"@pixiv/three-vrm-materials-hdr-emissive-multiplier@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm-materials-hdr-emissive-multiplier/-/three-vrm-materials-hdr-emissive-multiplier-1.0.3.tgz#d3f2f05a7868b38dedc8d94ad583a537c6ce89e8"
-  integrity sha512-rGZPN9JhXNIInXctKDVjvnTZpAj/K0Fv3DE7UZIw2INigMN4PIaLgSxYJW8CZ6LHRAR2fZA5V89CcfVGK9nJ6g==
+"@pixiv/three-vrm-materials-hdr-emissive-multiplier@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm-materials-hdr-emissive-multiplier/-/three-vrm-materials-hdr-emissive-multiplier-1.0.4.tgz#24f5093b41fb64c5fba2c8abb90c9bafbc7f7a0a"
+  integrity sha512-Y6SwEGbwPKaj6d0EHA0VGu6rn82T95ObhuIGKTqIm+LuGvqxvTOfOP4HwLiXcSMMu1qRvq21X/jmu83ehE0clw==
   dependencies:
     "@pixiv/types-vrmc-materials-hdr-emissive-multiplier-1.0" "1.0.0"
 
-"@pixiv/three-vrm-materials-mtoon@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm-materials-mtoon/-/three-vrm-materials-mtoon-1.0.3.tgz#b6b6d1044c5c1a2a1669e88eecff396cdfbcf82f"
-  integrity sha512-8o9Y6Sb7UdJy7PVICwX1eGMfKwgEnmzVEjCX3jLFyDPIE27vmSv2ylcUix5LRg0L+ga+8Cg/mP7vaLfR+mKfrQ==
+"@pixiv/three-vrm-materials-mtoon@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm-materials-mtoon/-/three-vrm-materials-mtoon-1.0.4.tgz#09bb11193b19c01b30d8660d1b560dada73899b1"
+  integrity sha512-wEXeUNHKO5ZoQVDW9P/cvc/d02Ze8wfu/0ViGep26uasuQqEwcEB3pLYjtBorWV4iUcupfkdaIjZxL3ZMpGuCA==
   dependencies:
     "@pixiv/types-vrm-0.0" "1.0.0"
     "@pixiv/types-vrmc-materials-mtoon-1.0" "1.0.0"
 
-"@pixiv/three-vrm-materials-v0compat@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm-materials-v0compat/-/three-vrm-materials-v0compat-1.0.3.tgz#b9059ecf1dab8381abdc932113e1f2e353b2e84f"
-  integrity sha512-uljFJMa3P4Le1BGa+ldWipHkpPDk2Yi+uaVaYkqac6MP0rcZg+DCZkaeied77WLoweoiJ/hW4KEQqBkWZxO/5g==
+"@pixiv/three-vrm-materials-v0compat@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm-materials-v0compat/-/three-vrm-materials-v0compat-1.0.4.tgz#620f70c2a8718b4ba1c2c8d699a8b822034f7bbf"
+  integrity sha512-oGIkToNkfdvm3fagwcYSv/XevwV6ia4tVjvMcdLtP2yEA25yq3wkI9wG7xP15pa5Ss93ISlmZaqCBSuKblOmiw==
   dependencies:
     "@pixiv/types-vrm-0.0" "1.0.0"
     "@pixiv/types-vrmc-materials-mtoon-1.0" "1.0.0"
 
-"@pixiv/three-vrm-node-constraint@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm-node-constraint/-/three-vrm-node-constraint-1.0.3.tgz#125846064a3b2938bdc665c31944d7a2ba0cbc2b"
-  integrity sha512-5+r9GhLKYKrzsYjnwy1nJLZvCmmjspTOEL1dcUeVKDBXDYwYfE5BENCAgeIsUt5HlESSlbzqs2ILD+jXIJk5jw==
+"@pixiv/three-vrm-node-constraint@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm-node-constraint/-/three-vrm-node-constraint-1.0.4.tgz#7306145284e54dc9c740f620e8d9cf030214db89"
+  integrity sha512-QoVARZsO4Nexfkd836vol/kGNhfcv9pHy9BtAv7yqpKgSe16LCRw8EdT4G3/GkeFQKv0uWg2N27Yf+f3BQ0Rlg==
   dependencies:
     "@pixiv/types-vrmc-node-constraint-1.0" "1.0.0"
 
-"@pixiv/three-vrm-springbone@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm-springbone/-/three-vrm-springbone-1.0.3.tgz#b6576102a2152691b8c7a589693cee48c09151cb"
-  integrity sha512-uMDNvydxC11fy4OjJtYnxmP9KqI90MwF87kdA9KD8qtnZoubwyJc8QagChyWfDueElUqCQQ2uJNhLd0VYRfP/A==
+"@pixiv/three-vrm-springbone@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm-springbone/-/three-vrm-springbone-1.0.4.tgz#8b145ffd5a720c03f5d5d7e11d4c152cfa1b55c5"
+  integrity sha512-E5TNoCHdfthFMxV+FLRU9AId1/Bm7jrD/9jd6WhCrbhOF/J2BdrxlW1udoBI5OLH9TrM6xxf9VZRgrUUt61bBg==
   dependencies:
     "@pixiv/types-vrm-0.0" "1.0.0"
     "@pixiv/types-vrmc-springbone-1.0" "1.0.0"
 
-"@pixiv/three-vrm@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm/-/three-vrm-1.0.3.tgz#85f6dc7380a5c914a2425d080868b7bbf6829e52"
-  integrity sha512-5l3Y4xR0dOctKRXZ0jAUkDK0d0U5RSHGGxyVPmHdC95Q8omrXBx+tEjj81wghQpisrFwr+rKnZR2NWO3L54TZw==
+"@pixiv/three-vrm@1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@pixiv/three-vrm/-/three-vrm-1.0.4.tgz#4214c7302ce70baac225d77c4a9cbe5d8e24c95c"
+  integrity sha512-26CYDI9/YM21QNCfICix4sg18wyMvb4iPH8511zDHFXKgZw1spycRFy0hXSbh4X2dn8Rx1zEwoKkc5T2aESUaw==
   dependencies:
-    "@pixiv/three-vrm-core" "1.0.3"
-    "@pixiv/three-vrm-materials-hdr-emissive-multiplier" "1.0.3"
-    "@pixiv/three-vrm-materials-mtoon" "1.0.3"
-    "@pixiv/three-vrm-materials-v0compat" "1.0.3"
-    "@pixiv/three-vrm-node-constraint" "1.0.3"
-    "@pixiv/three-vrm-springbone" "1.0.3"
+    "@pixiv/three-vrm-core" "1.0.4"
+    "@pixiv/three-vrm-materials-hdr-emissive-multiplier" "1.0.4"
+    "@pixiv/three-vrm-materials-mtoon" "1.0.4"
+    "@pixiv/three-vrm-materials-v0compat" "1.0.4"
+    "@pixiv/three-vrm-node-constraint" "1.0.4"
+    "@pixiv/three-vrm-springbone" "1.0.4"
 
 "@pixiv/types-vrm-0.0@1.0.0":
   version "1.0.0"
@@ -921,6 +926,14 @@ emojis-list@^3.0.0:
   resolved "https://registry.yarnpkg.com/emojis-list/-/emojis-list-3.0.0.tgz#5570662046ad29e2e916e71aae260abdff4f6a78"
   integrity sha512-/kyM18EfinwXZbno9FyUGeFh87KC8HRQBQGildHZbEuRyWFOmv1U10o9BBp8XVZDVNNuQKyIGIu5ZYAAXJ0V2Q==
 
+enhanced-resolve@^5.10.0:
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.10.0.tgz#0dc579c3bb2a1032e357ac45b8f3a6f3ad4fb1e6"
+  integrity sha512-T0yTFjdpldGY8PmuXXR0PyQ1ufZpEGiHVrp7zHKB7jdR4qlmZHhONVM5AQOAWXuF/w3dnHbEQVrNptJgt7F+cQ==
+  dependencies:
+    graceful-fs "^4.2.4"
+    tapable "^2.2.0"
+
 enquirer@^2.3.5:
   version "2.3.6"
   resolved "https://registry.yarnpkg.com/enquirer/-/enquirer-2.3.6.tgz#2a7fe5dd634a1e4125a975ec994ff5456dc3734d"
@@ -1460,6 +1473,11 @@ globby@^11.1.0:
     merge2 "^1.4.1"
     slash "^3.0.0"
 
+graceful-fs@^4.2.4:
+  version "4.2.10"
+  resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.10.tgz#147d3a006da4ca3ce14728c7aefc287c367d7a6c"
+  integrity sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==
+
 has-bigints@^1.0.1, has-bigints@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/has-bigints/-/has-bigints-1.0.2.tgz#0871bd3e3d51626f6ca0966668ba35d5602d6eaa"
@@ -1767,11 +1785,6 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-lodash-es@^4.17.21:
-  version "4.17.21"
-  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
-  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
-
 loader-utils@^2.0.0:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-2.0.3.tgz#d4b15b8504c63d1fc3f2ade52d41bc8459d6ede1"
@@ -1780,6 +1793,11 @@ loader-utils@^2.0.0:
     big.js "^5.2.2"
     emojis-list "^3.0.0"
     json5 "^2.1.2"
+
+lodash-es@^4.17.21:
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
+  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
 
 lodash.merge@^4.6.2:
   version "4.6.2"
@@ -1912,6 +1930,13 @@ natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
+
+next-transpile-modules@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/next-transpile-modules/-/next-transpile-modules-10.0.0.tgz#7152880048835acb64d05fc7aa34910cbe7994da"
+  integrity sha512-FyeJ++Lm2Fq31gbThiRCrJlYpIY9QaI7A3TjuhQLzOix8ChQrvn5ny4MhfIthS5cy6+uK1AhDRvxVdW17y3Xdw==
+  dependencies:
+    enhanced-resolve "^5.10.0"
 
 next@12.3.1:
   version "12.3.1"
@@ -2118,6 +2143,13 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
+raf@^3.1.0:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/raf/-/raf-3.4.1.tgz#0742e99a4a6552f445d73e3ee0328af0ff1ede39"
+  integrity sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==
+  dependencies:
+    performance-now "^2.1.0"
+
 raw-loader@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/raw-loader/-/raw-loader-4.0.2.tgz#1aac6b7d1ad1501e66efdac1522c73e59a584eb6"
@@ -2125,13 +2157,6 @@ raw-loader@^4.0.2:
   dependencies:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
-
-raf@^3.1.0:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/raf/-/raf-3.4.1.tgz#0742e99a4a6552f445d73e3ee0328af0ff1ede39"
-  integrity sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==
-  dependencies:
-    performance-now "^2.1.0"
 
 react-custom-scrollbars-2@^4.5.0:
   version "4.5.0"
@@ -2581,6 +2606,11 @@ table@^6.0.9:
     slice-ansi "^4.0.0"
     string-width "^4.2.3"
     strip-ansi "^6.0.1"
+
+tapable@^2.2.0:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/tapable/-/tapable-2.2.1.tgz#1967a73ef4060a82f12ab96af86d52fdb76eeca0"
+  integrity sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==
 
 text-table@^0.2.0:
   version "0.2.0"

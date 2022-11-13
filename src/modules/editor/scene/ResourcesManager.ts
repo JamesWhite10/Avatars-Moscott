@@ -1,7 +1,9 @@
+import * as THREE from 'three';
 import { GLTFLoader, GLTF as ThreeGLTF, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DataTexture, Texture, TextureLoader } from 'three';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import * as ThreeVRM from '@pixiv/three-vrm';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
 export interface Loader {
   load: (
@@ -28,6 +30,7 @@ export enum ResourceType {
   HDR_TEXTURE = 'HDR_TEXTURE',
   TEXTURE = 'TEXTURE',
   VRM = 'VRM',
+  FBX = 'FBX',
 }
 
 export interface GlbResource extends Resource {
@@ -38,6 +41,11 @@ export interface GlbResource extends Resource {
 export interface TextureResource extends Resource {
   type: ResourceType.TEXTURE;
   content?: Texture;
+}
+
+export interface FbxResource extends Resource {
+  type: ResourceType.FBX;
+  content?: THREE.Group;
 }
 
 export interface HdrTextureResource extends Resource {
@@ -51,12 +59,14 @@ export interface VrmResource extends Resource {
 }
 
 export type ResourcesRecord = Record<string, (
-  GlbResource | HdrTextureResource | TextureResource | VrmResource)>;
+  GlbResource | HdrTextureResource | TextureResource | VrmResource | FbxResource)>;
 
 class ResourcesManager {
   public gltfLoader: GLTFLoader = new GLTFLoader();
 
   public vrmLoader: GLTFLoader = new GLTFLoader();
+
+  public fbxLoader: FBXLoader = new FBXLoader();
 
   public rgbeLoader: RGBELoader = new RGBELoader();
 
@@ -75,6 +85,7 @@ class ResourcesManager {
     this.textureLoader.setCrossOrigin('anonymous');
     this.vrmLoader.setCrossOrigin('anonymous');
     this.rgbeLoader.setCrossOrigin('anonymous');
+    this.fbxLoader.setCrossOrigin('anonymous');
     this.useQueryTimestamp = params.useQueryTimestamp ?? true;
   }
 
@@ -93,12 +104,20 @@ class ResourcesManager {
     return this;
   }
 
+  public addFbx(url: string):void {
+    this.addResource(url, ResourceType.FBX);
+  }
+
   public getTextureByUrlOrFail(url: string): Texture {
     return this.getResourceContentByUrlOrFail<TextureResource>(url, ResourceType.TEXTURE);
   }
 
   public getGlbByUrlOrFail(url: string): ThreeGLTF {
     return this.getResourceContentByUrlOrFail<GlbResource>(url, ResourceType.GLB);
+  }
+
+  public getFbxByUrlOrFail(url: string): THREE.Group {
+    return this.getResourceContentByUrlOrFail<FbxResource>(url, ResourceType.FBX);
   }
 
   public addHdrTexture(url: string): this {
@@ -151,6 +170,7 @@ class ResourcesManager {
     if (resource.type === ResourceType.GLB) return this.gltfLoader;
     if (resource.type === ResourceType.HDR_TEXTURE) return this.rgbeLoader;
     if (resource.type === ResourceType.TEXTURE) return this.textureLoader;
+    if (resource.type === ResourceType.FBX) return this.fbxLoader;
     if (resource.type === ResourceType.VRM) {
       this.vrmLoader.register((parser) => new ThreeVRM.VRMLoaderPlugin(parser));
       return this.vrmLoader;

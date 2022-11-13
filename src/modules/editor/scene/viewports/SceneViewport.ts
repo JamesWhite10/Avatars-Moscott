@@ -1,10 +1,11 @@
 import * as THREE from 'three';
-import ResourcesManager from '../ResourcesManager';
+import ResourcesManager, { ResourceType } from '../ResourcesManager';
 import { TextureEditor } from '../textureEditor/index';
 import { MouseControl, TouchControl } from '../cameraControls/index';
 import { Avatar, EnvironmentConfigType, Style } from '../../../../types/index';
 import { NOISE } from '../../constans/TextureUrl';
 import { Actions } from '../../features/mainActions/index';
+import { getAnimationFile } from '../../utils/getAnimationFile';
 
 export type SceneConfig = {
   characters: Avatar[]; // TODO возможно перемапать на свои внутренние типы
@@ -21,7 +22,7 @@ export class SceneViewport {
 
   public clock: THREE.Clock;
 
-  public mainView: TextureEditor.TextureEditor | null = null;
+  public textureEditor: TextureEditor.TextureEditor | null = null;
 
   public actions: Actions.Actions | null = null;
 
@@ -74,8 +75,8 @@ export class SceneViewport {
     this.threeRenderer.setAnimationLoop(() => {
       this.syncRendererSize();
       const delta = this.clock.getDelta();
-      this.actions?.onUpdate();
-      this.mainView?.onUpdate(delta);
+      if (this.actions) this.actions.onUpdate(delta);
+      if (this.textureEditor) this.textureEditor.onUpdate(delta);
       this.mouseControls.onUpdate();
       this.touchControls.onUpdate();
       this.render();
@@ -114,14 +115,29 @@ export class SceneViewport {
         this.runRenderCycle();
         this.initControls();
         this.initLight();
-        this.mainView = new TextureEditor.TextureEditor({ sceneViewport: this });
-        this.mainView.addCharacters(config);
-        this.mainView.applyTexture(config);
-        this.mainView.applyVideoTexture(config);
-        this.mainView.applyHdrTexture(config.environment);
-        this.actions = new Actions.Actions({ sceneViewport: this, mainView: this.mainView });
-        this.actions.init(config.styles);
+        this.initTexture(config);
+        this.initMainActions(config);
       });
+  }
+
+  public initMainActions(config: SceneConfig): void {
+    if (this.textureEditor) {
+      this.actions = new Actions.Actions({ sceneViewport: this, textureEditor: this.textureEditor });
+      if (this.actions.animationAction) {
+        this.actions.animationAction.init(config.characters, config.styles);
+        this.actions.animationAction.waitInActiveAnimation();
+      }
+      this.actions.init(config.styles);
+    }
+  }
+
+  public initTexture(config: SceneConfig): void {
+    this.textureEditor = new TextureEditor.TextureEditor({ sceneViewport: this });
+    this.textureEditor.addCharacters(config);
+    this.textureEditor.applyTexture(config);
+    this.textureEditor.applyVideoTexture(config);
+    this.textureEditor.applyHdrTexture(config.environment);
+    this.initMainActions(config);
   }
 
   public initControls(): void {
@@ -139,9 +155,28 @@ export class SceneViewport {
   }
 
   public loadSceneTexture(progress: (progress: number) => void, config: SceneConfig): Promise<void> {
-    const { styles, environment } = config;
+    const { styles, environment, characters } = config;
 
     this.resourcesManager.addGlb(environment.background);
+
+    characters.forEach((avatar) => {
+      if (avatar.animations) {
+        avatar.animations.forEach((animation) => {
+          const fileAnimation = getAnimationFile(animation.id, ResourceType.FBX.toLowerCase());
+          this.resourcesManager.addFbx(fileAnimation);
+        });
+      }
+    });
+
+    styles.forEach((style) => {
+      if (style.animations) {
+        style.animations.forEach((animation) => {
+          const fileAnimation = getAnimationFile(animation.id, ResourceType.FBX.toLowerCase());
+          this.resourcesManager.addFbx(fileAnimation);
+        });
+      }
+    });
+
     this.resourcesManager.addHdrTexture(environment.environment);
     this.resourcesManager.addTexture(NOISE);
 
@@ -188,9 +223,10 @@ export class SceneViewport {
   }
 
   public clickHandler(event: MouseEvent): void {
-    if (this.actions && this.actions.characterAction) {
+    if (this.actions && this.actions.characterAction && this.actions.animationAction) {
       if (this.mouseControls.object && this.touchControls.object) {
         this.actions.characterAction.characterClickHandler(event);
+        this.actions.animationAction.clearInActiveAnimation();
       }
     }
   }
@@ -199,6 +235,7 @@ export class SceneViewport {
     if (this.actions && this.actions.characterAction) this.actions.characterAction.moveHead(event);
     this.mouseControls.onMouseMove(event);
     this.mouseControls.updateCameraParallax();
+    if (this.actions && this.actions.animationAction) this.actions.animationAction.clearInActiveAnimation();
   }
 
   public mouseUpHandler(): void {
@@ -214,6 +251,7 @@ export class SceneViewport {
 
   public mouseWheelHandler(event: WheelEvent): void {
     this.mouseControls.onMouseWheel(event);
+    if (this.actions && this.actions.animationAction) this.actions.animationAction.clearInActiveAnimation();
   }
 
   public touchMoveHandler(event: TouchEvent): void {
@@ -221,6 +259,7 @@ export class SceneViewport {
     event.stopPropagation();
     this.touchControls.onTouchMove(event);
     this.touchControls.updateCameraParallax();
+    if (this.actions && this.actions.animationAction) this.actions.animationAction.clearInActiveAnimation();
   }
 
   public touchStartHandler(event: TouchEvent): void {
@@ -231,6 +270,7 @@ export class SceneViewport {
         this.actions.characterAction.characterTouchHandler(event);
       }
     }
+    if (this.actions && this.actions.animationAction) this.actions.animationAction.clearInActiveAnimation();
   }
 
   public touchEndHandler(event: TouchEvent): void {
