@@ -123,7 +123,6 @@ export class TextureEditor {
   }
 
   public applyCharacterTexture = (model: ThreeVRM.VRM, textureName: string): void => {
-    // todo: при нажатии на руку не работает райкст
     const primitiveCollider = new PrimitiveCollider();
     primitiveCollider.object.name = textureName;
     model.springBoneManager?.reset();
@@ -136,11 +135,7 @@ export class TextureEditor {
       if (node instanceof THREE.Mesh) {
         node.receiveShadow = false;
         node.castShadow = false;
-        if (node.material.uniforms && node.material.uniforms.map) {
-          const map = node.material.uniforms.map.value;
-          const uniform = this.dissolveShader.createUniform({ uDiffuseMap: map, uHeightMap: noiseTexture }, textureName);
-          node.material = this.dissolveShader.createMaterialShader(uniform, textureName, false, true);
-        } else {
+        if (Array.isArray(node.material)) {
           const materials: THREE.ShaderMaterial[] = [];
           node.material.forEach((material: THREE.ShaderMaterial) => {
             const map = material.uniforms.map.value;

@@ -1,5 +1,5 @@
 import {
-  FC, MutableRefObject, useRef,
+  FC, MutableRefObject, useCallback, useRef,
 } from 'react';
 import { observer } from 'mobx-react';
 import { useStyleStore } from '@app/containers/Editor/hooks/useEditorStore';
@@ -9,6 +9,7 @@ import classNames from './BottomControls.module.scss';
 import Fade from '@app/components/Transition/Fade';
 import { useClickAway } from 'react-use';
 import { Swiper as SwiperClass } from 'swiper';
+import { Style } from '@app/types';
 
 const Styles: FC = observer(() => {
   const {
@@ -18,6 +19,7 @@ const Styles: FC = observer(() => {
     showStyleSelection,
     controlElement,
     setShowStyleSelection,
+    isLoadingStyle,
   } = useStyleStore();
 
   const areaRef = useRef<SwiperClass>();
@@ -26,6 +28,10 @@ const Styles: FC = observer(() => {
     if (!controlElement || !e.target || !showStyleSelection) return;
     if (!controlElement.contains(e.target as Node)) setShowStyleSelection(false);
   });
+
+  const cardCLickHandler = useCallback((style: Style) => {
+    if (!isLoadingStyle) onStyleChange(style.id);
+  }, [isLoadingStyle]);
 
   return (
     <Fade
@@ -50,7 +56,7 @@ const Styles: FC = observer(() => {
                 contentType="video"
                 active={style.id === activeStyle}
                 video={style.videoUrl}
-                onClick={() => onStyleChange(style.id)}
+                onClick={() => cardCLickHandler(style)}
               />
             </SwiperSlide>
           ))}

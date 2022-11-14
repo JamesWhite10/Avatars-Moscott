@@ -21,6 +21,8 @@ export default class StyleStore implements EmitterInterface<StyleStoreEventsType
 
   public eventEmitter!: EventEmitter<StyleStoreEventsType>;
 
+  public isLoadingStyle = false;
+
   constructor() {
     this.eventEmitter = new EventEmitter();
     makeAutoObservable(this, {}, { autoBind: true });
@@ -53,6 +55,10 @@ export default class StyleStore implements EmitterInterface<StyleStoreEventsType
   public onStyleChange(id: string): void {
     this.activeStyle = id;
     this.eventEmitter.emit('styleChange', id);
+  }
+
+  public setLoadingStyle(loading: boolean): void {
+    this.isLoadingStyle = loading;
   }
 
   public off(event: keyof StyleStoreEventsType): void {

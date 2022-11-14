@@ -30,6 +30,7 @@ export class Shader {
       fragmentShader: this.fragmentShader,
       transparent,
       lights,
+      side: THREE.DoubleSide,
     });
 
     this.materials.push({ material: shaderMaterial, name });

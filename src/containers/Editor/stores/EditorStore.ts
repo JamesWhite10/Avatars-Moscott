@@ -3,7 +3,7 @@ import { SceneViewport } from '@app/modules/editor/scene/viewports/index';
 import ResourcesManager from '../../../modules/editor/scene/ResourcesManager';
 import ControlsStore from './ControlsStore';
 import { saveSnapshot } from '../../../helpers/saveSnapshot';
-import { Avatar, EnvironmentConfigType, Style } from '../../../types';
+import { AnimationsType, Avatar, EnvironmentConfigType, Style } from '../../../types';
 import CharacterStore from './CharacterStore';
 import StyleStore from './StyleStore';
 import SoundSystem from '../../../sound/SoundSystem';
@@ -90,45 +90,35 @@ export default class EditorStore {
     this.styleStore.subscribe('styleChange', (id) => {
       if (this.threeScene && this.threeScene.actions && this.threeScene.actions.stylesAction) {
         const texture = this.findTexture(id);
+        this.styleStore.isLoadingStyle = true;
         this.threeScene.actions.stylesAction.changeStyle(texture || '', id);
         this.soundSystem.playSound(id, true);
       }
     });
+
     this.styleStore.subscribe('styleSelectionClosed', () => this.controlsStore.setActiveAvatarPropertyType());
-    let timer: NodeJS.Timer;
     let activeId: string | undefined;
     this.animationStore.subscribe('animation_select', (id) => {
       if (activeId !== id) {
         this.animationStore.setProgress(0);
       }
+      if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
+        this.threeScene.actions.animationAction.playAnimation(id, true);
+      }
       activeId = id;
-      clearInterval(timer);
-      timer = setInterval(() => {
-        if (this.animationStore.progress === 100) {
-          this.animationStore.setProgress(0);
-          this.animationStore.setActiveAnimationId();
-          clearInterval(timer);
-          return;
-        }
-        this.animationStore.setProgress(this.animationStore.progress + 1);
-      }, 1000);
     });
 
     this.animationStore.subscribe('pause', (paused) => {
-      console.log('pause event. is paused: ', paused);
-      clearInterval(timer);
-      timer = setInterval(() => {
-        if (this.animationStore.progress === 100) {
-          this.animationStore.setProgress(0);
-          clearInterval(timer);
-          return;
-        }
-        this.animationStore.setProgress(this.animationStore.progress + 1);
-      }, 1000);
+      if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
+        if (paused) this.threeScene.actions.animationAction.pauseAnimation();
+        else this.threeScene.actions.animationAction.continueAnimation();
+      }
     });
 
     this.animationStore.subscribe('stop', () => {
-      console.log('animation stop');
+      if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
+        this.threeScene.actions.animationAction.stopAnimation();
+      }
     });
 
     this.animationStore.subscribe('selection_closed', () => {
@@ -136,16 +126,22 @@ export default class EditorStore {
     });
   }
 
-  public initialize(characters: Avatar[], styles: Style[], environment: EnvironmentConfigType): void {
+  public initialize(
+    characters: Avatar[],
+    styles: Style[],
+    environment: EnvironmentConfigType,
+    animations: AnimationsType[],
+  ): void {
     this.threeScene = new SceneViewport.SceneViewport();
     if (!this.threeScene) return;
-    this.threeScene.init({ characters, styles, environment }, this.onProgress.bind(this))
+    this.threeScene.init({ characters, styles, environment, animations }, this.onProgress.bind(this))
       .then(() => {
         this.setIsReady(true);
         if (this.threeScene && this.threeScene.actions?.characterAction) this.sceneSubscribe();
         if (!this.threeScene) return;
         this.sceneSubscribe();
         this.styleStore.setStyles(styles);
+        this.animationStore.setAnimations(animations);
         const character = this.charactersStore.setUp(characters);
         if (character && character.name) {
           const style = this.findBaseStyle(character.name);
@@ -210,8 +206,16 @@ export default class EditorStore {
         this.soundSystem.playSound(avatarName.name.toLowerCase(), true);
       });
 
-      this.threeScene.actions.subscribe('loadCharacter', () => {
+      this.threeScene.actions.subscribe('loadNewCharacter', () => {
         this.charactersStore.setCharacterIsChanging(true);
+      });
+
+      this.threeScene.actions.subscribe('setAnimationTime', (time) => {
+        if (!this.animationStore.isPaused) this.animationStore.setProgress(time);
+      });
+
+      this.threeScene.actions.subscribe('animationEnded', () => {
+        this.styleStore.setLoadingStyle(false);
       });
     }
   }

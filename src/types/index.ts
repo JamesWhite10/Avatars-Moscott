@@ -5,18 +5,10 @@ export type EnvironmentConfigType = {
   environment: string;
 };
 
-/**
- * FROM Editor
- */
-export type StaticAnimationType = {
+export type IdleAnimationType = {
   id: string;
   name: string;
 };
-
-// TODO возможно будет доработано после реализации анимаций
-export type IdleAnimationType = {
-  idle: true;
-} & StaticAnimationType;
 
 export type Avatar = {
   id: string;
@@ -37,4 +29,10 @@ export type Style = {
   model?: string;
   videoUrl: string;
   animations: IdleAnimationType[];
+};
+
+export type AnimationsType = {
+  id: string;
+  name: string;
+  animation: string;
 };

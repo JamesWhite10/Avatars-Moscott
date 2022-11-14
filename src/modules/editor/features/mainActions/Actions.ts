@@ -11,10 +11,14 @@ import { Style } from '../../../../types/index';
 import { AnimationAction } from './AnimationAction';
 
 export type SceneEventType = {
-  loadCharacter: () => void;
-  characterChange: (characterName: string) => void;
-  loadStyleCharacter: (characterName: string, texture: string) => void;
   loadNewCharacter: (characterName: string, model: THREE.Object3D<THREE.Event>) => void;
+  loadNewStyle: (characterName: string, texture: string) => void;
+
+  characterChange: (characterName: string) => void;
+  styleChange: (id: string) => void;
+
+  setAnimationTime: (time: number) => void;
+  animationEnded: () => void;
 };
 
 export interface ActionOptions {
@@ -47,8 +51,6 @@ export class Actions {
 
   public animationAction: AnimationAction | null = null;
 
-  public isLoadingCharacter: boolean = false;
-
   constructor(options: ActionOptions) {
     this.sceneViewport = options.sceneViewport;
     this.eventEmitter = new EventEmitter<SceneEventType>();
@@ -74,53 +76,83 @@ export class Actions {
     this.subscribeSceneActions();
   }
 
+  public onUpdate(delta: number): void {
+    TWEEN.update();
+    this.vrmAvatarUpdate(delta);
+    if (this.animationAction && this.animationAction.startCharacterAnimation) {
+      this.animationAction.countAnimationTime(this.animationAction.startCharacterAnimation);
+    }
+  }
+
   public init(styles: Style[]): void {
     if (this.characterAction) this.characterAction.charactersInit(styles);
   }
 
-  public onUpdate(delta: number): void {
-    TWEEN.update();
+  public vrmAvatarUpdate(delta: number): void {
     this.textureEditor.vrmAvatars.forEach((avatar) => {
       avatar.update(delta);
-      // avatar.vrm.lookAt?.update(delta);
     });
   }
 
   public subscribeSceneActions(): void {
-    this.subscribe('loadStyleCharacter', (characterName, texture) => {
-      if (this.animationAction) {
-        this.animationAction.playAnimation('switchCharacter', true);
-        this.isLoadingCharacter = true;
-
-        this.animationAction.removeLoopAnimation(() => {
-          if (this.stylesAction) {
-            this.isLoadingCharacter = false;
-            this.stylesAction.changeStyleTexture(texture);
-            this.stylesAction.changeStyleCharacter(characterName);
-
-            if (this.animationAction) {
-              this.animationAction.playAnimation('activeStart', true);
-              this.animationAction.playAnimation('activeBack', false);
-            }
-          }
-        }, 1500);
+    this.subscribe('loadNewStyle', (characterName, texture) => {
+      if (this.animationAction && this.animationAction.mixer) {
+        if (this.stylesAction) {
+          this.stylesAction.isLoadStyle = true;
+          this.stylesAction.changeStyleTexture(texture);
+          this.stylesAction.changeStyleCharacter(characterName);
+        }
       }
     });
 
     this.subscribe('loadNewCharacter', (characterName, model) => {
-      const time = this.startObject ? 1500 : 0;
-      if (this.startObject) this.animationAction?.playAnimation('forgiveness', true);
-      this.isLoadingCharacter = true;
-
-      this.animationAction?.removeLoopAnimation(() => {
-        if (this.characterAction) {
-          this.isLoadingCharacter = false;
-          this.characterAction.changeCharacter(model);
-          this.characterAction.changeTexture();
-          this.animationAction?.playAnimation('activeStart', true);
+      if (this.animationAction && this.characterAction) {
+        this.animationAction.playAnimation('forgiveness', true, 1);
+        this.characterAction.isLoadCharacter = true;
+        if (!this.startObject) {
+          this.animationAction.stopAnimation();
+          this.loadNewCharacter(model);
+        } else {
+          this.animationAction.mixer?.addEventListener('finished', () => {
+            this.loadNewCharacter(model);
+          });
         }
-      }, time);
+      }
     });
+
+    this.subscribe('characterChange', () => {
+      this.animationAction?.playAnimation('activeStart', true);
+      if (this.startObject) this.animationAction?.playAnimation('activeBack', false);
+    });
+
+    this.subscribe('styleChange', () => {
+      if (this.animationAction && this.animationAction.mixer) {
+        this.animationAction.playAnimation('switchStyle', true, 1);
+        this.animationAction.mixer.addEventListener('finished', () => {
+          if (this.animationAction && this.stylesAction && this.stylesAction.isLoadStyle) {
+            this.stylesAction.isLoadStyle = false;
+            this.eventEmitter.emit('animationEnded');
+            this.animationAction.playAnimation('activeStart', true);
+          }
+        });
+      }
+    });
+  }
+
+  public loadNewCharacter(model: THREE.Object3D): void {
+    if (this.characterAction && this.characterAction.isLoadCharacter && this.animationAction) {
+      this.characterAction.isLoadCharacter = false;
+      this.characterAction.changeCharacter(model);
+      this.characterAction.changeTexture();
+      this.animationAction.playAnimation('activeStart', true);
+      if (this.startObject) {
+        this.sceneViewport.mouseControls.clearData();
+        this.sceneViewport.touchControls.clearData();
+      }
+
+      this.sceneViewport.mouseControls.setObject(model);
+      this.sceneViewport.touchControls.setObject(model);
+    }
   }
 
   public getSnapshot(): string {
