@@ -123,8 +123,9 @@ export class TextureEditor {
   }
 
   public applyCharacterTexture = (model: ThreeVRM.VRM, textureName: string): void => {
-    // todo: при нажатии на руку не работает райкст
-    const primitiveCollider = new PrimitiveCollider();
+    const primitiveCollider = new PrimitiveCollider({
+      data: { position: new THREE.Vector3(0, 0.8, 0) },
+    });
     primitiveCollider.object.name = textureName;
     model.springBoneManager?.reset();
 
