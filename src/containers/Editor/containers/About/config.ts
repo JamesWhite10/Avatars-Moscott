@@ -46,12 +46,13 @@ export const previewInformation: Array<PreviewType> = [
 ];
 
 export const schema = Yup.object().shape({
-  userName: Yup.string().required('Name is required')
+  userName: Yup.string().required('What is your name?')
     .min(2, 'Must be at least 2 characters long')
     .max(20, 'Must be max 20 characters long')
     .matches(/^[A-z\s-]+$/gi, 'Incorrect name format'),
   phoneNumber: Yup.string()
-    .required('Phone is required')
+    .required('How to contact you?')
+    .max(20, 'Must be max 20 characters long')
     .matches(/^[\d\s()-]+$/, 'Incorrect phone format'),
-  email: Yup.string().required('Email is required').email('Email is incorrect'),
+  email: Yup.string().required('How to contact you?').email('Please, enter a valid email address'),
 });

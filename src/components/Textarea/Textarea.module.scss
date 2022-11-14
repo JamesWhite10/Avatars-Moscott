@@ -25,7 +25,7 @@
   }
 
   &:focus {
-    background: mix(rgba(127, 135, 255, 1), rgba(23, 26, 48, 0.15));
+    background: var(--primary-700);
     filter: drop-shadow(0 0 #4444dd);
     outline: none;
     border: 1px solid rgba(127, 135, 255, 1);
