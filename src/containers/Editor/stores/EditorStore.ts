@@ -188,6 +188,7 @@ export default class EditorStore {
     this.showLoadingScreen = show;
     this.soundSystem.playSound('background');
     if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
+      this.threeScene.actions.cameraUpdate();
       this.threeScene.actions.animationAction.startAnimationAction();
     }
   }
