@@ -2,7 +2,6 @@ $mq-desktop: 1280px;
 $mq-tablet-min: 720px;
 $mq-tablet-max:1279px;
 $mq-mobile-min: 360px;
-$mq-mobile-medium: 415px;
 $mq-mobile-max:719px;
 
 :export {
@@ -10,6 +9,5 @@ $mq-mobile-max:719px;
   mqTabletMin: $mq-tablet-min;
   mqTabletMax: $mq-tablet-max;
   mqMobileMin: $mq-mobile-min;
-  mqMobileMedium: $mq-mobile-medium;
   mqMobileMax: $mq-mobile-max;
 }

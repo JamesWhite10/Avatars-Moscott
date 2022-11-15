@@ -254,15 +254,7 @@
   line-height: 20px;
   text-align: start;
   margin-bottom: 150px;
-  @media (max-width: $mq-tablet-max) {
-    margin-bottom: 250px;
-    transition: 1s;
-  }
   @media (max-width: $mq-mobile-max) {
-    margin-bottom: 250px;
-    transition: 1s;
-  }
-  @media (max-width: $mq-mobile-medium) {
     margin-bottom: 450px;
     transition: 1s;
   }
