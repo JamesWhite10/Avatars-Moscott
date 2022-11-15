@@ -37,6 +37,10 @@ const BottomControls: FC = observer(() => {
     if (activeProperty === 'animations') setShowAnimationSelection(false);
   }, [activeProperty, soundSystem]);
 
+  const mobileButtonText = useMemo(() => {
+    return activeProperty === 'animations' ? 'Close' : 'Ok';
+  }, [activeProperty]);
+
   return (
     <div className={classNames.root}>
       <Styles />
@@ -49,7 +53,7 @@ const BottomControls: FC = observer(() => {
             onClick={closeButtonHandler}
             onMouseEnter={() => soundSystem.playSound('hover', true)}
           >
-            Ok
+            {mobileButtonText}
           </Button>
         ) : (
           <Button
