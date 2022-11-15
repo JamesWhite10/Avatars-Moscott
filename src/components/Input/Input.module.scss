@@ -25,7 +25,7 @@
   }
 
   &:focus {
-    background: mix(rgba(127, 135, 255, 1), rgba(23, 26, 48, 0.15));
+    background: var(--primary-700);
     filter: drop-shadow(0 0 #4444dd);
     outline: none;
     border: 1px solid rgba(127, 135, 255, 1);
@@ -58,7 +58,7 @@
 
 .formLabel {
   position: absolute;
-  top: 1px;
+  top: 8px;
   margin-left: 18px;
   display: block;
   transition: 0.4s;
@@ -76,12 +76,18 @@
 
 .input_error {
   border: 1px solid rgba(255, 118, 77, 1);
+  box-shadow: rgba(255, 118, 77, 0.5) 0 1px 4px, rgb(255, 118, 77, 0.5) 0 0 0 3px;
 
   &:hover {
     border: 1px solid rgba(255, 118, 77, 1);
   }
 
   &:focus {
-    outline: 2px solid mix(rgba(255, 118, 77, 1), rgba(23, 26, 48, 0.15));
+    border: 1px solid rgba(255, 118, 77, 1);
+    box-shadow: rgba(255, 118, 77, 0.5) 0 1px 4px, rgb(255, 118, 77, 0.5) 0 0 0 3px;
   }
+}
+
+.formFieldInputValue {
+  padding: 16px 16px 0 16px;
 }

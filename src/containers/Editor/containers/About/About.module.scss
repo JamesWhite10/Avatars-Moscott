@@ -25,14 +25,14 @@
 }
 
 .rootMobileForm {
-  position: relative;
   padding: 0;
-  width: auto;
-  height: auto;
   margin-top: 88px;
   box-sizing: border-box;
   outline: none;
-  overflow: auto;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  overflow: hidden;
 }
 
 .overlay_afterOpen {
@@ -253,8 +253,9 @@
   font-weight: 400;
   line-height: 20px;
   text-align: start;
+  margin-bottom: 150px;
   @media (max-width: $mq-mobile-max) {
-    margin-bottom: 250px;
+    margin-bottom: 450px;
     transition: 1s;
   }
 }

@@ -2,6 +2,7 @@ import React, { FC, PropsWithChildren, useCallback } from 'react';
 import classNames from '@app/containers/Editor/containers/About/About.module.scss';
 import ReactModal from 'react-modal';
 import BackIcon from '@app/components/Icons/BackIcon';
+import { useLockBodyScroll } from 'react-use';
 
 interface MobileFormModalProps {
   openModalForm?: boolean;
@@ -12,6 +13,8 @@ const MobileFormModal: FC<PropsWithChildren<MobileFormModalProps>> = (props) => 
   const { openModalForm = false, setOpenModalForm, children } = props;
 
   const modalCloseHandler = useCallback(() => setOpenModalForm(false), [setOpenModalForm]);
+
+  useLockBodyScroll(openModalForm);
 
   return (
     <ReactModal

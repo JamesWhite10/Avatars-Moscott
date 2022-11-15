@@ -93,7 +93,7 @@ const About: FC = observer(() => {
             setOpenModalForm={setMobileFormIsOpen}
           />
           {isMobile
-            && <div>
+            && <div className={classNames.blockButton}>
               <button
                 type="button"
                 className={classNames.buttonContact}
