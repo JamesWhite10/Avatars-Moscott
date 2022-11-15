@@ -224,7 +224,7 @@ export class SceneViewport {
 
   public clickHandler(event: MouseEvent): void {
     if (this.actions && this.actions.characterAction && this.actions.animationAction) {
-      if (this.mouseControls.object && this.touchControls.object) {
+      if (this.mouseControls.object && !this.mouseControls.isRotateObject) {
         this.actions.characterAction.characterClickHandler(event);
         this.actions.animationAction.clearInActiveAnimation();
       }
@@ -243,7 +243,7 @@ export class SceneViewport {
   }
 
   public mouseDownHandler(event: MouseEvent): void {
-    if (this.mouseControls.object && this.touchControls.object) {
+    if (this.mouseControls.object) {
       this.mouseControls.onMouseDown(event);
       this.mouseControls.onStartRotate(event);
     }
@@ -266,7 +266,7 @@ export class SceneViewport {
     this.threeRenderer.domElement.focus();
     this.touchControls.onTouchStart(event);
     if (this.actions && this.actions.characterAction) {
-      if (this.mouseControls.object && this.touchControls.object) {
+      if (this.touchControls.object && !this.mouseControls.isRotateObject) {
         this.actions.characterAction.characterTouchHandler(event);
       }
     }
