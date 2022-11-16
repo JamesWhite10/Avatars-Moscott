@@ -74,9 +74,21 @@ const About: FC = observer(() => {
           />
           <Footer>
             <span className={classNames.footerSymbol}>&#169; </span>
-            Cyberfox
+            <a
+              href="https://cyber-fox.net/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Cyberfox
+            </a>
             <span className={classNames.footerSymbol}> & </span>
-            Web3dev
+            <a
+              href="https://web3dev.group/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Web3dev
+            </a>
           </Footer>
           {isMobile && <MobileFormModal
             openModalForm={mobileFormIsOpen}
@@ -93,7 +105,7 @@ const About: FC = observer(() => {
             setOpenModalForm={setMobileFormIsOpen}
           />
           {isMobile
-            && <div className={classNames.blockButton}>
+            && <div>
               <button
                 type="button"
                 className={classNames.buttonContact}
