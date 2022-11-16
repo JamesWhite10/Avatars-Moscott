@@ -60,6 +60,7 @@ const BottomControls: FC = observer(() => {
             ref={setControlElement}
             active={showStyleSelection}
             onClick={styleSelectHandler}
+            colorScheme="secondary"
             onMouseEnter={() => soundSystem.playSound('hover', true)}
           >
             Style
