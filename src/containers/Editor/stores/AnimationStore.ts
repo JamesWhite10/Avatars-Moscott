@@ -23,6 +23,8 @@ export default class AnimationStore implements EmitterInterface<AnimationEventsT
 
   public controlElement: HTMLButtonElement | null = null;
 
+  public isLoadAnimation: boolean = false;
+
   eventEmitter!: EventEmitter<AnimationEventsType>;
 
   constructor() {

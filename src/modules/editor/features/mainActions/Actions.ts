@@ -19,6 +19,8 @@ export type SceneEventType = {
 
   setAnimationTime: (time: number) => void;
   animationEnded: () => void;
+
+  loadTimeAnimation: (loading: boolean) => void;
 };
 
 export interface ActionOptions {
@@ -51,6 +53,8 @@ export class Actions {
 
   public animationAction: AnimationAction | null = null;
 
+  public currentMixers: THREE.AnimationMixer[] = [];
+
   constructor(options: ActionOptions) {
     this.sceneViewport = options.sceneViewport;
     this.eventEmitter = new EventEmitter<SceneEventType>();
@@ -78,7 +82,11 @@ export class Actions {
 
   public onUpdate(delta: number): void {
     TWEEN.update();
-    this.vrmAvatarUpdate(delta);
+    this.currentMixers.forEach((item) => {
+      console.log(item);
+      item.update(delta);
+    });
+    this.characterAction?.moveBodyParts(delta);
     if (this.animationAction && this.animationAction.startCharacterAnimation) {
       this.animationAction.countAnimationTime(this.animationAction.startCharacterAnimation);
     }
@@ -86,12 +94,6 @@ export class Actions {
 
   public init(styles: Style[]): void {
     if (this.characterAction) this.characterAction.charactersInit(styles);
-  }
-
-  public vrmAvatarUpdate(delta: number): void {
-    this.textureEditor.vrmAvatars.forEach((avatar) => {
-      avatar.update(delta);
-    });
   }
 
   public subscribeSceneActions(): void {
@@ -106,15 +108,30 @@ export class Actions {
     });
 
     this.subscribe('loadNewCharacter', (characterName, model) => {
-      if (this.animationAction && this.characterAction) {
+      const { mouseControls, touchControls } = this.sceneViewport;
+      if (this.animationAction && this.characterAction && model.visible) {
         this.animationAction.playAnimation('forgiveness', true, 1);
+
+        const rotateFrom = this.startObject?.rotation.y || 0;
+        const rotateTo = 0;
+
+        mouseControls.setIsLockRotate(true);
+        touchControls.setIsLockRotate(true);
+
+        new TWEEN.Tween({ rotation: rotateFrom })
+          .to({ rotation: rotateTo }, 600)
+          .onUpdate(({ rotation }) => {
+            if (this.startObject) this.startObject.rotation.y = rotation;
+          })
+          .start();
+
+        if (this.startObject) this.startObject.rotation.y = 0;
+
         this.characterAction.isLoadCharacter = true;
-        if (!this.startObject) {
-          this.animationAction.stopAnimation();
-          this.loadNewCharacter(model);
-        } else {
+        if (!this.startObject) this.loadNewCharacter(model);
+        else {
           this.animationAction.mixer?.addEventListener('finished', () => {
-            this.loadNewCharacter(model);
+            if (model.visible) this.loadNewCharacter(model);
           });
         }
       }
@@ -126,11 +143,18 @@ export class Actions {
     });
 
     this.subscribe('styleChange', () => {
+      const { mouseControls, touchControls } = this.sceneViewport;
       if (this.animationAction && this.animationAction.mixer) {
+        mouseControls.setIsLockRotate(true);
+        touchControls.setIsLockRotate(true);
+        if (this.startObject) this.startObject.rotation.y = 0;
         this.animationAction.playAnimation('switchStyle', true, 1);
+
         this.animationAction.mixer.addEventListener('finished', () => {
           if (this.animationAction && this.stylesAction && this.stylesAction.isLoadStyle) {
             this.stylesAction.isLoadStyle = false;
+            mouseControls.setIsLockRotate(false);
+            touchControls.setIsLockRotate(false);
             this.eventEmitter.emit('animationEnded');
             this.animationAction.playAnimation('activeStart', true);
           }

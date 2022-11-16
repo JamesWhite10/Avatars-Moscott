@@ -5,6 +5,7 @@ import { textures } from '../../constans/Textures';
 import { Actions, ActionOptions, CharacterOptions } from './Actions';
 import { TextureEditor } from '../../scene/textureEditor/TextureEditor';
 import { SceneViewport } from '../../scene/viewports/index';
+import { VrmAvatar } from '@avs/vrm-avatar';
 
 export class CharacterAction {
   public _sceneViewport: SceneViewport.SceneViewport;
@@ -54,17 +55,35 @@ export class CharacterAction {
     }
   }
 
-  public moveHead(event: MouseEvent): void {
-    if (this._actions) {
-      this._textureEditor.vrmAvatars.forEach((vrmAvatar) => {
-        if (vrmAvatar && vrmAvatar.vrm && vrmAvatar.vrm.lookAt) {
-          vrmAvatar.vrm.lookAt.lookAt(new THREE.Vector3(
-            (event.clientX / window.innerWidth) * 2,
-            -(event.clientY / window.innerHeight),
-            0,
-          ));
-        }
+  public moveBodyParts(delta: number): void {
+    if (this._actions && this._actions.animationAction) {
+      this._actions.textureEditor.vrmAvatars.forEach((avatar) => {
+        avatar.vrm.humanoid.autoUpdateHumanBones = false;
+        avatar.update(delta);
+
+        this.moveHead(avatar);
+        this.moveEyes(avatar);
       });
+    }
+  }
+
+  public moveHead(avatar: VrmAvatar): void {
+    if (this._actions && avatar.vrm.scene.name === this._actions.startObject?.name) {
+      const head = avatar.getBone('head');
+      if (head && this._actions.characterAction && this._actions.animationAction?.isIdle) {
+        head.rotateY((this._sceneViewport.mouseControls.mousePosition.x * 0.2));
+        head.rotateX((this._sceneViewport.mouseControls.mousePosition.y * 0.2));
+      }
+    }
+  }
+
+  public moveEyes(avatar: VrmAvatar): void {
+    if (avatar.vrm.lookAt) {
+      avatar.vrm.lookAt.lookAt(new THREE.Vector3(
+        this._sceneViewport.mouseControls.mousePosition.x * 2,
+        this._sceneViewport.mouseControls.mousePosition.y * 2,
+        0,
+      ));
     }
   }
 
@@ -94,6 +113,9 @@ export class CharacterAction {
           if (this._actions) {
             this._actions.startObject = modelObject;
             modelObject.position.set(x, this._actions.startPosition.y, z);
+
+            mouseControls.setIsLockRotate(false);
+            touchControls.setIsLockRotate(false);
 
             this._actions.eventEmitter.emit('characterChange', modelObject.name);
           }
