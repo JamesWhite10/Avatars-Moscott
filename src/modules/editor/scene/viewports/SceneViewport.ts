@@ -64,9 +64,9 @@ export class SceneViewport {
   }
 
   public makeThreeCamera(): THREE.PerspectiveCamera {
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100);
+    const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 1, 100);
 
-    camera.position.set(0.4, 1.4, 4);
+    camera.position.set(0.4, 1.9, 4);
     camera.lookAt(1.6, 1, 0);
 
     return camera;
@@ -229,7 +229,7 @@ export class SceneViewport {
 
   public clickHandler(event: MouseEvent): void {
     if (this.actions && this.actions.characterAction && this.actions.animationAction) {
-      if (this.mouseControls.object && this.touchControls.object) {
+      if (this.mouseControls.object && !this.mouseControls.isRotateObject) {
         this.actions.characterAction.characterClickHandler(event);
         this.actions.animationAction.clearInActiveAnimation();
       }
@@ -248,7 +248,7 @@ export class SceneViewport {
   }
 
   public mouseDownHandler(event: MouseEvent): void {
-    if (this.mouseControls.object && this.touchControls.object) {
+    if (this.mouseControls.object) {
       this.mouseControls.onMouseDown(event);
       this.mouseControls.onStartRotate(event);
     }
@@ -271,7 +271,7 @@ export class SceneViewport {
     this.threeRenderer.domElement.focus();
     this.touchControls.onTouchStart(event);
     if (this.actions && this.actions.characterAction) {
-      if (this.mouseControls.object && this.touchControls.object) {
+      if (this.touchControls.object && !this.mouseControls.isRotateObject) {
         this.actions.characterAction.characterTouchHandler(event);
       }
     }

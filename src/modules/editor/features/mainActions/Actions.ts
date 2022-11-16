@@ -155,6 +155,21 @@ export class Actions {
     }
   }
 
+  public cameraUpdate(): void {
+    const cameraFrom = { fov: 90, positionY: 1.9 };
+    const cameraTo = { fov: 45, positionY: 1.4 };
+    new TWEEN.Tween(cameraFrom)
+      .to(cameraTo, 1500)
+      .easing(TWEEN.Easing.Exponential.Out)
+      .onUpdate(({ fov, positionY }) => {
+        this.sceneViewport.threeCamera.fov = fov;
+        this.sceneViewport.threeCamera.position.y = positionY;
+        this.sceneViewport.threeCamera.lookAt(1.6, 1, 0);
+        this.sceneViewport.threeCamera.updateProjectionMatrix();
+      })
+      .start();
+  }
+
   public getSnapshot(): string {
     return getRendererSnapshot({ trim: false, renderer: this.sceneViewport.threeRenderer });
   }

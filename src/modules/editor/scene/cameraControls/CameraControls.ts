@@ -40,6 +40,8 @@ export class CameraControls {
 
   public targetRotationOnMouseDownX: number = 0;
 
+  public isRotateObject = false;
+
   constructor(options: ObjectControlsOptions) {
     this.threeCamera = options.threeCamera;
     this.rendererHeight = options.height;

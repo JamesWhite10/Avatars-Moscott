@@ -20,6 +20,7 @@ export class TouchControls extends CameraControls {
 
   public onTouchEnded(event: TouchEvent) {
     this.isMovingCamera = true;
+    this.isRotateObject = false;
     this.prevMousePosition.copy(this.getMousePosition(event));
   }
 
@@ -29,9 +30,10 @@ export class TouchControls extends CameraControls {
       this.setPrevPosition();
 
       if (this.isMovingCamera && this.object) {
+        this.isRotateObject = true;
         const mouseX = event.targetTouches[0].clientX - window.innerWidth / 2;
 
-        this.targetRotationX = this.targetRotationOnMouseDownX + (mouseX - this.clientXClickDown) * -0.01;
+        this.targetRotationX = this.targetRotationOnMouseDownX + (mouseX - this.clientXClickDown) * -0.07;
       }
     }
   }
