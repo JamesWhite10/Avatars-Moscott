@@ -151,7 +151,7 @@ export default class EditorStore {
           const style = this.findBaseStyle(character.name);
           const characterStyle = this.styleStore.styles.find((item) => item.id.includes(character.name.toLowerCase()));
           if (this.threeScene.actions?.characterAction && characterStyle) {
-            this.styleStore.activeStyle = characterStyle.id;
+            this.styleStore.setActiveStyle(characterStyle.id);
             this.threeScene.actions.characterAction.setDefaultData(
               characterStyle.id,
               style.targetTextureName,
