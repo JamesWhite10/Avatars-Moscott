@@ -123,7 +123,6 @@ export class TextureEditor {
   }
 
   public applyCharacterTexture = (model: ThreeVRM.VRM, textureName: string): void => {
-    const primitiveCollider = new PrimitiveCollider();
     const primitiveCollider = new PrimitiveCollider({
       data: { position: new THREE.Vector3(0, 0.8, 0) },
     });
