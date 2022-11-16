@@ -19,7 +19,6 @@ void main(void)
 
   if (color.a < .7) discard;
   if (height < uTime) discard;
-  if (height < (uTime + 0.0000001)) color = vec4(0.0, 0.0, 0.0, 1.0);
 
   if (color.r < 0.05 && color.b < .1) gl_FragColor = vec4((color.r * r.r) * 1.2, (color.g * r.g) * 1.2, (color.b * r.b) * 1.2, color.a);
   else gl_FragColor = vec4(color.r * (r.r * 0.5), color.g * (r.g * 0.55), color.b * (r.b * 0.55), color.a);

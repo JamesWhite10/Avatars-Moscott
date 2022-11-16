@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import ResourcesManager, { ResourceType } from '../ResourcesManager';
 import { TextureEditor } from '../textureEditor/index';
 import { MouseControl, TouchControl } from '../cameraControls/index';
-import { Avatar, EnvironmentConfigType, Style } from '../../../../types/index';
+import { AnimationsType, Avatar, EnvironmentConfigType, Style } from '../../../../types/index';
 import { NOISE } from '../../constans/TextureUrl';
 import { Actions } from '../../features/mainActions/index';
 import { getAnimationFile } from '../../utils/getAnimationFile';
@@ -11,6 +11,7 @@ export type SceneConfig = {
   characters: Avatar[]; // TODO возможно перемапать на свои внутренние типы
   styles: Style[];
   environment: EnvironmentConfigType;
+  animations: AnimationsType[];
 };
 
 export class SceneViewport {
@@ -124,7 +125,7 @@ export class SceneViewport {
     if (this.textureEditor) {
       this.actions = new Actions.Actions({ sceneViewport: this, textureEditor: this.textureEditor });
       if (this.actions.animationAction) {
-        this.actions.animationAction.init(config.characters, config.styles);
+        this.actions.animationAction.init(config.characters, config.styles, config.animations);
         this.actions.animationAction.waitInActiveAnimation();
       }
       this.actions.init(config.styles);
@@ -155,7 +156,7 @@ export class SceneViewport {
   }
 
   public loadSceneTexture(progress: (progress: number) => void, config: SceneConfig): Promise<void> {
-    const { styles, environment, characters } = config;
+    const { styles, environment, characters, animations } = config;
 
     this.resourcesManager.addGlb(environment.background);
 
@@ -175,6 +176,10 @@ export class SceneViewport {
           this.resourcesManager.addFbx(fileAnimation);
         });
       }
+    });
+
+    animations.forEach((item) => {
+      this.resourcesManager.addFbx(item.animation);
     });
 
     this.resourcesManager.addHdrTexture(environment.environment);

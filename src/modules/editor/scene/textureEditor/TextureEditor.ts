@@ -123,6 +123,7 @@ export class TextureEditor {
   }
 
   public applyCharacterTexture = (model: ThreeVRM.VRM, textureName: string): void => {
+    const primitiveCollider = new PrimitiveCollider();
     const primitiveCollider = new PrimitiveCollider({
       data: { position: new THREE.Vector3(0, 0.8, 0) },
     });
@@ -137,11 +138,7 @@ export class TextureEditor {
       if (node instanceof THREE.Mesh) {
         node.receiveShadow = false;
         node.castShadow = false;
-        if (node.material.uniforms && node.material.uniforms.map) {
-          const map = node.material.uniforms.map.value;
-          const uniform = this.dissolveShader.createUniform({ uDiffuseMap: map, uHeightMap: noiseTexture }, textureName);
-          node.material = this.dissolveShader.createMaterialShader(uniform, textureName, false, true);
-        } else {
+        if (Array.isArray(node.material)) {
           const materials: THREE.ShaderMaterial[] = [];
           node.material.forEach((material: THREE.ShaderMaterial) => {
             const map = material.uniforms.map.value;
