@@ -51,8 +51,10 @@ export default class StyleStore implements EmitterInterface<StyleStoreEventsType
   }
 
   public onStyleChange(id: string): void {
-    this.activeStyle = id;
-    this.eventEmitter.emit('styleChange', id);
+    if (id !== this.activeStyle) {
+      this.activeStyle = id;
+      this.eventEmitter.emit('styleChange', id);
+    }
   }
 
   public off(event: keyof StyleStoreEventsType): void {
