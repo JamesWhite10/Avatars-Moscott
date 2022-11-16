@@ -5,7 +5,6 @@ const withTM = require('next-transpile-modules')(['@avs/vrm-avatar']);
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  assetPrefix: '/',
   webpack: (config) => {
     config.module.rules.push({
       test: /\.(glsl)$/,
