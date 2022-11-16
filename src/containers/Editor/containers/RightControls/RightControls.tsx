@@ -35,6 +35,7 @@ const RightControls: FC = observer(() => {
             ref={setControlElement}
             active={activeProperty === 'animations'}
             onClick={animationsSelectHandler}
+            colorScheme="secondary"
             onMouseEnter={() => soundSystem.playSound('hover', true)}
           >
             Animation
