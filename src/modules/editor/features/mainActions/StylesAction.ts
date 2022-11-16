@@ -53,9 +53,9 @@ export class StylesAction {
         const dissolveTween = new TWEEN.Tween(dissolveFrom)
           .to(dissolveTo, 900)
           .onUpdate(({ dissolve }) => {
-            this._textureEditor.dissolveShader.uniforms.forEach((value) => {
-              if (this._actions?.startObject && this._actions.startObject.name === value.name) {
-                value.uniform.uTime.value = dissolve;
+            this._textureEditor.vrmMaterials.forEach((material) => {
+              if (material.userData.shader) {
+                material.userData.shader.uniforms.uTime = { value: dissolve };
               }
             });
           });
@@ -83,8 +83,10 @@ export class StylesAction {
         const appearanceTween = new TWEEN.Tween(appearanceFrom)
           .to(appearanceTo, 900)
           .onUpdate(({ appearance }) => {
-            this._textureEditor.dissolveShader.uniforms.forEach((value) => {
-              if (value.name === characterName) value.uniform.uTime.value = appearance;
+            this._textureEditor.vrmMaterials.forEach((material) => {
+              if (material.userData.shader) {
+                material.userData.shader.uniforms.uTime = { value: appearance };
+              }
             });
           });
 

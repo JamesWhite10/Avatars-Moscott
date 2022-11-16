@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { HdrTextureResource, ResourceType } from '../ResourcesManager';
-import { BlendingShader, DissolveShader } from '../shaders/index';
+import { BlendingShader } from '../shaders/index';
 import { SceneViewport } from '../viewports/index';
 import * as ThreeVRM from '@pixiv/three-vrm';
 import PrimitiveCollider from '../../features/PrimitiveCollider';
@@ -21,16 +21,15 @@ export class TextureEditor {
 
   public blendingShader: BlendingShader.BlendingShader;
 
-  public dissolveShader: DissolveShader.DissolveShader;
-
   private _mixers: THREE.AnimationMixer[] = [];
 
   public vrmAvatars: VrmAvatar[] = [];
 
+  public vrmMaterials: THREE.MeshStandardMaterial[] = [];
+
   constructor(options: MainViewOptions) {
     this._sceneViewport = options.sceneViewport;
     this.blendingShader = new BlendingShader.BlendingShader({ fragmentShader: blendingFragment, vertexShader: blendingVertex });
-    this.dissolveShader = new DissolveShader.DissolveShader({ vertexShader: dissolveVertex, fragmentShader: dissolveFragment });
   }
 
   public onUpdate(delta: number): void {
@@ -135,18 +134,25 @@ export class TextureEditor {
 
     model.scene.traverse((node) => {
       if (node instanceof THREE.Mesh) {
-        node.receiveShadow = false;
-        node.castShadow = false;
-        if (node.material.uniforms && node.material.uniforms.map) {
-          const map = node.material.uniforms.map.value;
-          const uniform = this.dissolveShader.createUniform({ uDiffuseMap: map, uHeightMap: noiseTexture }, textureName);
-          node.material = this.dissolveShader.createMaterialShader(uniform, textureName, false, true);
-        } else {
-          const materials: THREE.ShaderMaterial[] = [];
+        if (Array.isArray(node.material)) {
+          const materials: THREE.MeshStandardMaterial[] = [];
           node.material.forEach((material: THREE.ShaderMaterial) => {
             const map = material.uniforms.map.value;
-            const uniform = this.dissolveShader.createUniform({ uDiffuseMap: map, uHeightMap: noiseTexture }, textureName);
-            materials.push(this.dissolveShader.createMaterialShader(uniform, textureName, false, true));
+
+            const newMaterial = new THREE.MeshStandardMaterial({ map, side: THREE.DoubleSide, transparent: true, opacity: 0.9 });
+            newMaterial.onBeforeCompile = (shader: THREE.Shader) => {
+              shader.uniforms.uHeightMap = { value: noiseTexture };
+              shader.uniforms.uTime = { value: 0.0 };
+
+              shader.vertexShader = dissolveVertex.replace('#include <uv_pars_vertex>', '#include <common>\n'
+                + '#include <uv_pars_vertex>');
+              shader.fragmentShader = dissolveFragment.replace('#include <packing>', '#include <common>\n'
+                + '#include <packing>');
+              newMaterial.userData.shader = shader;
+            };
+
+            materials.push(newMaterial);
+            this.vrmMaterials.push(newMaterial);
           });
           node.material = materials;
         }
