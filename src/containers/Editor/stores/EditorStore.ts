@@ -141,8 +141,8 @@ export default class EditorStore {
     if (!this.threeScene) return;
     this.threeScene.init({ characters, styles, environment }, this.onProgress.bind(this))
       .then(() => {
-        this.progress = 100;
         this.setIsReady(true);
+        this.setProgress(100);
         if (this.threeScene && this.threeScene.actions?.characterAction) this.sceneSubscribe();
         if (!this.threeScene) return;
         this.sceneSubscribe();
@@ -178,9 +178,9 @@ export default class EditorStore {
   public setProgress(progress: number): void {
     if (progress < 0) this.progress = 0;
     if (progress >= 100) {
-      this.progress = 100 - 2;
+      this.progress = 100;
     }
-    this.progress = progress - 2;
+    this.progress = progress;
   }
 
   public setIsLoadErrorModalOpen(isOpen: boolean): void {

@@ -214,7 +214,7 @@ class ResourcesManager {
             if (this.overallProgressLoad < this.countPercentLoader()) {
               this.overallProgressLoad = this.countPercentLoader();
               const progress = this.countPercentLoader();
-              onProgress(progress);
+              onProgress(progress - 2);
             }
           }
         });
