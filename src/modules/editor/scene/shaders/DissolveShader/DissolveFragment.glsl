@@ -1,25 +1,121 @@
-varying vec2 vUv;
+uniform float uCustom;
+
+#define STANDARD
+
+#ifdef PHYSICAL
+#define REFLECTIVITY
+#define CLEARCOAT
+#define TRANSPARENCY
+#endif
 
 uniform sampler2D uDiffuseMap;
 uniform sampler2D uHeightMap;
 uniform float uTime;
 
-struct DirectionalLight {
-  vec3 direction;
-  vec3 color;
-};
+uniform vec3 diffuse;
+uniform vec3 emissive;
+uniform float roughness;
+uniform float metalness;
+uniform float opacity;
 
-uniform DirectionalLight directionalLights[ NUM_DIR_LIGHTS ];
+#ifdef TRANSPARENCY
+uniform float transparency;
+#endif
 
-void main(void)
-{
-  vec3 r = directionalLights[0].color;
+#ifdef REFLECTIVITY
+uniform float reflectivity;
+#endif
+
+#ifdef CLEARCOAT
+uniform float clearcoat;
+uniform float clearcoatRoughness;
+#endif
+
+#ifdef USE_SHEEN
+uniform vec3 sheen;
+#endif
+
+varying vec3 vViewPosition;
+
+#ifndef FLAT_SHADED
+varying vec3 vNormal;
+#ifdef USE_TANGENT
+varying vec3 vTangent;
+varying vec3 vBitangent;
+#endif
+#endif
+
+#include <packing>
+#include <dithering_pars_fragment>
+#include <color_pars_fragment>
+#include <uv_pars_fragment>
+#include <uv2_pars_fragment>
+#include <map_pars_fragment>
+#include <alphamap_pars_fragment>
+#include <aomap_pars_fragment>
+#include <lightmap_pars_fragment>
+#include <emissivemap_pars_fragment>
+#include <bsdfs>
+#include <cube_uv_reflection_fragment>
+#include <envmap_common_pars_fragment>
+#include <envmap_physical_pars_fragment>
+#include <fog_pars_fragment>
+#include <lights_pars_begin>
+#include <lights_physical_pars_fragment>
+#include <shadowmap_pars_fragment>
+#include <bumpmap_pars_fragment>
+#include <normalmap_pars_fragment>
+#include <clearcoat_pars_fragment>
+#include <roughnessmap_pars_fragment>
+#include <metalnessmap_pars_fragment>
+#include <logdepthbuf_pars_fragment>
+#include <clipping_planes_pars_fragment>
+
+void main() {
+
+  #include <clipping_planes_fragment>
+
+  vec4 diffuseColor = vec4( diffuse, opacity );
+  ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
+  vec3 totalEmissiveRadiance = emissive;
+
+  #include <logdepthbuf_fragment>
+  #include <map_fragment>
+  #include <color_fragment>
+  #include <alphamap_fragment>
+  #include <alphatest_fragment>
+  #include <roughnessmap_fragment>
+  #include <metalnessmap_fragment>
+  #include <normal_fragment_begin>
+  #include <normal_fragment_maps>
+  #include <clearcoat_normal_fragment_begin>
+  #include <clearcoat_normal_fragment_maps>
+  #include <emissivemap_fragment>
+
+  // accumulation
+  #include <lights_physical_fragment>
+  #include <lights_fragment_begin>
+  #include <lights_fragment_maps>
+  #include <lights_fragment_end>
+
+  #include <aomap_fragment>
+
+  vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;
+
+  #ifdef TRANSPARENCY
+  diffuseColor.a *= saturate( 1. - transparency + linearToRelativeLuminance( reflectedLight.directSpecular + reflectedLight.indirectSpecular ) );
+  #endif
+
   float height = texture2D(uHeightMap, vUv).r;
-  vec4 color = texture2D(uDiffuseMap, vUv);
 
-  if (color.a < .7) discard;
   if (height < uTime) discard;
 
-  if (color.r < 0.05 && color.b < .1) gl_FragColor = vec4((color.r * r.r) * 1.2, (color.g * r.g) * 1.2, (color.b * r.b) * 1.2, color.a);
-  else gl_FragColor = vec4(color.r * (r.r * 0.5), color.g * (r.g * 0.55), color.b * (r.b * 0.55), color.a);
+
+  gl_FragColor = vec4(outgoingLight.rgb, diffuseColor.a);
+
+  #include <tonemapping_fragment>
+  #include <encodings_fragment>
+  #include <fog_fragment>
+  #include <premultiplied_alpha_fragment>
+  #include <dithering_fragment>
 }

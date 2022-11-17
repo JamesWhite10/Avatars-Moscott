@@ -78,8 +78,10 @@ export class CharacterAction {
       const dissolveTween = new TWEEN.Tween(dissolveFrom)
         .to(dissolveTo, 900)
         .onUpdate(({ dissolve }) => {
-          this._textureEditor.dissolveShader.uniforms.forEach((value) => {
-            value.uniform.uTime.value = dissolve;
+          this._textureEditor.vrmMaterials.forEach((material) => {
+            if (material.userData.shader) {
+              material.userData.shader.uniforms.uTime = { value: dissolve };
+            }
           });
         });
 
@@ -105,8 +107,10 @@ export class CharacterAction {
       const appearanceTween = new TWEEN.Tween(appearanceFrom)
         .to(appearanceTo, 900)
         .onUpdate(({ appearance }) => {
-          this._textureEditor.dissolveShader.uniforms.forEach((value) => {
-            value.uniform.uTime.value = appearance;
+          this._textureEditor.vrmMaterials.forEach((material) => {
+            if (material.userData.shader) {
+              material.userData.shader.uniforms.uTime = { value: appearance };
+            }
             if (this._actions && appearance === 0) {
               if (!mouseControls.object) mouseControls.setObject(this._actions.startObject);
               if (!touchControls.object) touchControls.setObject(this._actions.startObject);

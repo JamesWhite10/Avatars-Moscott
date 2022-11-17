@@ -217,14 +217,12 @@ export class SceneViewport {
   }
 
   public initLight(): void {
-    const color = 0xBFBEBD;
-    const intensity = 1.0;
-    const light = new THREE.DirectionalLight(color, intensity);
-    light.position.set(0, 7, 3);
+    const color = 0xFFFFFF;
+    const light = new THREE.SpotLight(color, 0.6);
+    light.position.set(0, 2, 3);
     light.target.position.set(0, 0, 0);
 
     this.threeScene.add(light);
-    light.target.updateMatrixWorld();
   }
 
   public clickHandler(event: MouseEvent): void {
