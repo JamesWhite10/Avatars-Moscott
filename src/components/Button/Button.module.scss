@@ -52,7 +52,7 @@
 
 .secondary {
   &:not(.active) {
-    background: #97989E;
+    background: var(--transparent-bg-gray-500);
 
     &:hover {
       background: #72747F;

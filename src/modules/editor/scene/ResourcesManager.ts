@@ -58,6 +58,12 @@ export interface VrmResource extends Resource {
   content?: ThreeGLTF;
 }
 
+export interface ResourceLoadData {
+  url: string;
+  loaded: number;
+  total: number;
+}
+
 export type ResourcesRecord = Record<string, (
   GlbResource | HdrTextureResource | TextureResource | VrmResource | FbxResource)>;
 
@@ -80,6 +86,8 @@ class ResourcesManager {
 
   private overallProgressLoad: number = 0;
 
+  private resourceLoadData: ResourceLoadData[] = [];
+
   constructor(params: ResourcesManagerOptions = {}) {
     this.gltfLoader.setCrossOrigin('anonymous');
     this.textureLoader.setCrossOrigin('anonymous');
@@ -95,6 +103,7 @@ class ResourcesManager {
   }
 
   public addVrm(url: string): this {
+    this.resourceLoadData.push({ url, total: 0, loaded: 0 });
     this.addResource(url, ResourceType.VRM);
     return this;
   }
@@ -105,6 +114,7 @@ class ResourcesManager {
   }
 
   public addFbx(url: string):void {
+    this.resourceLoadData.push({ url, total: 0, loaded: 0 });
     this.addResource(url, ResourceType.FBX);
   }
 
@@ -197,13 +207,17 @@ class ResourcesManager {
         resolve();
       },
       (xhr) => {
-        if (resource.type === ResourceType.VRM) {
-          const progressLoaded = (xhr.loaded / xhr.total) * 100;
-          if (progressLoaded > this.overallProgressLoad) {
-            this.overallProgressLoad = progressLoaded;
-            onProgress(Math.floor(this.overallProgressLoad));
+        this.resourceLoadData.forEach((item) => {
+          if (item.url === url) {
+            item.loaded = xhr.loaded;
+            item.total = xhr.total;
+            if (this.overallProgressLoad < this.countPercentLoader()) {
+              this.overallProgressLoad = this.countPercentLoader();
+              const progress = this.countPercentLoader();
+              onProgress(progress - 2);
+            }
           }
-        }
+        });
       },
       () => {
         resource.loaded = true;
@@ -212,6 +226,16 @@ class ResourcesManager {
         reject(resource.error);
       },
     ));
+  }
+
+  private countPercentLoader(): number {
+    const count = this.resourceLoadData.reduce((prev, item) => {
+      return {
+        load: prev.load + item.loaded,
+        total: prev.total + item.total,
+      };
+    }, { load: 0, total: 0 });
+    return (count.load / count.total) * 100;
   }
 
   private addQueryTimestampToUrl(url: string): string {

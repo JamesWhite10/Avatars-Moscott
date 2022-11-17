@@ -24,18 +24,18 @@
   --gray-800: #262730;
   --gray-900: #1D1E26;
 
-  --transparent-gb-gray-150: rgba(23, 26, 48, 0.15);
-  --transparent-gb-gray-300: rgba(23, 26, 48, 0.3);
-  --transparent-gb-gray-500: rgba(23, 26, 48, 0.5);
-  --transparent-gb-gray-700: rgba(23, 26, 48, 0.7);
-  --transparent-gb-gray-900: rgba(23, 26, 48, 0.9);
+  --transparent-bg-gray-150: rgba(23, 26, 48, 0.15);
+  --transparent-bg-gray-300: rgba(23, 26, 48, 0.3);
+  --transparent-bg-gray-500: rgba(23, 26, 48, 0.5);
+  --transparent-bg-gray-700: rgba(23, 26, 48, 0.7);
+  --transparent-bg-gray-900: rgba(23, 26, 48, 0.9);
 
-  --transparent-gb-white-100: rgba(255, 255, 255, 0.1);
-  --transparent-gb-white-150: rgba(255, 255, 255, 0.15);
-  --transparent-gb-white-300: rgba(255, 255, 255, 0.3);
-  --transparent-gb-white-500: rgba(255, 255, 255, 0.5);
-  --transparent-gb-white-700: rgba(255, 255, 255, 0.7);
-  --transparent-gb-white-900: rgba(255, 255, 255, 0.9);
+  --transparent-bg-white-100: rgba(255, 255, 255, 0.1);
+  --transparent-bg-white-150: rgba(255, 255, 255, 0.15);
+  --transparent-bg-white-300: rgba(255, 255, 255, 0.3);
+  --transparent-bg-white-500: rgba(255, 255, 255, 0.5);
+  --transparent-bg-white-700: rgba(255, 255, 255, 0.7);
+  --transparent-bg-white-900: rgba(255, 255, 255, 0.9);
 
   --error-25: #FFEBE6;
   --error-50: #FFC4B3;

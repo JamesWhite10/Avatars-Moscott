@@ -15,6 +15,8 @@ export class CharacterAction {
 
   public characters: CharacterOptions[] = [];
 
+  public isLoadCharacter: boolean = false;
+
   constructor(options: ActionOptions) {
     this._sceneViewport = options.sceneViewport;
     this._textureEditor = options.textureEditor;
@@ -40,21 +42,12 @@ export class CharacterAction {
   }
 
   public changeData(characterName: string): void {
-    const { mouseControls, touchControls } = this._sceneViewport;
     const modelObject = this._sceneViewport.threeScene.children.find((node) => node.name.includes(characterName) && node.visible);
     if (modelObject) {
       const { threeScene } = this._sceneViewport;
       if (threeScene && this._actions) {
         const startObjectName = !this._actions.startObject ? '' : this._actions.startObject.name;
         if (modelObject && startObjectName !== characterName) {
-          if (this._actions.startObject) {
-            mouseControls.clearData();
-            touchControls.clearData();
-          }
-
-          mouseControls.setObject(modelObject);
-          touchControls.setObject(modelObject);
-
           this._actions.eventEmitter.emit('loadNewCharacter', characterName, modelObject);
         }
       }
@@ -64,7 +57,7 @@ export class CharacterAction {
   public moveHead(event: MouseEvent): void {
     if (this._actions) {
       this._textureEditor.vrmAvatars.forEach((vrmAvatar) => {
-        if (vrmAvatar.vrm.lookAt) {
+        if (vrmAvatar && vrmAvatar.vrm && vrmAvatar.vrm.lookAt) {
           vrmAvatar.vrm.lookAt.lookAt(new THREE.Vector3(
             (event.clientX / window.innerWidth) * 2,
             -(event.clientY / window.innerHeight),
@@ -159,18 +152,22 @@ export class CharacterAction {
 
   public characterClickHandler(event: MouseEvent): void {
     this.characters.forEach((character) => {
-      if (this._actions && !this._actions.isLoadingCharacter) {
+      if (this._actions && !this.isLoadCharacter && !this._actions.stylesAction?.isLoadStyle) {
         const intersects = this._actions.raycastSystem.mouseRaycast(event, character.name);
-        if (intersects.length !== 0) this.changeData(intersects[0].object.parent?.name || '');
+        if (intersects.length !== 0) {
+          const model = intersects[0].object.parent;
+          if (model) this.changeData(model.name);
+        }
       }
     });
   }
 
   public characterTouchHandler(event: TouchEvent): void {
     this.characters.forEach((character) => {
-      if (this._actions && !this._actions.isLoadingCharacter) {
+      if (this._actions && !this.isLoadCharacter && !this._actions.stylesAction?.isLoadStyle) {
         const intersects = this._actions.raycastSystem.touchRaycast(event, character.name);
-        if (intersects.length !== 0) this.changeData(intersects[0].object.parent?.name || '');
+        const model = intersects[0].object.parent;
+        if (model) this.changeData(model.name);
       }
     });
   }

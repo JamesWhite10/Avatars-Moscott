@@ -11,6 +11,8 @@ export class StylesAction {
 
   private _actions: Actions | null = null;
 
+  public isLoadStyle: boolean = false;
+
   constructor(options: ActionOptions) {
     this._sceneViewport = options.sceneViewport;
     this._textureEditor = options.textureEditor;
@@ -18,7 +20,7 @@ export class StylesAction {
   }
 
   public changeStyle(texture: string, characterName: string): void {
-    if (this._textureEditor && this._actions) this._actions.eventEmitter.emit('loadStyleCharacter', characterName, texture);
+    if (this._textureEditor && this._actions) this._actions.eventEmitter.emit('loadNewStyle', characterName, texture);
   }
 
   public changeStyleTexture(texture: string): void {
@@ -69,10 +71,12 @@ export class StylesAction {
               lastStartObject.visible = false;
               if (this._actions) {
                 this._actions.startObject = modelObject;
+                modelObject.position.set(x, y, z);
                 this._actions.startObject.visible = true;
-                this._actions.startObject.position.set(x, y, z);
                 this._sceneViewport.mouseControls.setObject(modelObject);
                 this._sceneViewport.touchControls.setObject(modelObject);
+
+                this._actions.eventEmitter.emit('styleChange', characterName);
               }
             }
           });

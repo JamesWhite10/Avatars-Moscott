@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { EmitterInterface } from '../../../stores/EmitterInterface';
 import EventEmitter from 'eventemitter3';
-import { StaticAnimationType } from '../../../types/index';
+import { AnimationsType } from '../../../types/index';
 
 export type AnimationEventsType = {
   animation_select: (id: string) => void;
@@ -10,38 +10,10 @@ export type AnimationEventsType = {
   stop: () => void;
 };
 
-// TODO Remove after parse animations from editor
-const mockAnimations: StaticAnimationType[] = [
-  {
-    id: 'anim_one',
-    name: 'Dance',
-  },
-  {
-    id: 'anim_two',
-    name: 'Fool around',
-  },
-  {
-    id: 'anim_three',
-    name: 'Dance',
-  },
-  {
-    id: 'anim_four',
-    name: 'Dance',
-  },
-  {
-    id: 'anim_five',
-    name: 'Dance',
-  },
-  {
-    id: 'anim_six',
-    name: 'Dance',
-  },
-];
-
 export default class AnimationStore implements EmitterInterface<AnimationEventsType> {
   public showAnimationSelection = false;
 
-  public animations = mockAnimations;
+  public animations: AnimationsType[] = [];
 
   public activeAnimationId?: string = undefined;
 
@@ -71,7 +43,7 @@ export default class AnimationStore implements EmitterInterface<AnimationEventsT
     this.eventEmitter.emit('animation_select', id);
   }
 
-  public setAnimations(animations: []): void {
+  public setAnimations(animations: AnimationsType[]): void {
     this.animations = animations;
   }
 
