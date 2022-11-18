@@ -2,13 +2,13 @@ import * as THREE from 'three';
 import { CameraControls, ObjectControlsOptions } from './CameraControls';
 
 export class MouseControls extends CameraControls {
-  public zoomSpeed: number = 0.1;
+  public zoomSpeed: number = 2;
 
-  private _currentZoom: number = 4;
+  private _currentZoom: number = 45;
 
-  public minZoom: number = 4;
+  public minZoom: number = 33;
 
-  public maxZoom: number = 4.6;
+  public maxZoom: number = 45;
 
   constructor({ threeCamera, width, height }: ObjectControlsOptions) {
     super({ threeCamera, width, height });
@@ -44,8 +44,8 @@ export class MouseControls extends CameraControls {
       const delta = event.deltaY < 0 ? -1 : 1;
       this._currentZoom += Math.sin(delta) * this.zoomSpeed;
       if (this._currentZoom < this.maxZoom && this._currentZoom > this.minZoom) {
-        this.threeCamera.position.z = this._currentZoom;
-        this.threeCamera.position.z = this._currentZoom;
+        this.threeCamera.fov = this._currentZoom;
+        this.threeCamera.updateProjectionMatrix();
         this.threeCamera.lookAt(this.lookVector.x, this.lookVector.y, this.lookVector.z);
       } else {
         this.changeScale(this._currentZoom);
