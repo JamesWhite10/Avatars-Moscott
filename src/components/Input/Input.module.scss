@@ -30,6 +30,7 @@
     outline: none;
     border: 1px solid rgba(127, 135, 255, 1);
     box-shadow: rgba(127, 135, 255, 0.5) 0 1px 4px, rgb(127, 135, 255, 0.5) 0 0 0 3px;
+    -webkit-appearance: none;
   }
 
   &:disabled {
@@ -77,6 +78,7 @@
 .input_error {
   border: 1px solid rgba(255, 118, 77, 1);
   box-shadow: rgba(255, 118, 77, 0.5) 0 1px 4px, rgb(255, 118, 77, 0.5) 0 0 0 3px;
+  -webkit-appearance: none;
 
   &:hover {
     border: 1px solid rgba(255, 118, 77, 1);
@@ -85,6 +87,7 @@
   &:focus {
     border: 1px solid rgba(255, 118, 77, 1);
     box-shadow: rgba(255, 118, 77, 0.5) 0 1px 4px, rgb(255, 118, 77, 0.5) 0 0 0 3px;
+    -webkit-appearance: none;
   }
 }
 
