@@ -56,8 +56,10 @@ export class StylesAction {
           .to(dissolveTo, 900)
           .onUpdate(({ dissolve }) => {
             this._textureEditor.vrmMaterials.forEach((material) => {
-              if (material.userData.shader) {
-                material.userData.shader.uniforms.uTime = { value: dissolve };
+              if (this._actions && this._actions.startObject) {
+                if (material.userData.shader && material.userData.name === this._actions.startObject.name) {
+                  material.userData.shader.uniforms.uTime = { value: dissolve };
+                }
               }
             });
           });
@@ -70,12 +72,11 @@ export class StylesAction {
               lastStartObject.position.set(0, 0, 0);
               lastStartObject.visible = false;
               if (this._actions) {
-                this._actions.startObject = modelObject;
                 modelObject.position.set(x, y, z);
-                this._actions.startObject.visible = true;
+                this._actions.startObject = modelObject;
                 this._sceneViewport.mouseControls.setObject(modelObject);
                 this._sceneViewport.touchControls.setObject(modelObject);
-
+                this._actions.startObject.visible = true;
                 this._actions.eventEmitter.emit('styleChange', characterName);
               }
             }
@@ -88,7 +89,7 @@ export class StylesAction {
           .to(appearanceTo, 900)
           .onUpdate(({ appearance }) => {
             this._textureEditor.vrmMaterials.forEach((material) => {
-              if (material.userData.shader) {
+              if (material.userData.shader && material.userData.name === characterName) {
                 material.userData.shader.uniforms.uTime = { value: appearance };
               }
             });

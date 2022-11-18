@@ -149,6 +149,7 @@ export class TextureEditor {
               shader.fragmentShader = dissolveFragment.replace('#include <packing>', '#include <common>\n'
                 + '#include <packing>');
               newMaterial.userData.shader = shader;
+              newMaterial.userData.name = textureName;
             };
 
             materials.push(newMaterial);
@@ -166,8 +167,11 @@ export class TextureEditor {
     this._sceneViewport.threeScene.add(primitiveCollider.object);
   };
 
-  public hideObjects(objectName: string, isVisible: boolean): void {
+  public hideObjects(objectName: string): void {
     const objectModel = this._sceneViewport.threeScene.getObjectByName(objectName);
-    if (objectModel) objectModel.visible = isVisible;
+    if (objectModel) {
+      objectModel.position.set(1.3, -2, 0);
+      objectModel.visible = true;
+    }
   }
 }
