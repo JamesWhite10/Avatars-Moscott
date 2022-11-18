@@ -86,8 +86,8 @@
   fill: #FFFFFF;
   cursor: pointer;
   vertical-align: middle;
-  width: 18px;
-  height: 19px;
+  width: 27px;
+  height: 28px;
 }
 
 .content_wrapper {
@@ -253,9 +253,13 @@
   font-weight: 400;
   line-height: 20px;
   text-align: start;
-  margin-bottom: 150px;
+  margin-bottom: 50px;
   @media (max-width: $mq-mobile-max) {
-    margin-bottom: 450px;
+    margin-bottom: 250px;
+    transition: 1s;
+  }
+  @media (max-height: $mq-mobile-max) {
+    margin-bottom: 600px;
     transition: 1s;
   }
 }

@@ -9,6 +9,7 @@ import React, {
   useState,
 } from 'react';
 import classNames from './Textarea.module.scss';
+import cn from 'classnames';
 import ClearIcon from '../Icons/ClearIcon';
 import Fade from '@app/components/Transition/Fade';
 
@@ -81,7 +82,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, PropsWithChildren<TextareaProps
         id={nameId + name}
         ref={ref}
         value={innerValue}
-        className={classNames.formFieldTextArea}
+        className={cn(classNames.formFieldTextArea, { [classNames.formFieldTextAreaValue]: innerValue })}
         placeholder={placeholder}
         autoComplete="off"
         onChange={onChangeHandler}

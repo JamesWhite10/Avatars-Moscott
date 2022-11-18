@@ -1,3 +1,5 @@
+@import "../../../styles/media.module";
+
 .formGroupField {
   position: relative;
 }
@@ -18,6 +20,9 @@
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.1);
   transition: all .2s ease;
+  @media (max-width: $mq-mobile-max) {
+    height: 144px;
+  }
 
   &:hover {
     background: rgba(255, 255, 255, 0.5);
@@ -30,6 +35,7 @@
     outline: none;
     border: 1px solid rgba(127, 135, 255, 1);
     box-shadow: rgba(127, 135, 255, 0.5) 0 1px 4px, rgb(127, 135, 255, 0.5) 0 0 0 3px;
+    -webkit-appearance: none;
   }
 
   &:disabled {
@@ -58,7 +64,7 @@
 
 .formLabel {
   position: absolute;
-  top: 1px;
+  top: 12px;
   margin-left: 18px;
   display: block;
   transition: .4s;
@@ -69,7 +75,11 @@
 
 .clearIcon {
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: 10px;
+  right: 18px;
   cursor: pointer;
+}
+
+.formFieldTextAreaValue {
+  padding: 30px 16px 16px 16px;
 }
