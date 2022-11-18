@@ -166,8 +166,10 @@ export class CharacterAction {
     this.characters.forEach((character) => {
       if (this._actions && !this.isLoadCharacter && !this._actions.stylesAction?.isLoadStyle) {
         const intersects = this._actions.raycastSystem.touchRaycast(event, character.name);
-        const model = intersects[0].object.parent;
-        if (model) this.changeData(model.name);
+        if (intersects && intersects.length !== 0) {
+          const model = intersects[0].object.parent;
+          if (model) this.changeData(model.name);
+        }
       }
     });
   }

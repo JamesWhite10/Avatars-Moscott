@@ -156,7 +156,7 @@ export default class EditorStore {
             );
             this.styleStore.styles.forEach((item) => {
               if (item.name !== 'Base') {
-                if (this.threeScene && this.threeScene.textureEditor) this.threeScene.textureEditor.hideObjects(item.id, false);
+                if (this.threeScene && this.threeScene.textureEditor) this.threeScene.textureEditor.hideObjects(item.id);
               }
             });
           }
