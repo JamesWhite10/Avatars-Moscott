@@ -18,6 +18,7 @@ const Animations: FC = observer(() => {
     setActiveAnimationId,
     setShowAnimationSelection,
     onStop,
+    isLoadAnimation,
   } = useAnimationStore();
 
   const areaRef = useRef<HTMLDivElement>(null);
@@ -57,7 +58,9 @@ const Animations: FC = observer(() => {
           <AnimatedButton
             key={animation.id}
             progress={progress}
-            onClick={() => animationSelectHandler(animation.id)}
+            onClick={() => {
+              if (!isLoadAnimation) animationSelectHandler(animation.id);
+            }}
             active={animationIsActive(animation.id)}
           >
             {animation.name}

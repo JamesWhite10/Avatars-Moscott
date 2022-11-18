@@ -132,14 +132,19 @@ const sceneConfig: EnvironmentConfigType = {
 
 const animations: AnimationsType[] = [
   {
-    id: 'dance',
-    name: 'Dance',
-    animation: '/3d/assets/animations/animationsUi/dance.fbx',
+    id: 'retroDance',
+    name: 'New Dance',
+    animation: '/3d/assets/animations/animationsUi/retroDance.fbx',
   },
   {
     id: 'foolAround',
     name: 'Fool around',
     animation: '/3d/assets/animations/animationsUi/foolAround.fbx',
+  },
+  {
+    id: 'dance',
+    name: 'Dance',
+    animation: '/3d/assets/animations/animationsUi/dance.fbx',
   },
 ];
 

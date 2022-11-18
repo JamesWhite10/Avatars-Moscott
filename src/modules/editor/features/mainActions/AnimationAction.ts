@@ -35,6 +35,8 @@ export class AnimationAction {
 
   public isFirstForgiveness: boolean = true;
 
+  public isIdle = true;
+
   constructor(options: ActionOptions) {
     this._sceneViewport = options.sceneViewport;
     this._textureEditor = options.textureEditor;
@@ -56,12 +58,19 @@ export class AnimationAction {
       const findAvatars = this._textureEditor.vrmAvatars
         .filter((avatar) => avatar.vrm.scene.name === style.id);
       findAvatars.forEach((avatar) => {
-        if (style.animations) {
-          this._animationsStyles.push({ vrmAvatar: avatar, animations: style.animations });
-        }
+        if (style.animations) this._animationsStyles.push({ vrmAvatar: avatar, animations: style.animations });
       });
     });
     this.loadAnimation(animations);
+  }
+
+  public stopAnimation(): void {
+    const { mouseControls, touchControls } = this._sceneViewport;
+    if (this._actions && this._actions.characterAction) {
+      mouseControls.setIsLockRotate(false);
+      touchControls.setIsLockRotate(false);
+      this._actions.characterAction.isLoadCharacter = false;
+    }
   }
 
   public loadAnimation(animations: AnimationsType[]): void {
@@ -99,23 +108,27 @@ export class AnimationAction {
     }
   }
 
-  public stopAnimation(): void {
-    if (this.startCharacterAnimation) this.playAnimation('activeStart', true);
-  }
-
   public startAnimationAction(): void {
     if (this._actions && this._actions.characterAction) this._actions.characterAction.isLoadCharacter = true;
+    const { mouseControls, touchControls } = this._sceneViewport;
     this.playAnimation('forgiveness', true, 1);
     this.playAnimation('forgiveness', false, 1);
 
+    mouseControls.setIsLockRotate(true);
+    touchControls.setIsLockRotate(true);
+
+    this._actions?.eventEmitter.emit('loadTimeAnimation', true);
     if (this.mixer) {
       this.mixer.addEventListener('finished', (event) => {
         const clip = event.action.getClip();
 
         if (clip.name === 'forgiveness' && event.action.repetitions === 1 && this.isFirstForgiveness) {
           this.isFirstForgiveness = false;
+          mouseControls.setIsLockRotate(false);
+          touchControls.setIsLockRotate(false);
           if (this._actions && this._actions.characterAction) this._actions.characterAction.isLoadCharacter = false;
           this.playAnimation('activeStart', true);
+          this._actions?.eventEmitter.emit('loadTimeAnimation', false);
           this.playAnimation('activeBack', false);
         }
       });
@@ -140,14 +153,31 @@ export class AnimationAction {
     });
   }
 
-  public playAnimation(animationName: string, isStartObject = false, repetitions = Infinity): void {
+  public playAnimation(
+    animationName: string,
+    isStartObject = false,
+    repetitions = Infinity,
+    isFade = true,
+    idle = true,
+  ): void {
     if (this._actions) {
+      if (this._actions.startObject && !idle) this._actions.startObject.rotation.y = 0;
+      const { mouseControls, touchControls } = this._sceneViewport;
+      this.isIdle = idle;
+
+      if (!idle) {
+        mouseControls.setIsLockRotate(true);
+        touchControls.setIsLockRotate(true);
+      }
+
       const { startObject } = this._actions;
       this.animationsData.forEach((data) => {
         if (isStartObject && startObject?.name === data.vrmAvatar.vrm.scene.name) {
           const action = data.vrmAvatar.getAnimationAction(AnimationCode.stringToAnimationCode(animationName));
           if (action) {
-            if (this.startCharacterAnimation) this.fadeToAction(this.startCharacterAnimation, data.vrmAvatar, animationName);
+            if (this.startCharacterAnimation && isFade) {
+              this.fadeToAction(this.startCharacterAnimation, data.vrmAvatar, animationName);
+            }
             this.startCharacterAnimation = action;
             data.vrmAvatar.playAnimation(AnimationCode.stringToAnimationCode(animationName));
 
@@ -165,9 +195,9 @@ export class AnimationAction {
   public fadeToAction(previewAction: THREE.AnimationAction, vrmAvatar: VrmAvatar, fadeNameAnimation: string): void {
     const currentAction = vrmAvatar?.getAnimationAction(AnimationCode.stringToAnimationCode(fadeNameAnimation));
     if (currentAction) {
-      previewAction.fadeOut(1000);
+      previewAction.fadeOut(0.5);
       previewAction.reset();
-      currentAction.fadeIn(1000);
+      currentAction.fadeIn(0.5);
     }
   }
 
@@ -191,7 +221,7 @@ export class AnimationAction {
 
   public countAnimationTime(action: THREE.AnimationAction): void {
     if (action) {
-      if (this.startCharacterAnimation && this._actions) {
+      if (this.startCharacterAnimation && this._actions && !this.isIdle) {
         const { duration } = action.getClip();
         const totalTime = (action.time / duration) * 100;
         this._actions.eventEmitter.emit('setAnimationTime', totalTime);

@@ -42,6 +42,8 @@ export class CameraControls {
 
   public isRotateObject = false;
 
+  public isLockRotate = false;
+
   constructor(options: ObjectControlsOptions) {
     this.threeCamera = options.threeCamera;
     this.rendererHeight = options.height;
@@ -54,6 +56,10 @@ export class CameraControls {
 
   public setObject(object: THREE.Object3D | null) {
     this.object = object;
+  }
+
+  public setIsLockRotate(isLock: boolean): void {
+    this.isLockRotate = isLock;
   }
 
   public updateCameraParallax() {
@@ -71,7 +77,7 @@ export class CameraControls {
   }
 
   public rotateObject(): void {
-    if (this.object) {
+    if (this.object && !this.isLockRotate) {
       this.object.rotation.y += (this.targetRotationX - this.object.rotation.y) * 0.01;
     }
   }

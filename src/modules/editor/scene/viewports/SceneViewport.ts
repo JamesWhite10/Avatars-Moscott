@@ -235,7 +235,6 @@ export class SceneViewport {
   }
 
   public moveMouseHandler(event: MouseEvent): void {
-    if (this.actions && this.actions.characterAction) this.actions.characterAction.moveHead(event);
     this.mouseControls.onMouseMove(event);
     this.mouseControls.updateCameraParallax();
     if (this.actions && this.actions.animationAction) this.actions.animationAction.clearInActiveAnimation();

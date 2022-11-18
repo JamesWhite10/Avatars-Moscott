@@ -159,6 +159,7 @@ export class TextureEditor {
         }
       }
     });
+
     model.scene.name = textureName;
     this.vrmAvatars.push(new VrmAvatar(model));
 

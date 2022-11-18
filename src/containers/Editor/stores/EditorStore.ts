@@ -99,17 +99,16 @@ export default class EditorStore {
     this.styleStore.subscribe('styleSelectionClosed', () => this.controlsStore.setActiveAvatarPropertyType());
     let activeId: string | undefined;
     this.animationStore.subscribe('animation_select', (id) => {
-      if (activeId !== id) {
-        this.animationStore.setProgress(0);
-      }
+      if (activeId !== id) this.animationStore.setProgress(0);
       if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
-        this.threeScene.actions.animationAction.playAnimation(id, true);
+        this.threeScene.actions.animationAction.playAnimation(id, true, Infinity, true, false);
       }
       activeId = id;
     });
 
     this.animationStore.subscribe('pause', (paused) => {
       if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
+        console.log(paused);
         if (paused) this.threeScene.actions.animationAction.pauseAnimation();
         else this.threeScene.actions.animationAction.continueAnimation();
       }
@@ -118,6 +117,7 @@ export default class EditorStore {
     this.animationStore.subscribe('stop', () => {
       if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
         this.threeScene.actions.animationAction.stopAnimation();
+        this.threeScene.actions.animationAction.playAnimation('activeStart', true, Infinity);
       }
     });
 
@@ -221,6 +221,10 @@ export default class EditorStore {
 
       this.threeScene.actions.subscribe('animationEnded', () => {
         this.styleStore.setLoadingStyle(false);
+      });
+
+      this.threeScene.actions.subscribe('loadTimeAnimation', (isLoading: boolean) => {
+        this.animationStore.isLoadAnimation = isLoading;
       });
     }
   }
