@@ -5,8 +5,10 @@ import { SceneViewport } from '../viewports/index';
 import * as ThreeVRM from '@pixiv/three-vrm';
 import PrimitiveCollider from '../../features/PrimitiveCollider';
 import { EnvironmentConfigType } from '../../../../types/index';
-import blendingFragment from '../shaders/BlendingShader/BlendingFragment.glsl';
-import blendingVertex from '../shaders/BlendingShader/BlendingVertex.glsl';
+import standardBlendingFragment from '../shaders/BlendingShader/StandartBlendingShader/BlendingFragment.glsl';
+import standardBlendingVertex from '../shaders/BlendingShader/StandartBlendingShader/BlendingVertex.glsl';
+import blendingCustomVertex from '../shaders/BlendingShader/CustomBlendingShader/BlendingVertex.glsl';
+import blendingCustomFragment from '../shaders/BlendingShader/CustomBlendingShader/BlendingFragment.glsl';
 import dissolveFragment from '../shaders/DissolveShader/DissolveFragment.glsl';
 import dissolveVertex from '../shaders/DissolveShader/DissolveVertex.glsl';
 import { NOISE } from '../../constans/TextureUrl';
@@ -27,9 +29,14 @@ export class TextureEditor {
 
   public vrmMaterials: THREE.MeshStandardMaterial[] = [];
 
+  public sceneMaterials: THREE.MeshStandardMaterial[] = [];
+
   constructor(options: MainViewOptions) {
     this._sceneViewport = options.sceneViewport;
-    this.blendingShader = new BlendingShader.BlendingShader({ fragmentShader: blendingFragment, vertexShader: blendingVertex });
+    this.blendingShader = new BlendingShader.BlendingShader({
+      fragmentShader: blendingCustomFragment,
+      vertexShader: blendingCustomVertex,
+    });
   }
 
   public onUpdate(delta: number): void {
@@ -67,9 +74,7 @@ export class TextureEditor {
       if (node instanceof THREE.Mesh) {
         this.blendingShader.sortVideoTextureStyles(this._sceneViewport.resourcesManager, videos, 'portal_video');
         const material = this.blendingShader.getMaterialByName('portal_video');
-        if (material && node.name === 'portal_video') {
-          node.material = this.blendingShader.getMaterialByName(node.name);
-        }
+        if (material && node.name === 'portal_video') node.material = material;
       }
     });
   };
@@ -92,12 +97,36 @@ export class TextureEditor {
         this.blendingShader.sortTextureStyles(this._sceneViewport.resourcesManager, styles, node.name);
         const material = this.blendingShader.getMaterialByName(node.name);
         if (material) {
-          if (node.name === 'plane') {
-            material.depthTest = true;
+          node.material.map = material.uniforms.textureFourth.value;
+          node.castShadow = false;
+          node.receiveShadow = true;
+          node.material.onBeforeCompile = (shader: THREE.Shader) => {
+            shader.uniforms.textureFirst = { value: material.uniforms.textureFirst.value };
+            shader.uniforms.textureSecond = { value: material.uniforms.textureSecond.value };
+            shader.uniforms.textureThird = { value: material.uniforms.textureThird.value };
+            shader.uniforms.textureFourth = { value: material.uniforms.textureFourth.value };
 
-            material.depthWrite = false;
-          }
-          node.material = material;
+            shader.uniforms.blendingFirstTexture = { value: 1.0 };
+            shader.uniforms.blendingSecondTexture = { value: 0.0 };
+            shader.uniforms.blendingThirdTexture = { value: 0.0 };
+            shader.uniforms.blendingFourthTexture = { value: 0.0 };
+
+            if (node.name === 'plane') {
+              shader.uniforms.plane = { value: true };
+              node.material.transparent = true;
+              node.material.depthTest = true;
+              node.material.depthWrite = false;
+            }
+
+            shader.vertexShader = standardBlendingVertex.replace('#include <uv_pars_vertex>', '#include <common>\n'
+                + '#include <uv_pars_vertex>');
+            shader.fragmentShader = standardBlendingFragment.replace('#include <packing>', '#include <common>\n'
+                + '#include <packing>');
+
+            node.material.userData.shader = shader;
+          };
+          node.material.needsUpdate = true;
+          this.sceneMaterials.push(node.material);
         }
       }
     });
@@ -139,7 +168,7 @@ export class TextureEditor {
           node.material.forEach((material: THREE.ShaderMaterial) => {
             const map = material.uniforms.map.value;
 
-            const newMaterial = new THREE.MeshStandardMaterial({ map, side: THREE.DoubleSide, transparent: true, opacity: 0.9 });
+            const newMaterial = new THREE.MeshStandardMaterial({ map, side: THREE.DoubleSide, transparent: true });
             newMaterial.onBeforeCompile = (shader: THREE.Shader) => {
               shader.uniforms.uHeightMap = { value: noiseTexture };
               shader.uniforms.uTime = { value: 0.0 };
@@ -155,6 +184,8 @@ export class TextureEditor {
             materials.push(newMaterial);
             this.vrmMaterials.push(newMaterial);
           });
+          node.castShadow = true;
+          node.receiveShadow = true;
           node.material = materials;
         }
       }

@@ -40,6 +40,12 @@ export class StylesAction {
             value.uniform[currentBlendingName].value = current;
             value.uniform[additionalBlendingName].value = additional;
           });
+          this._textureEditor.sceneMaterials.forEach((item) => {
+            if (item.userData.shader) {
+              item.userData.shader.uniforms[currentBlendingName].value = current;
+              item.userData.shader.uniforms[additionalBlendingName].value = additional;
+            }
+          });
         })
         .start();
     }

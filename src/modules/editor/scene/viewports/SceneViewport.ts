@@ -217,12 +217,17 @@ export class SceneViewport {
   }
 
   public initLight(): void {
-    const color = 0xFFFFFF;
-    const light = new THREE.SpotLight(color, 0.6);
-    light.position.set(0, 2, 3);
+    const intensity = 0.7;
+    const light = new THREE.DirectionalLight(0xffffff, intensity);
+    light.position.set(1.5, 2.8, 1);
     light.target.position.set(0, 0, 0);
-
     this.threeScene.add(light);
+    light.castShadow = true;
+
+    light.shadow.mapSize.width = 512;
+    light.shadow.mapSize.height = 512;
+    light.shadow.camera.near = 1;
+    light.shadow.camera.far = 1000;
   }
 
   public clickHandler(event: MouseEvent): void {

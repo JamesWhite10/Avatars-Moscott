@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { Style } from '../../../../../types/index';
-import ResourcesManager from '../../ResourcesManager';
-import { ShadersType } from '../types/shadersType';
-import { Shader, ShaderOptions } from '../Shader';
+import { Style } from '../../../../../../types/index';
+import ResourcesManager from '../../../ResourcesManager';
+import { ShadersType } from '../../types/shadersType';
+import { Shader, ShaderOptions } from '../../Shader';
 
 export interface CreateUniformsOptions {
   textureFirst: THREE.Texture;
