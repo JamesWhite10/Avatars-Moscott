@@ -12,6 +12,14 @@ export interface AnimationData {
   animations: IdleAnimationType[];
 }
 
+export interface AnimationPlayOptions {
+  animationName: string;
+  isStartObject: boolean;
+  repetitions: number;
+  isFade: boolean;
+  idle: boolean;
+}
+
 export class AnimationAction {
   public inActiveTime = 20000;
 
@@ -69,6 +77,9 @@ export class AnimationAction {
     if (this._actions && this._actions.characterAction) {
       mouseControls.setIsLockRotate(false);
       touchControls.setIsLockRotate(false);
+
+      mouseControls.targetRotationX = 0;
+      touchControls.targetRotationX = 0;
       this._actions.characterAction.isLoadCharacter = false;
     }
   }
@@ -153,14 +164,32 @@ export class AnimationAction {
     });
   }
 
-  public playAnimation(
-    animationName: string,
-    isStartObject = false,
-    repetitions = Infinity,
-    isFade = true,
-    idle = true,
-  ): void {
+  public playUiAnimation(animationName: string): void {
+    const { mouseControls, touchControls } = this._sceneViewport;
+    const previewAction = this.startCharacterAnimation;
     if (this._actions) {
+      mouseControls.setIsLockRotate(true);
+      touchControls.setIsLockRotate(true);
+      this.isIdle = false;
+      const { startObject } = this._actions;
+      this.animationsData.forEach((data) => {
+        if (startObject?.name === data.vrmAvatar.vrm.scene.name) {
+          const action = data.vrmAvatar.getAnimationAction(AnimationCode.stringToAnimationCode(animationName));
+          if (action && previewAction) {
+            this.startCharacterAnimation = action;
+            previewAction.timeScale = 1;
+            action.timeScale = 1;
+          }
+          if (Math.abs(startObject.rotation.y) > 0.5) this._actions?.eventEmitter.emit('rotateCharacter');
+          data.vrmAvatar.playAnimation(AnimationCode.stringToAnimationCode(animationName));
+        }
+      });
+    }
+  }
+
+  public playAnimation(animationName: string, isStartObject = false, repetitions = Infinity, isFade = true, idle = true): void {
+    if (this._actions) {
+      const { startObject } = this._actions;
       if (this._actions.startObject && !idle) this._actions.startObject.rotation.y = 0;
       const { mouseControls, touchControls } = this._sceneViewport;
       this.isIdle = idle;
@@ -170,7 +199,6 @@ export class AnimationAction {
         touchControls.setIsLockRotate(true);
       }
 
-      const { startObject } = this._actions;
       this.animationsData.forEach((data) => {
         if (isStartObject && startObject?.name === data.vrmAvatar.vrm.scene.name) {
           const action = data.vrmAvatar.getAnimationAction(AnimationCode.stringToAnimationCode(animationName));
@@ -178,9 +206,9 @@ export class AnimationAction {
             if (this.startCharacterAnimation && isFade) {
               this.fadeToAction(this.startCharacterAnimation, data.vrmAvatar, animationName);
             }
-            this.startCharacterAnimation = action;
             data.vrmAvatar.playAnimation(AnimationCode.stringToAnimationCode(animationName));
-
+            this.startCharacterAnimation = action;
+            action.enabled = true;
             action.repetitions = repetitions;
             this.mixer = action.getMixer();
             this.mixer.dispatchEvent({ type: 'finished', action: this.startCharacterAnimation });
@@ -192,19 +220,22 @@ export class AnimationAction {
     }
   }
 
-  public fadeToAction(previewAction: THREE.AnimationAction, vrmAvatar: VrmAvatar, fadeNameAnimation: string): void {
+  public fadeToAction(previewAction: THREE.AnimationAction, vrmAvatar: VrmAvatar, fadeNameAnimation: string) {
     const currentAction = vrmAvatar?.getAnimationAction(AnimationCode.stringToAnimationCode(fadeNameAnimation));
     if (currentAction) {
-      previewAction.fadeOut(0.5);
+      previewAction.enabled = true;
+      previewAction.setEffectiveTimeScale(1);
+      previewAction.setEffectiveWeight(1);
       previewAction.reset();
-      currentAction.fadeIn(0.5);
+      currentAction.crossFadeTo(previewAction, 1000, true);
     }
   }
 
   public waitInActiveAnimation(): void {
     this._idleInterval = setTimeout(() => {
-      this.playAnimation('inActive', true);
-      this.playAnimation('inActive', true);
+      if (this.isIdle) {
+        this.playAnimation('inActive', true, Infinity, true, true);
+      }
       this._isInActiveAnimation = true;
     }, this.inActiveTime);
   }
@@ -212,15 +243,14 @@ export class AnimationAction {
   public clearInActiveAnimation(): void {
     if (this._isInActiveAnimation) {
       this._isInActiveAnimation = false;
-      this.playAnimation('activeStart', true);
-      this.playAnimation('activeBack', false);
+      this.playAnimation('activeStart', true, Infinity, false);
     }
     clearInterval(this._idleInterval);
     this.waitInActiveAnimation();
   }
 
   public countAnimationTime(action: THREE.AnimationAction): void {
-    if (action) {
+    if (action && !this.isIdle) {
       if (this.startCharacterAnimation && this._actions && !this.isIdle) {
         const { duration } = action.getClip();
         const totalTime = (action.time / duration) * 100;

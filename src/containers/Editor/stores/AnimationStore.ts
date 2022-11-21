@@ -53,6 +53,10 @@ export default class AnimationStore implements EmitterInterface<AnimationEventsT
     this.controlElement = el;
   }
 
+  public setAnimationLoading(value: boolean): void {
+    this.isLoadAnimation = value;
+  }
+
   public setActiveAnimationId(id?: string): void {
     this.activeAnimationId = id;
     if (id) this.eventEmitter.emit('animation_select', id);

@@ -40,9 +40,11 @@ export class CameraControls {
 
   public targetRotationOnMouseDownX: number = 0;
 
-  public isRotateObject = false;
+  public isRotateObject: boolean = false;
 
-  public isLockRotate = false;
+  public isLockRotate: boolean = false;
+
+  public objectRotateY: number = 0;
 
   constructor(options: ObjectControlsOptions) {
     this.threeCamera = options.threeCamera;
@@ -79,6 +81,8 @@ export class CameraControls {
   public rotateObject(): void {
     if (this.object && !this.isLockRotate) {
       this.object.rotation.y += (this.targetRotationX - this.object.rotation.y) * 0.01;
+      if (Math.abs(this.objectRotateY) > Math.PI) this.objectRotateY /= Math.PI;
+      else this.objectRotateY = this.object.rotation.y;
     }
   }
 

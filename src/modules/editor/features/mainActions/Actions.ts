@@ -21,6 +21,8 @@ export type SceneEventType = {
   animationEnded: () => void;
 
   loadTimeAnimation: (loading: boolean) => void;
+
+  rotateCharacter: () => void;
 };
 
 export interface ActionOptions {
@@ -83,7 +85,6 @@ export class Actions {
   public onUpdate(delta: number): void {
     TWEEN.update();
     this.currentMixers.forEach((item) => {
-      console.log(item);
       item.update(delta);
     });
     this.characterAction?.moveBodyParts(delta);
@@ -97,9 +98,13 @@ export class Actions {
   }
 
   public subscribeSceneActions(): void {
+    const { mouseControls, touchControls } = this.sceneViewport;
     this.subscribe('loadNewStyle', (characterName, texture) => {
       if (this.animationAction && this.animationAction.mixer) {
         if (this.stylesAction) {
+          mouseControls.targetRotationX = 0;
+          touchControls.targetRotationX = 0;
+          this.rotateToDefault();
           this.stylesAction.isLoadStyle = true;
           this.stylesAction.changeStyleTexture(texture);
           this.stylesAction.changeStyleCharacter(characterName);
@@ -108,22 +113,15 @@ export class Actions {
     });
 
     this.subscribe('loadNewCharacter', (characterName, model) => {
-      const { mouseControls, touchControls } = this.sceneViewport;
       if (this.animationAction && this.characterAction && model.visible) {
-        this.animationAction.playAnimation('forgiveness', true, 1);
-
-        const rotateFrom = this.startObject?.rotation.y || 0;
-        const rotateTo = 0;
+        this.animationAction.playAnimation('forgiveness', true, 1, false);
 
         mouseControls.setIsLockRotate(true);
         touchControls.setIsLockRotate(true);
+        mouseControls.targetRotationX = 0;
+        touchControls.targetRotationX = 0;
 
-        new TWEEN.Tween({ rotation: rotateFrom })
-          .to({ rotation: rotateTo }, 600)
-          .onUpdate(({ rotation }) => {
-            if (this.startObject) this.startObject.rotation.y = rotation;
-          })
-          .start();
+        this.rotateToDefault();
 
         if (this.startObject) this.startObject.rotation.y = 0;
 
@@ -143,7 +141,6 @@ export class Actions {
     });
 
     this.subscribe('styleChange', () => {
-      const { mouseControls, touchControls } = this.sceneViewport;
       if (this.animationAction && this.animationAction.mixer) {
         mouseControls.setIsLockRotate(true);
         touchControls.setIsLockRotate(true);
@@ -155,12 +152,35 @@ export class Actions {
             this.stylesAction.isLoadStyle = false;
             mouseControls.setIsLockRotate(false);
             touchControls.setIsLockRotate(false);
+
+            mouseControls.targetRotationX = 0;
+            touchControls.targetRotationX = 0;
             this.eventEmitter.emit('animationEnded');
             this.animationAction.playAnimation('activeStart', true);
           }
         });
       }
     });
+
+    this.subscribe('rotateCharacter', () => {
+      this.rotateToDefault();
+    });
+  }
+
+  public rotateToDefault(): void {
+    if (this.startObject) {
+      const { mouseControls, touchControls } = this.sceneViewport;
+      const rotateFrom = mouseControls.objectRotateY || touchControls.objectRotateY;
+      const rotateTo = 0;
+      if (Math.abs(rotateFrom) > 0.5) {
+        new TWEEN.Tween({ rotation: rotateFrom })
+          .to({ rotation: rotateTo }, 600)
+          .onUpdate(({ rotation }) => {
+            if (this.startObject) this.startObject.rotation.y = rotation;
+          })
+          .start();
+      }
+    }
   }
 
   public loadNewCharacter(model: THREE.Object3D): void {
@@ -195,7 +215,7 @@ export class Actions {
   }
 
   public getSnapshot(): string {
-    return getRendererSnapshot({ trim: false, renderer: this.sceneViewport.threeRenderer });
+    return getRendererSnapshot({ trim: true, renderer: this.sceneViewport.threeRenderer });
   }
 
   public subscribe<T extends keyof SceneEventType>(

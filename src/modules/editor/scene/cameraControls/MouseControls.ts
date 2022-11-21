@@ -21,11 +21,12 @@ export class MouseControls extends CameraControls {
   public onMouseDown(event: MouseEvent) {
     this.isMovingCamera = false;
     this.isRotateObject = false;
-    this.prevMousePosition.copy(this.getPosition(event));
 
-    this.clientXClickDown = event.clientX - (window.innerWidth / 2);
-
-    if (!this.isLockRotate) this.targetRotationOnMouseDownX = this.targetRotationX;
+    if (!this.isLockRotate) {
+      this.prevMousePosition.copy(this.getPosition(event));
+      this.clientXClickDown = event.clientX - (window.innerWidth / 2);
+      this.targetRotationOnMouseDownX = this.targetRotationX;
+    }
   }
 
   public onMouseMove(event: MouseEvent) {

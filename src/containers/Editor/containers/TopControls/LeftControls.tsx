@@ -15,9 +15,11 @@ const LeftControls: FC = observer(() => {
   const soundSystem = useSoundSystem();
 
   const characterSelectHandler = useCallback(() => {
-    soundSystem.playSound('click', true);
-    setActiveAvatarPropertyType('character');
-  }, [activeProperty]);
+    if (!characterIsChanging) {
+      soundSystem.playSound('click', true);
+      setActiveAvatarPropertyType('character');
+    }
+  }, [activeProperty, characterIsChanging]);
 
   const buttonSize = useMemo(() => {
     return isMobile ? 'md' : 'lg';

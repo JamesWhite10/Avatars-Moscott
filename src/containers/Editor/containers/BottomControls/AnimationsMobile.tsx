@@ -36,11 +36,12 @@ const AnimationsMobile: FC = observer(() => {
       return;
     }
     setActiveAnimationId(id);
+    setIsPaused(false);
   }, [activeAnimationId, isPaused]);
 
   const animationIsActive = useCallback((id: string) => {
-    return id === activeAnimationId && !isPaused;
-  }, [activeAnimationId, isPaused]);
+    return id === activeAnimationId;
+  }, [activeAnimationId]);
 
   return (
     <Fade
@@ -63,6 +64,7 @@ const AnimationsMobile: FC = observer(() => {
               className={classNames.animationsSlideItem}
             >
               <AnimatedButton
+                isPaused={isPaused}
                 progress={progress}
                 onClick={() => animationSelectHandler(animation.id)}
                 active={animationIsActive(animation.id)}
