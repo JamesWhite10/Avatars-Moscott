@@ -127,6 +127,7 @@
   @media (max-width: $mq-mobile-max) {
     font-size: 16px;
     line-height: 24px;
+    margin-bottom: 44px;
   }
 }
 
@@ -144,12 +145,13 @@
 .formBlock {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-items: center;
 }
 
-.title {
+.title, .title_contactUs {
   font-family: var(--font-space-grotesk);
-  color: rgba(255, 255, 255, 1);
+  color: rgb(213, 253, 16);
   font-size: 64px;
   font-weight: 700;
   line-height: 75px;
@@ -160,25 +162,36 @@
     max-width: 100%;
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: 80px;
   }
   @media (max-width: $mq-mobile-max) {
     font-size: 40px;
     line-height: 47px;
-    margin-bottom: 40px;
   }
 }
 
+.title_contactUs {
+  color: rgba(255, 255, 255, 1);
+  margin-bottom: 40px;
+}
+
 .image {
-  max-width: 347px;
-  max-height: 347px;
+  position: absolute;
+  max-width: 400px;
+  max-height: 670px;
+  top: 8%;
+  right: 34%;
   width: auto;
   height: auto;
   margin-right: 24px;
-  @media (max-width: $mq-tablet-min) {
+  @media (max-width: $mq-tablet-max) {
+    position: initial;
+    max-width: 338px;
+    max-height: 564px;
+  }
+  @media (max-width: $mq-mobile-max) {
     margin: 0 auto;
-    max-width: 278px;
-    max-height: 278px;
+    max-width: 338px;
+    max-height: 564px;
   }
   @media (max-width: $mq-mobile-min) {
     max-width: 278px;
@@ -189,10 +202,12 @@
 .form {
   width: 282px;
   display: grid;
-  gap: 8px;
+  gap: 5px;
   margin-right: 3px;
   @media (max-width: $mq-tablet-max) {
     width: 50%;
+    display: flex;
+    flex-direction: column;
   }
   @media (max-width: $mq-mobile-max) {
     width: 100%;
@@ -312,7 +327,8 @@
 }
 
 .descriptionBlock {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   margin-bottom: 80px;
   gap: 40px;
   @media (max-width: $mq-mobile-max) {
@@ -328,23 +344,34 @@
   font-weight: 700;
   line-height: 32px;
   margin: 80px 0 40px 0;
-  @media (max-width: $mq-mobile-max) {
-    margin: 40px 0 24px 0;
+  @media (max-width: $mq-tablet-max) {
+    margin: 0 0 24px 0;
   }
 }
 
-.subTitleCompany, .subTitleMission {
+.subTitleCompany  {
   font-family: var(--font-space-grotesk);
   color: rgba(255, 255, 255, 1);
   font-size: 20px;
   font-weight: 400;
-  line-height: 20px;
+  line-height: 28px;
   flex-wrap: wrap;
   opacity: 0.8;
   @media (max-width: $mq-mobile-max) {
     font-size: 16px;
     line-height: 22px;
   }
+}
+
+.subTitleMission {
+  font-family: var(--font-space-grotesk);
+  color: rgb(213, 253, 16);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 43px;
+  flex-wrap: wrap;
+  letter-spacing: -4%;
+  vertical-align: top;
 }
 
 .buttonPopup {
