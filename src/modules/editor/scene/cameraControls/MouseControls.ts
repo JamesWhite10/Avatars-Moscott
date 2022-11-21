@@ -4,7 +4,7 @@ import { CameraControls, ObjectControlsOptions } from './CameraControls';
 export class MouseControls extends CameraControls {
   public zoomSpeed: number = 2;
 
-  private _currentZoom: number = 45;
+  private _currentZoom: number = 35;
 
   public minZoom: number = 33;
 

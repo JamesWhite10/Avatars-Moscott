@@ -180,8 +180,8 @@ export class Actions {
   }
 
   public cameraUpdate(): void {
-    const cameraFrom = { fov: 90, positionY: 1.9 };
-    const cameraTo = { fov: 45, positionY: 1.4 };
+    const cameraFrom = { fov: 78, positionY: 1.9 };
+    const cameraTo = { fov: 35, positionY: 1.4 };
     new TWEEN.Tween(cameraFrom)
       .to(cameraTo, 1500)
       .easing(TWEEN.Easing.Exponential.Out)
