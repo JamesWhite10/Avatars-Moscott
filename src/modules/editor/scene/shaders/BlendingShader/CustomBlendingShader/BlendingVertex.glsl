@@ -7,3 +7,4 @@ void main() {
   #include <skinning_vertex>
   #include <project_vertex>
 }
+
