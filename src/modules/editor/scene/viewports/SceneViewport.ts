@@ -64,7 +64,7 @@ export class SceneViewport {
   }
 
   public makeThreeCamera(): THREE.PerspectiveCamera {
-    const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 1, 100);
+    const camera = new THREE.PerspectiveCamera(78, window.innerWidth / window.innerHeight, 1, 100);
 
     camera.position.set(0.4, 1.9, 4);
     camera.lookAt(1.6, 1, 0);
