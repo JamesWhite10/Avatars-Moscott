@@ -8,6 +8,7 @@ export interface AnimatedButtonProps {
   onMouseEnter?: () => void;
   active?: boolean;
   progress: number;
+  isPaused: boolean;
 }
 
 const AnimatedButton: FC<PropsWithChildren<AnimatedButtonProps>> = (props) => {
@@ -15,13 +16,17 @@ const AnimatedButton: FC<PropsWithChildren<AnimatedButtonProps>> = (props) => {
     onClick = () => undefined,
     onMouseEnter = () => undefined,
     active = false,
+    isPaused = false,
     progress = 0,
     children,
   } = props;
 
   const icon = useMemo(() => {
-    return active ? <PauseIcon className={classNames.icon} /> : <PlayIcon className={classNames.icon} />;
-  }, [active]);
+    if (active) {
+      return isPaused ? <PlayIcon className={classNames.icon} /> : <PauseIcon className={classNames.icon} />;
+    }
+    return <PlayIcon className={classNames.icon} />;
+  }, [active, isPaused]);
 
   return (
     <button

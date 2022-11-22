@@ -29,6 +29,7 @@ const Animations: FC = observer(() => {
       return;
     }
     setActiveAnimationId(id);
+    setIsPaused(false);
   }, [activeAnimationId, isPaused]);
 
   useClickAway(areaRef as MutableRefObject<HTMLElement>, (e) => {
@@ -40,8 +41,8 @@ const Animations: FC = observer(() => {
   });
 
   const animationIsActive = useCallback((id: string) => {
-    return id === activeAnimationId && !isPaused;
-  }, [activeAnimationId, isPaused]);
+    return id === activeAnimationId;
+  }, [activeAnimationId]);
 
   return (
     <Fade
@@ -56,6 +57,7 @@ const Animations: FC = observer(() => {
       >
         {animations.map((animation) => (
           <AnimatedButton
+            isPaused={isPaused}
             key={animation.id}
             progress={progress}
             onClick={() => {

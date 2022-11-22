@@ -40,9 +40,9 @@ export class CameraControls {
 
   public targetRotationOnMouseDownX: number = 0;
 
-  public isRotateObject = false;
+  public isRotateObject: boolean = false;
 
-  public isLockRotate = false;
+  public isLockRotate: boolean = false;
 
   constructor(options: ObjectControlsOptions) {
     this.threeCamera = options.threeCamera;

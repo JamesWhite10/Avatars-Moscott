@@ -21,11 +21,12 @@ export class MouseControls extends CameraControls {
   public onMouseDown(event: MouseEvent) {
     this.isMovingCamera = false;
     this.isRotateObject = false;
-    this.prevMousePosition.copy(this.getPosition(event));
 
-    this.clientXClickDown = event.clientX - (window.innerWidth / 2);
-
-    if (!this.isLockRotate) this.targetRotationOnMouseDownX = this.targetRotationX;
+    if (!this.isLockRotate) {
+      this.prevMousePosition.copy(this.getPosition(event));
+      this.clientXClickDown = event.clientX - (this.rendererWidth / 2);
+      this.targetRotationOnMouseDownX = this.targetRotationX;
+    }
   }
 
   public onMouseMove(event: MouseEvent) {
@@ -34,7 +35,7 @@ export class MouseControls extends CameraControls {
 
     if (!this.isMovingCamera && this.object && !this.isLockRotate) {
       this.isRotateObject = true;
-      const clientX = event.clientX - window.innerWidth / 2;
+      const clientX = event.clientX - this.rendererWidth / 2;
       this.targetRotationX = this.targetRotationOnMouseDownX + (clientX - this.clientXClickDown) * -0.01;
     }
   }

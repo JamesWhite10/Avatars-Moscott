@@ -75,11 +75,9 @@ export default class EditorStore {
     this.charactersStore.subscribe('characterChange', (id) => {
       if (this.threeScene && this.threeScene.actions && this.threeScene.actions.characterAction) {
         const characterCandidate = this.charactersStore.characters.find((character) => character.id === id);
-        this.charactersStore.setCharacterIsChanging(true);
         this.charactersStore.setShowCharacterSelection(false);
         if (characterCandidate) {
           this.threeScene.actions.characterAction.changeData(characterCandidate?.id as string);
-          this.charactersStore.setCharacterIsChanging(false);
           if (characterCandidate) this.soundSystem.playSound(characterCandidate.name.toLowerCase());
         }
       }
@@ -99,16 +97,17 @@ export default class EditorStore {
     this.styleStore.subscribe('styleSelectionClosed', () => this.controlsStore.setActiveAvatarPropertyType());
     let activeId: string | undefined;
     this.animationStore.subscribe('animation_select', (id) => {
-      if (activeId !== id) this.animationStore.setProgress(0);
-      if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
-        this.threeScene.actions.animationAction.playAnimation(id, true, Infinity, true, false);
+      if (activeId !== id) {
+        this.animationStore.setProgress(0);
+        if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
+          this.threeScene.actions.animationAction.playUiAnimation(id);
+        }
       }
       activeId = id;
     });
 
     this.animationStore.subscribe('pause', (paused) => {
       if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
-        console.log(paused);
         if (paused) this.threeScene.actions.animationAction.pauseAnimation();
         else this.threeScene.actions.animationAction.continueAnimation();
       }
@@ -116,13 +115,26 @@ export default class EditorStore {
 
     this.animationStore.subscribe('stop', () => {
       if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
-        this.threeScene.actions.animationAction.stopAnimation();
-        this.threeScene.actions.animationAction.playAnimation('activeStart', true, Infinity);
+        this.animationStore.setProgress(0);
+        if (activeId) {
+          this.threeScene.actions.animationAction.stopAnimation();
+          this.threeScene.actions.animationAction.playAnimation('activeStart', true, Infinity, false);
+        }
+        activeId = undefined;
       }
     });
 
     this.animationStore.subscribe('selection_closed', () => {
       this.controlsStore.setActiveAvatarPropertyType();
+      if (activeId) {
+        if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
+          this.threeScene.actions.animationAction.stopAnimation();
+          this.threeScene.actions.animationAction.playAnimation('activeStart', true, Infinity, false);
+        }
+        this.animationStore.setProgress(0);
+        this.animationStore.setActiveAnimationId();
+        activeId = undefined;
+      }
     });
   }
 
@@ -204,6 +216,8 @@ export default class EditorStore {
         if (!avatarName) return;
         this.styleStore.setActiveStyleFilter(avatarName.name);
         this.charactersStore.setCharacterIsChanging(false);
+        this.animationStore.setAnimationLoading(false);
+        this.styleStore.setLoadingStyle(false);
         this.charactersStore.setCharacter(avatarName.name);
         const { character } = this.charactersStore;
         if (character) this.aboutStore.setCharacterImage(character.renderImage);
@@ -211,7 +225,21 @@ export default class EditorStore {
         this.soundSystem.playSound(avatarName.name.toLowerCase(), true);
       });
 
+      this.threeScene.actions.subscribe('animationEnded', () => {
+        this.animationStore.setAnimationLoading(false);
+        this.styleStore.setLoadingStyle(false);
+        this.charactersStore.setCharacterIsChanging(false);
+      });
+
       this.threeScene.actions.subscribe('loadNewCharacter', () => {
+        this.animationStore.setAnimationLoading(true);
+        this.styleStore.setLoadingStyle(true);
+        this.charactersStore.setCharacterIsChanging(true);
+      });
+
+      this.threeScene.actions.subscribe('loadNewStyle', () => {
+        this.animationStore.setAnimationLoading(true);
+        this.styleStore.setLoadingStyle(true);
         this.charactersStore.setCharacterIsChanging(true);
       });
 
@@ -221,10 +249,11 @@ export default class EditorStore {
 
       this.threeScene.actions.subscribe('animationEnded', () => {
         this.styleStore.setLoadingStyle(false);
+        this.styleStore.setLoadingStyle(false);
       });
 
       this.threeScene.actions.subscribe('loadTimeAnimation', (isLoading: boolean) => {
-        this.animationStore.isLoadAnimation = isLoading;
+        this.animationStore.setAnimationLoading(isLoading);
       });
     }
   }

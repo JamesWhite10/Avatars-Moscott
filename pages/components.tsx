@@ -185,6 +185,7 @@ const Components = () => {
       </form>
       <div>
         <AnimatedButton
+          isPaused={false}
           progress={progress}
           active={playing}
           onClick={playHandler}

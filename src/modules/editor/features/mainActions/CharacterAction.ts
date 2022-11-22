@@ -79,11 +79,22 @@ export class CharacterAction {
 
   public moveEyes(avatar: VrmAvatar): void {
     if (avatar.vrm.lookAt) {
-      avatar.vrm.lookAt.lookAt(new THREE.Vector3(
-        this._sceneViewport.mouseControls.mousePosition.x * 2,
-        this._sceneViewport.mouseControls.mousePosition.y * 2,
-        0,
-      ));
+      const eyes: THREE.Object3D<THREE.Event>[] = [];
+      const leftEye = avatar.getBone('leftEye');
+      const rightEye = avatar.getBone('rightEye');
+      if (leftEye && rightEye) {
+        eyes.push(leftEye);
+        eyes.push(rightEye);
+        if (this._actions && avatar.vrm.scene.name === this._actions.startObject?.name) {
+          eyes.forEach((eye) => {
+            eye.rotation.set(
+              this._sceneViewport.mouseControls.mousePosition.y * 0.15,
+              this._sceneViewport.mouseControls.mousePosition.x * 0.25,
+              0,
+            );
+          });
+        }
+      }
     }
   }
 
