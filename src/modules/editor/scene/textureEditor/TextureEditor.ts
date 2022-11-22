@@ -111,13 +111,6 @@ export class TextureEditor {
             shader.uniforms.blendingThirdTexture = { value: 0.0 };
             shader.uniforms.blendingFourthTexture = { value: 0.0 };
 
-            if (node.name === 'plane') {
-              shader.uniforms.plane = { value: true };
-              node.material.transparent = true;
-              node.material.depthTest = true;
-              node.material.depthWrite = false;
-            }
-
             shader.vertexShader = standardBlendingVertex.replace('#include <uv_pars_vertex>', '#include <common>\n'
                 + '#include <uv_pars_vertex>');
             shader.fragmentShader = standardBlendingFragment.replace('#include <packing>', '#include <common>\n'
@@ -125,6 +118,12 @@ export class TextureEditor {
 
             node.material.userData.shader = shader;
           };
+          if (node.name === 'plane') {
+            node.material = material;
+            node.material.transparent = true;
+            node.material.depthTest = true;
+            node.material.depthWrite = false;
+          }
           node.material.needsUpdate = true;
           this.sceneMaterials.push(node.material);
         }
