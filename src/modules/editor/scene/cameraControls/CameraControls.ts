@@ -44,8 +44,6 @@ export class CameraControls {
 
   public isLockRotate: boolean = false;
 
-  public objectRotateY: number = 0;
-
   constructor(options: ObjectControlsOptions) {
     this.threeCamera = options.threeCamera;
     this.rendererHeight = options.height;
@@ -81,8 +79,6 @@ export class CameraControls {
   public rotateObject(): void {
     if (this.object && !this.isLockRotate) {
       this.object.rotation.y += (this.targetRotationX - this.object.rotation.y) * 0.01;
-      if (Math.abs(this.objectRotateY) > Math.PI) this.objectRotateY /= Math.PI;
-      else this.objectRotateY = this.object.rotation.y;
     }
   }
 

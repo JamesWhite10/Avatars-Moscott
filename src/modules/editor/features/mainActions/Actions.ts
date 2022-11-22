@@ -23,6 +23,8 @@ export type SceneEventType = {
   loadTimeAnimation: (loading: boolean) => void;
 
   rotateCharacter: () => void;
+
+  startUiAnimation: () => void;
 };
 
 export interface ActionOptions {
@@ -169,8 +171,8 @@ export class Actions {
 
   public rotateToDefault(): void {
     if (this.startObject) {
-      const { mouseControls, touchControls } = this.sceneViewport;
-      const rotateFrom = mouseControls.objectRotateY || touchControls.objectRotateY;
+      const rotateFrom = Math.abs(this.startObject.rotation.y) > Math.PI * 2
+        ? this.startObject.rotation.y % (Math.PI * 2) : this.startObject.rotation.y;
       const rotateTo = 0;
       if (Math.abs(rotateFrom) > 0.5) {
         new TWEEN.Tween({ rotation: rotateFrom })

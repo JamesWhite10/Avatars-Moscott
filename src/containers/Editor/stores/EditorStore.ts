@@ -244,11 +244,7 @@ export default class EditorStore {
       });
 
       this.threeScene.actions.subscribe('setAnimationTime', (time) => {
-        if (!this.animationStore.isPaused) {
-          this.animationStore.setProgress(time);
-          if (time > 1 && time < 10) this.animationStore.setAnimationLoading(true);
-          else if (time > 10) this.animationStore.setAnimationLoading(false);
-        }
+        if (!this.animationStore.isPaused) this.animationStore.setProgress(time);
       });
 
       this.threeScene.actions.subscribe('animationEnded', () => {

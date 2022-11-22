@@ -172,18 +172,18 @@ export class AnimationAction {
       touchControls.setIsLockRotate(true);
       this.isIdle = false;
       const { startObject } = this._actions;
-      this.animationsData.forEach((data) => {
-        if (startObject?.name === data.vrmAvatar.vrm.scene.name) {
-          const action = data.vrmAvatar.getAnimationAction(AnimationCode.stringToAnimationCode(animationName));
-          if (action && previewAction) {
-            this.startCharacterAnimation = action;
-            previewAction.timeScale = 1;
-            action.timeScale = 1;
-          }
-          if (Math.abs(startObject.rotation.y) > 0.5) this._actions?.eventEmitter.emit('rotateCharacter');
-          data.vrmAvatar.playAnimation(AnimationCode.stringToAnimationCode(animationName));
+      const startCharacter = this.animationsData.find((item) => startObject?.name === item.vrmAvatar.vrm.scene.name);
+      if (startCharacter && startObject) {
+        const action = startCharacter.vrmAvatar.getAnimationAction(AnimationCode.stringToAnimationCode(animationName));
+        if (action && previewAction) {
+          this.startCharacterAnimation = action;
+          this.fadeToAction(previewAction, startCharacter.vrmAvatar, animationName);
+          previewAction.timeScale = 1;
+          action.timeScale = 1;
         }
-      });
+        if (Math.abs(startObject.rotation.y) > 0.5) this._actions.eventEmitter.emit('rotateCharacter');
+        startCharacter.vrmAvatar.playAnimation(AnimationCode.stringToAnimationCode(animationName));
+      }
     }
   }
 

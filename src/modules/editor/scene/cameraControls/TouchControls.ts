@@ -12,7 +12,7 @@ export class TouchControls extends CameraControls {
       this.isMovingCamera = false;
       this.handleTouchStartRotate(event);
 
-      this.clientXClickDown = event.targetTouches[0].clientX - (window.innerWidth / 2);
+      this.clientXClickDown = event.targetTouches[0].clientX - (this.rendererWidth / 2);
 
       if (!this.isLockRotate) this.targetRotationOnMouseDownX = this.targetRotationX;
     }
@@ -31,7 +31,7 @@ export class TouchControls extends CameraControls {
 
       if (this.isMovingCamera && this.object && !this.isLockRotate) {
         this.isRotateObject = true;
-        const mouseX = event.targetTouches[0].clientX - window.innerWidth / 2;
+        const mouseX = event.targetTouches[0].clientX - this.rendererWidth / 2;
 
         this.targetRotationX = this.targetRotationOnMouseDownX + (mouseX - this.clientXClickDown) * -0.07;
       }

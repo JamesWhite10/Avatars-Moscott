@@ -1,4 +1,4 @@
-import { FC, MutableRefObject, useCallback, useEffect, useRef } from 'react';
+import { FC, MutableRefObject, useCallback, useRef } from 'react';
 import classNames from './RightControls.module.scss';
 import Fade from '@app/components/Transition/Fade';
 import { observer } from 'mobx-react';
@@ -43,10 +43,6 @@ const Animations: FC = observer(() => {
   const animationIsActive = useCallback((id: string) => {
     return id === activeAnimationId;
   }, [activeAnimationId]);
-
-  useEffect(() => {
-    console.log(isLoadAnimation);
-  }, [isLoadAnimation]);
 
   return (
     <Fade
