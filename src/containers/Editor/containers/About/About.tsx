@@ -14,6 +14,7 @@ import AboutModal from '@app/containers/Editor/containers/About/components/Modal
 import { observer } from 'mobx-react';
 import MobileFormModal from '@app/containers/Editor/containers/About/components/Modals/MobileFormModal';
 import { CloseIcon } from '@app/components/Icons';
+import AboutImage from '@app/assets/about/AboutImage.png';
 
 const About: FC = observer(() => {
   const {
@@ -22,7 +23,6 @@ const About: FC = observer(() => {
     setMobileFormIsOpen,
     formResultModalIsOpen,
     setFormResultModalIsOpen,
-    characterImage,
   } = useAboutStore();
 
   const { isOpen } = useControlsStore();
@@ -61,7 +61,7 @@ const About: FC = observer(() => {
               From idea to integration
             </Title>
             <div className={classNames.formBlock}>
-              <AvatarImage image={characterImage} />
+              <AvatarImage image={AboutImage.src} />
               {!isMobile && <Form />}
             </div>
           </div>
@@ -69,7 +69,7 @@ const About: FC = observer(() => {
             titleDeveloping="We are developing"
             titleCompany="Who are we"
             titleMission="Our Mission"
-            subTitleMission="The mission statement communicates the purpose of the organization. The vision statement provides insight into what the company hopes to achieve or become in the future. The values statement reflects the organization's core principles and ethics."
+            subTitleMission="Provide Real Value of metaverses and make it Accessible"
             subTitleCompany="Company values are the set of guiding principles and fundamental beliefs that help a group of people function together as a team and work toward a common business goal. These values are often related to business relationships, customer relationships, and company growth."
           />
           <Footer>
@@ -94,9 +94,9 @@ const About: FC = observer(() => {
             openModalForm={mobileFormIsOpen}
             setOpenModalForm={setMobileFormIsOpen}
           >
-            <Title>
+            <div className={classNames.title_contactUs}>
               Contact us
-            </Title>
+            </div>
             <Form />
           </MobileFormModal>}
           <FormResultModalsSection
