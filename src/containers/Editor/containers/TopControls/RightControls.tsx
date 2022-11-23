@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import classNames from './TopControls.module.scss';
 import IconButton from '@app/components/IconButton';
 import { FullScreenExitIcon, FullScreenIcon, MusicIcon, MusicOffIcon, ScreenShotIcon } from '@app/components/Icons';
-import { useControlsStore } from '@app/containers/Editor/hooks/useEditorStore';
+import { useAnimationStore, useControlsStore } from '@app/containers/Editor/hooks/useEditorStore';
 import useSoundSystem from '@app/hooks/useSoundSystem';
 
 const RightControls: FC = observer(() => {
@@ -15,6 +15,8 @@ const RightControls: FC = observer(() => {
     setFullScreenMode,
     onTakeScreenShot,
   } = useControlsStore();
+
+  const { setControlElement, setIsPaused } = useAnimationStore();
 
   const soundSystem = useSoundSystem();
 
@@ -34,6 +36,7 @@ const RightControls: FC = observer(() => {
   const screenShotHandler = useCallback(() => {
     soundSystem.playSound('click');
     onTakeScreenShot();
+    setIsPaused(true);
   }, [onTakeScreenShot, soundSystem]);
 
   useEffect(() => {
@@ -52,6 +55,7 @@ const RightControls: FC = observer(() => {
   return (
     <div className={classNames.rightGroup}>
       <IconButton
+        ref={setControlElement}
         className={classNames.fullScreenButton}
         active={fullScreenMode}
         onClick={fullScreenHandler}
@@ -60,12 +64,14 @@ const RightControls: FC = observer(() => {
         { fullScreenIcon }
       </IconButton>
       <IconButton
+        ref={setControlElement}
         active={soundDisabled}
         onClick={onSoundChange}
       >
         { musicIcon }
       </IconButton>
       <IconButton
+        ref={setControlElement}
         onClick={screenShotHandler}
         onMouseEnter={() => soundSystem.playSound('hover', true)}
       >

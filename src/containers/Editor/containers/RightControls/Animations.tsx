@@ -8,7 +8,7 @@ import { useClickAway } from 'react-use';
 
 const Animations: FC = observer(() => {
   const {
-    controlElement,
+    controlElements,
     showAnimationSelection,
     animations,
     progress,
@@ -32,13 +32,15 @@ const Animations: FC = observer(() => {
     setIsPaused(false);
   }, [activeAnimationId, isPaused]);
 
-  useClickAway(areaRef as MutableRefObject<HTMLElement>, (e) => {
-    if (!controlElement || !e.target || !showAnimationSelection) return;
-    if (!controlElement.contains(e.target as Node)) {
-      setShowAnimationSelection(false);
-      onStop();
-    }
-  });
+  useClickAway(areaRef as MutableRefObject<HTMLElement>,
+    (e) => {
+      if (!controlElements || !e.target || !showAnimationSelection) return;
+      const control = controlElements.find((item) => item.contains(e.target as Node));
+      if (!control) {
+        setShowAnimationSelection(false);
+        onStop();
+      }
+    });
 
   const animationIsActive = useCallback((id: string) => {
     return id === activeAnimationId;

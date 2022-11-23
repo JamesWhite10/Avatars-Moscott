@@ -9,6 +9,7 @@ import { CharacterAction } from './CharacterAction';
 import { StylesAction } from './StylesAction';
 import { Style } from '../../../../types/index';
 import { AnimationAction } from './AnimationAction';
+import { saveSnapshot } from '../../../../helpers/saveSnapshot';
 
 export type SceneEventType = {
   loadNewCharacter: (characterName: string, model: THREE.Object3D<THREE.Event>) => void;
@@ -59,6 +60,8 @@ export class Actions {
 
   public currentMixers: THREE.AnimationMixer[] = [];
 
+  public isTakeScreenshot: boolean = false;
+
   constructor(options: ActionOptions) {
     this.sceneViewport = options.sceneViewport;
     this.eventEmitter = new EventEmitter<SceneEventType>();
@@ -89,10 +92,12 @@ export class Actions {
     this.currentMixers.forEach((item) => {
       item.update(delta);
     });
-    this.characterAction?.moveBodyParts(delta);
     if (this.animationAction && this.animationAction.startCharacterAnimation) {
       this.animationAction.countAnimationTime(this.animationAction.startCharacterAnimation);
     }
+
+    if (!this.isTakeScreenshot) this.characterAction?.moveBodyParts(delta);
+    else this.takeScreenshot(delta);
   }
 
   public init(styles: Style[]): void {
@@ -216,8 +221,25 @@ export class Actions {
       .start();
   }
 
-  public getSnapshot(): string {
-    return getRendererSnapshot({ trim: true, renderer: this.sceneViewport.threeRenderer });
+  public setIsTakeScreenshot(value: boolean): void {
+    this.isTakeScreenshot = value;
+  }
+
+  public takeScreenshot(delta: number): void {
+    this.sceneViewport.mouseControls.mousePosition.set(-0.5, 0);
+
+    if (this.characterAction) this.characterAction.moveBodyParts(delta);
+
+    this.sceneViewport.threeRenderer.render(this.sceneViewport.threeScene, this.sceneViewport.threeCamera);
+    const image = getRendererSnapshot({ trim: false, renderer: this.sceneViewport.threeRenderer });
+
+    saveSnapshot(image, this.startObject?.name || '');
+    this.setIsTakeScreenshot(false);
+
+    const previewMousePosition = this.sceneViewport.mouseControls.prevMousePosition;
+
+    this.sceneViewport.threeRenderer.render(this.sceneViewport.threeScene, this.sceneViewport.threeCamera);
+    this.sceneViewport.mouseControls.mousePosition.set(previewMousePosition.x, previewMousePosition.y);
   }
 
   public subscribe<T extends keyof SceneEventType>(
