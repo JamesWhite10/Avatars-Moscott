@@ -224,10 +224,14 @@ export class SceneViewport {
     this.threeScene.add(light);
     light.castShadow = true;
 
+    light.shadow.camera.near = 0.1;
+    light.shadow.camera.far = 500;
+    light.shadow.camera.right = 17;
+    light.shadow.camera.left = -17;
+    light.shadow.camera.top = 17;
+    light.shadow.camera.bottom = -17;
     light.shadow.mapSize.width = 512;
     light.shadow.mapSize.height = 512;
-    light.shadow.camera.near = 1;
-    light.shadow.camera.far = 1000;
   }
 
   public clickHandler(event: MouseEvent): void {
