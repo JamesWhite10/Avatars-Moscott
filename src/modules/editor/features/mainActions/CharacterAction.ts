@@ -6,6 +6,7 @@ import { Actions, ActionOptions, CharacterOptions } from './Actions';
 import { TextureEditor } from '../../scene/textureEditor/TextureEditor';
 import { SceneViewport } from '../../scene/viewports/index';
 import { VrmAvatar } from '@avs/vrm-avatar';
+import * as ThreeVrm from '@pixiv/three-vrm';
 
 export class CharacterAction {
   public _sceneViewport: SceneViewport.SceneViewport;
@@ -18,10 +19,13 @@ export class CharacterAction {
 
   public isLoadCharacter: boolean = false;
 
+  private blinkMixer: THREE.AnimationMixer[] = [];
+
   constructor(options: ActionOptions) {
     this._sceneViewport = options.sceneViewport;
     this._textureEditor = options.textureEditor;
     this._actions = options.actions || null;
+    this.blinkEyes();
   }
 
   public charactersInit(styles: Style[]): void {
@@ -60,11 +64,13 @@ export class CharacterAction {
       this._actions.textureEditor.vrmAvatars.forEach((avatar) => {
         avatar.vrm.humanoid.autoUpdateHumanBones = false;
         avatar.update(delta);
-
         this.moveHead(avatar);
         this.moveEyes(avatar);
       });
     }
+    this.blinkMixer.forEach((item) => {
+      item.update(delta);
+    });
   }
 
   public moveHead(avatar: VrmAvatar): void {
@@ -75,6 +81,27 @@ export class CharacterAction {
         head.rotateX((this._sceneViewport.mouseControls.mousePosition.y * 0.2));
       }
     }
+  }
+
+  public blinkEyes(): void {
+    this._textureEditor.vrmAvatars.forEach((item, index) => {
+      const durationClip = Math.random() * 10;
+      this.blinkMixer.push(new THREE.AnimationMixer(item.vrm.scene));
+
+      const firstTimeBlink = index / 10;
+
+      const blinkTrack = new THREE.NumberKeyframeTrack(
+        item.vrm.expressionManager?.getExpressionTrackName(ThreeVrm.VRMExpressionPresetName.Blink) || 'VRMExpression_blink.weight',
+        [firstTimeBlink, 0.5, 1.0],
+        [0.0, 1.0, 0.0],
+      );
+
+      const clip = new THREE.AnimationClip('blink', durationClip, [blinkTrack]);
+      const mixer = this.blinkMixer[index];
+      const action = mixer.clipAction(clip);
+
+      action.play();
+    });
   }
 
   public moveEyes(avatar: VrmAvatar): void {

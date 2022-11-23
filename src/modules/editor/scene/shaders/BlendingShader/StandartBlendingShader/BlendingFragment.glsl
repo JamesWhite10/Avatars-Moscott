@@ -119,21 +119,12 @@ void main() {
   diffuseColor.a *= saturate( 1. - transparency + linearToRelativeLuminance( reflectedLight.directSpecular + reflectedLight.indirectSpecular ) );
   #endif
 
-  if (plane == true) {
-    if (fourthTexture2D.a < .04 && blendingFourthTexture > 0.5) discard;
-    if (thirdTexture2D.a < .04 && blendingThirdTexture > 0.5) discard;
-    if (secondTexture2D.a < .04 && blendingSecondTexture > 0.5) discard;
-    if (firstTexture2D.a < .04 && blendingFirstTexture > 0.5) discard;
+  if (fourthTexture2D.a < 0.5 && blendingFourthTexture > 0.01) discard;
+  if (thirdTexture2D.a < .5 && blendingThirdTexture > 0.5) discard;
+  if (secondTexture2D.a < .5 && blendingSecondTexture > 0.5) discard;
+  if (firstTexture2D.a < .5 && blendingFirstTexture > 0.5) discard;
 
-    gl_FragColor = vec4(outgoingLight.rgb, fourthTexture2D.a);
-  } else {
-    if (fourthTexture2D.a < .08 && blendingFourthTexture > 0.5) discard;
-    if (thirdTexture2D.a < .3 && blendingThirdTexture > 0.5) discard;
-    if (secondTexture2D.a < .3 && blendingSecondTexture > 0.5) discard;
-    if (firstTexture2D.a < .25 && blendingFirstTexture > 0.5) discard;
-
-    gl_FragColor = vec4(outgoingLight.rgb, diffuseColor.a);
-  }
+  gl_FragColor = vec4(outgoingLight.rgb, diffuseColor.a);
 
   #include <tonemapping_fragment>
   #include <encodings_fragment>

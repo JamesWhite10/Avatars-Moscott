@@ -17,15 +17,15 @@ void main(void) {
   vec4 thirdTexture2D = texture2D(textureThird, vUv);
   vec4 fourthTexture2D = texture2D(textureFourth, vUv);
 
-  if (fourthTexture2D.a < .01 && blendingFourthTexture > 0.5) discard;
-  if (thirdTexture2D.a < .045 && blendingThirdTexture > 0.5) discard;
-  if (secondTexture2D.a < .045 && blendingSecondTexture > 0.5) discard;
-  if (firstTexture2D.a < .045 && blendingFirstTexture > 0.5) discard;
+  if (fourthTexture2D.a < .001 && blendingFourthTexture > 0.5) discard;
+  if (thirdTexture2D.a < .001 && blendingThirdTexture > 0.5) discard;
+  if (secondTexture2D.a < .001 && blendingSecondTexture > 0.5) discard;
+  if (firstTexture2D.a < .001 && blendingFirstTexture > 0.5) discard;
 
   rgba =
-  firstTexture2D.rgba * blendingFirstTexture +
+  (firstTexture2D.rgba * blendingFirstTexture) * 1.1 +
   secondTexture2D.rgba * blendingSecondTexture +
   thirdTexture2D.rgba * blendingThirdTexture +
   (fourthTexture2D.rgba) * blendingFourthTexture;
-  gl_FragColor = vec4(rgba.rgb * 1.15, rgba.a);
+  gl_FragColor = vec4(rgba.rgb * 1.1, rgba.a - 0.1);
 }
