@@ -85,7 +85,7 @@ export class CharacterAction {
 
   public blinkEyes(): void {
     this._textureEditor.vrmAvatars.forEach((item, index) => {
-      const durationClip = Math.random() * 10;
+      const durationClip = 4 + Math.random() * (10 - 4);
       this.blinkMixer.push(new THREE.AnimationMixer(item.vrm.scene));
 
       const firstTimeBlink = index / 10;
