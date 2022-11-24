@@ -68,15 +68,17 @@ export type ResourcesRecord = Record<string, (
   GlbResource | HdrTextureResource | TextureResource | VrmResource | FbxResource)>;
 
 class ResourcesManager {
-  public gltfLoader: GLTFLoader = new GLTFLoader();
+  public manager = new THREE.LoadingManager();
 
-  public vrmLoader: GLTFLoader = new GLTFLoader();
+  public gltfLoader: GLTFLoader = new GLTFLoader(this.manager);
 
-  public fbxLoader: FBXLoader = new FBXLoader();
+  public vrmLoader: GLTFLoader = new GLTFLoader(this.manager);
 
-  public rgbeLoader: RGBELoader = new RGBELoader();
+  public fbxLoader: FBXLoader = new FBXLoader(this.manager);
 
-  public textureLoader: TextureLoader = new TextureLoader();
+  public rgbeLoader: RGBELoader = new RGBELoader(this.manager);
+
+  public textureLoader: TextureLoader = new TextureLoader(this.manager);
 
   public resources: ResourcesRecord = {};
 
@@ -84,9 +86,9 @@ class ResourcesManager {
 
   private readonly queryTimestampKey = '_ts';
 
-  private overallProgressLoad: number = 0;
-
   private resourceLoadData: ResourceLoadData[] = [];
+
+  private overallProgressLoad: number = 0;
 
   constructor(params: ResourcesManagerOptions = {}) {
     this.gltfLoader.setCrossOrigin('anonymous');
@@ -114,7 +116,6 @@ class ResourcesManager {
   }
 
   public addFbx(url: string):void {
-    this.resourceLoadData.push({ url, total: 0, loaded: 0 });
     this.addResource(url, ResourceType.FBX);
   }
 
@@ -189,14 +190,22 @@ class ResourcesManager {
   }
 
   protected loadResource(
-    url: string,
+    link: string,
     resource: Resource,
     onProgress: (value: number) => void,
   ): Promise<void> {
     const loader = this.getLoaderByResource(resource);
-    let resourceUrl = url;
+    this.manager.onProgress = (url, loaded, total) => {
+      const progress = (loaded / total) * 100;
+      if (this.overallProgressLoad < progress) {
+        this.overallProgressLoad = progress;
+        onProgress(progress);
+      }
+    };
+
+    let resourceUrl = link;
     if (this.useQueryTimestamp) {
-      resourceUrl = this.addQueryTimestampToUrl(url);
+      resourceUrl = this.addQueryTimestampToUrl(link);
     }
     return new Promise((resolve, reject) => loader.load(
       resourceUrl,
@@ -206,36 +215,16 @@ class ResourcesManager {
         resource.error = undefined;
         resolve();
       },
-      (xhr) => {
-        this.resourceLoadData.forEach((item) => {
-          if (item.url === url) {
-            item.loaded = xhr.loaded;
-            item.total = xhr.total;
-            if (this.overallProgressLoad < this.countPercentLoader()) {
-              this.overallProgressLoad = this.countPercentLoader();
-              const progress = this.countPercentLoader();
-              onProgress(progress - 2);
-            }
-          }
-        });
+      () => {
+        console.log();
       },
       () => {
         resource.loaded = true;
         resource.content = undefined;
-        resource.error = new Error(`Unable load resource. Type: ${resource.type}. Url: ${url}`);
+        resource.error = new Error(`Unable load resource. Type: ${resource.type}. Url: ${link}`);
         reject(resource.error);
       },
     ));
-  }
-
-  private countPercentLoader(): number {
-    const count = this.resourceLoadData.reduce((prev, item) => {
-      return {
-        load: prev.load + item.loaded,
-        total: prev.total + item.total,
-      };
-    }, { load: 0, total: 0 });
-    return (count.load / count.total) * 100;
   }
 
   private addQueryTimestampToUrl(url: string): string {
