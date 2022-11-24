@@ -148,7 +148,7 @@ export class AnimationAction {
 
   public pauseAnimation(): void {
     this._textureEditor.vrmAvatars.forEach((item) => {
-      if (this._actions && item.vrm.scene.name === this._actions.startObject?.name) {
+      if (this._actions && item.vrm.scene.name === this._actions.startObject?.name && !this.isIdle) {
         if (this.startCharacterAnimation) {
           this.startCharacterAnimation.timeScale = 0.00001;
         }

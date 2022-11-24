@@ -10,7 +10,7 @@ import { useClickAway } from 'react-use';
 
 const AnimationsMobile: FC = observer(() => {
   const {
-    controlElement,
+    controlElements,
     showAnimationSelection,
     animations,
     activeAnimationId,
@@ -23,8 +23,9 @@ const AnimationsMobile: FC = observer(() => {
   } = useAnimationStore();
   const areaRef = useRef<SwiperClass>();
   useClickAway(areaRef as unknown as MutableRefObject<HTMLElement>, (e) => {
-    if (!controlElement || !e.target || !showAnimationSelection) return;
-    if (!controlElement.contains(e.target as Node)) {
+    if (!controlElements || !e.target || !showAnimationSelection) return;
+    const control = controlElements.find((item) => item.contains(e.target as Node));
+    if (!control) {
       setShowAnimationSelection(false);
       onStop();
     }

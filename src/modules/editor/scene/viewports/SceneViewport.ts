@@ -282,11 +282,6 @@ export class SceneViewport {
   public touchStartHandler(event: TouchEvent): void {
     this.threeRenderer.domElement.focus();
     this.touchControls.onTouchStart(event);
-    if (this.actions && this.actions.characterAction) {
-      if (this.touchControls.object && !this.mouseControls.isRotateObject) {
-        this.actions.characterAction.characterTouchHandler(event);
-      }
-    }
     if (this.actions && this.actions.animationAction) this.actions.animationAction.clearInActiveAnimation();
   }
 

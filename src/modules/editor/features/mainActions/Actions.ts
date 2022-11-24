@@ -9,6 +9,7 @@ import { CharacterAction } from './CharacterAction';
 import { StylesAction } from './StylesAction';
 import { Style } from '../../../../types/index';
 import { AnimationAction } from './AnimationAction';
+import { saveSnapshot } from '../../../../helpers/saveSnapshot';
 
 export type SceneEventType = {
   loadNewCharacter: (characterName: string, model: THREE.Object3D<THREE.Event>) => void;
@@ -89,10 +90,11 @@ export class Actions {
     this.currentMixers.forEach((item) => {
       item.update(delta);
     });
-    this.characterAction?.moveBodyParts(delta);
     if (this.animationAction && this.animationAction.startCharacterAnimation) {
       this.animationAction.countAnimationTime(this.animationAction.startCharacterAnimation);
     }
+
+    if (this.characterAction) this.characterAction.moveBodyParts(delta);
   }
 
   public init(styles: Style[]): void {
@@ -225,8 +227,20 @@ export class Actions {
       .start();
   }
 
-  public getSnapshot(): string {
-    return getRendererSnapshot({ trim: true, renderer: this.sceneViewport.threeRenderer });
+  public takeScreenshot(): void {
+    this.sceneViewport.mouseControls.mousePosition.set(-0.5, 0);
+
+    if (this.characterAction) this.characterAction.moveBodyParts(1 / 60);
+
+    this.sceneViewport.threeRenderer.render(this.sceneViewport.threeScene, this.sceneViewport.threeCamera);
+    const image = getRendererSnapshot({ trim: false, renderer: this.sceneViewport.threeRenderer });
+
+    saveSnapshot(image, this.startObject?.name || '');
+
+    const previewMousePosition = this.sceneViewport.mouseControls.prevMousePosition;
+
+    this.sceneViewport.threeRenderer.render(this.sceneViewport.threeScene, this.sceneViewport.threeCamera);
+    this.sceneViewport.mouseControls.mousePosition.set(previewMousePosition.x, previewMousePosition.y);
   }
 
   public subscribe<T extends keyof SceneEventType>(

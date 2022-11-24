@@ -2,7 +2,6 @@ import { makeAutoObservable } from 'mobx';
 import { SceneViewport } from '@app/modules/editor/scene/viewports/index';
 import ResourcesManager from '../../../modules/editor/scene/ResourcesManager';
 import ControlsStore from './ControlsStore';
-import { saveSnapshot } from '../../../helpers/saveSnapshot';
 import { AnimationsType, Avatar, EnvironmentConfigType, Style } from '../../../types';
 import CharacterStore from './CharacterStore';
 import StyleStore from './StyleStore';
@@ -50,10 +49,7 @@ export default class EditorStore {
   public subscribe(): void {
     this.controlsStore.subscribe('soundChange', () => { console.log('sound change'); });
     this.controlsStore.subscribe('takeScreenShot', () => {
-      if (this.threeScene && this.threeScene.actions) {
-        const characterPreview = this.threeScene.actions.getSnapshot();
-        if (characterPreview) this.loadSnapshot(characterPreview, 'mascott');
-      }
+      if (this.threeScene && this.threeScene.actions) this.threeScene.actions.takeScreenshot();
     });
     this.controlsStore.subscribe('styleSelect', () => {
       this.styleStore.setShowStyleSelection(true);
@@ -203,10 +199,6 @@ export default class EditorStore {
       this.threeScene.actions.cameraUpdate();
       this.threeScene.actions.animationAction.startAnimationAction();
     }
-  }
-
-  public loadSnapshot(characterPreview: string, characterName: string): void {
-    saveSnapshot(characterPreview, characterName);
   }
 
   public sceneSubscribe(): void {

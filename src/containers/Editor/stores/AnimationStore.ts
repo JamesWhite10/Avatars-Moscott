@@ -21,7 +21,7 @@ export default class AnimationStore implements EmitterInterface<AnimationEventsT
 
   public progress = 0;
 
-  public controlElement: HTMLButtonElement | null = null;
+  public controlElements: HTMLButtonElement[] = [];
 
   public isLoadAnimation: boolean = false;
 
@@ -50,7 +50,7 @@ export default class AnimationStore implements EmitterInterface<AnimationEventsT
   }
 
   public setControlElement(el: HTMLButtonElement | null): void {
-    this.controlElement = el;
+    if (el) this.controlElements?.push(el);
   }
 
   public setAnimationLoading(value: boolean): void {
