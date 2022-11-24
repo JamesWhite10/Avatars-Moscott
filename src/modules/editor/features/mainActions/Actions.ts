@@ -60,8 +60,6 @@ export class Actions {
 
   public currentMixers: THREE.AnimationMixer[] = [];
 
-  public isTakeScreenshot: boolean = false;
-
   constructor(options: ActionOptions) {
     this.sceneViewport = options.sceneViewport;
     this.eventEmitter = new EventEmitter<SceneEventType>();
@@ -96,8 +94,7 @@ export class Actions {
       this.animationAction.countAnimationTime(this.animationAction.startCharacterAnimation);
     }
 
-    if (!this.isTakeScreenshot) this.characterAction?.moveBodyParts(delta);
-    else this.takeScreenshot(delta);
+    if (this.characterAction) this.characterAction.moveBodyParts(delta);
   }
 
   public init(styles: Style[]): void {
@@ -221,20 +218,15 @@ export class Actions {
       .start();
   }
 
-  public setIsTakeScreenshot(value: boolean): void {
-    this.isTakeScreenshot = value;
-  }
-
-  public takeScreenshot(delta: number): void {
+  public takeScreenshot(): void {
     this.sceneViewport.mouseControls.mousePosition.set(-0.5, 0);
 
-    if (this.characterAction) this.characterAction.moveBodyParts(delta);
+    if (this.characterAction) this.characterAction.moveBodyParts(1 / 60);
 
     this.sceneViewport.threeRenderer.render(this.sceneViewport.threeScene, this.sceneViewport.threeCamera);
     const image = getRendererSnapshot({ trim: false, renderer: this.sceneViewport.threeRenderer });
 
     saveSnapshot(image, this.startObject?.name || '');
-    this.setIsTakeScreenshot(false);
 
     const previewMousePosition = this.sceneViewport.mouseControls.prevMousePosition;
 

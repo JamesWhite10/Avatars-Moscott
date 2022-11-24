@@ -49,7 +49,7 @@ export default class EditorStore {
   public subscribe(): void {
     this.controlsStore.subscribe('soundChange', () => { console.log('sound change'); });
     this.controlsStore.subscribe('takeScreenShot', () => {
-      if (this.threeScene && this.threeScene.actions) this.threeScene.actions.setIsTakeScreenshot(true);
+      if (this.threeScene && this.threeScene.actions) this.threeScene.actions.takeScreenshot();
     });
     this.controlsStore.subscribe('styleSelect', () => {
       this.styleStore.setShowStyleSelection(true);
