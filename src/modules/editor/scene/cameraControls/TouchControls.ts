@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { CameraControls, ObjectControlsOptions } from './CameraControls';
 
 export class TouchControls extends CameraControls {
+  public isChangeFov = false;
+
   constructor({ threeCamera, width, height }: ObjectControlsOptions) {
     super({ threeCamera, width, height });
   }
@@ -33,7 +35,7 @@ export class TouchControls extends CameraControls {
         this.isRotateObject = true;
         const mouseX = event.targetTouches[0].clientX - this.rendererWidth / 2;
 
-        this.targetRotationX = this.targetRotationOnMouseDownX + (mouseX - this.clientXClickDown) * -0.07;
+        this.targetRotationX = this.targetRotationOnMouseDownX + (mouseX - this.clientXClickDown) * -0.04;
       }
     }
   }

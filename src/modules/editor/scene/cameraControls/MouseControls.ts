@@ -4,11 +4,13 @@ import { CameraControls, ObjectControlsOptions } from './CameraControls';
 export class MouseControls extends CameraControls {
   public zoomSpeed: number = 2;
 
-  private _currentZoom: number = 35;
+  public currentZoom: number = 33;
 
   public minZoom: number = 33;
 
   public maxZoom: number = 45;
+
+  public isLockZoom: boolean = false;
 
   constructor({ threeCamera, width, height }: ObjectControlsOptions) {
     super({ threeCamera, width, height });
@@ -41,22 +43,22 @@ export class MouseControls extends CameraControls {
   }
 
   public onMouseWheel(event: WheelEvent): void {
-    if (this.threeCamera) {
+    if (this.threeCamera && !this.isLockZoom) {
       const delta = event.deltaY < 0 ? -1 : 1;
-      this._currentZoom += Math.sin(delta) * this.zoomSpeed;
-      if (this._currentZoom < this.maxZoom && this._currentZoom > this.minZoom) {
-        this.threeCamera.fov = this._currentZoom;
+      this.currentZoom += Math.sin(delta) * this.zoomSpeed;
+      if (this.currentZoom < this.maxZoom && this.currentZoom > this.minZoom) {
+        this.threeCamera.fov = this.currentZoom;
         this.threeCamera.updateProjectionMatrix();
         this.threeCamera.lookAt(this.lookVector.x, this.lookVector.y, this.lookVector.z);
       } else {
-        this.changeScale(this._currentZoom);
+        this.changeScale(this.currentZoom);
       }
     }
   }
 
   public changeScale(value: number): void {
-    if (value > this.maxZoom) this._currentZoom = this.maxZoom;
-    if (value < this.minZoom) this._currentZoom = this.minZoom;
+    if (value > this.maxZoom) this.currentZoom = this.maxZoom;
+    if (value < this.minZoom) this.currentZoom = this.minZoom;
   }
 
   public setPosition(event: MouseEvent) {

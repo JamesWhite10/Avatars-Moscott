@@ -202,16 +202,25 @@ export class Actions {
   }
 
   public cameraUpdate(): void {
+    const { threeCamera, mouseControls, touchControls, threeRenderer } = this.sceneViewport;
+    mouseControls.isLockZoom = true;
     const cameraFrom = { fov: 78, positionY: 1.9 };
-    const cameraTo = { fov: 35, positionY: 1.4 };
+    const cameraTo = { fov: 33, positionY: 1.4 };
+    if (threeRenderer.domElement.clientHeight > threeRenderer.domElement.clientWidth) {
+      cameraTo.fov = 43;
+    }
     new TWEEN.Tween(cameraFrom)
       .to(cameraTo, 1500)
       .easing(TWEEN.Easing.Exponential.Out)
       .onUpdate(({ fov, positionY }) => {
-        this.sceneViewport.threeCamera.fov = fov;
-        this.sceneViewport.threeCamera.position.y = positionY;
-        this.sceneViewport.threeCamera.lookAt(1.6, 1, 0);
-        this.sceneViewport.threeCamera.updateProjectionMatrix();
+        threeCamera.fov = fov;
+        threeCamera.position.y = positionY;
+        threeCamera.lookAt(1.6, 1, 0);
+        threeCamera.updateProjectionMatrix();
+        if (fov === cameraTo.fov) {
+          touchControls.isChangeFov = true;
+          mouseControls.isLockZoom = false;
+        }
       })
       .start();
   }
