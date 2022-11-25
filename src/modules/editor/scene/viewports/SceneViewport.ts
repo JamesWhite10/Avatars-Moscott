@@ -89,12 +89,6 @@ export class SceneViewport {
 
     if (!parentElement) return;
 
-    if (this.mouseControls && this.touchControls.isChangeFov) {
-      if (this.threeRenderer.domElement.clientHeight > this.threeRenderer.domElement.clientWidth) {
-        this.threeCamera.fov = this.mouseControls.currentZoom;
-      } else this.threeCamera.fov = 43;
-    }
-
     const parentSize = new THREE.Vector2(parentElement.offsetWidth, parentElement.offsetHeight);
     const rendererSize = this.threeRenderer.getSize(new THREE.Vector2());
 
