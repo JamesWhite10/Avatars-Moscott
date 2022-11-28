@@ -9,6 +9,10 @@ export default function Document(): ReactElement {
           href="https://fonts.googleapis.com/css2?family=Space+Grotesk&display=swap"
           rel="stylesheet"
         />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap"
+          rel="stylesheet"
+        />
       </Head>
       <body>
         <Main />

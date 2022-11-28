@@ -5,7 +5,6 @@
   padding: 0;
   box-sizing: border-box;
   outline: none;
-  overflow: auto;
   top: 0;
   left: 0;
   transition: opacity .3s ease;
@@ -22,6 +21,7 @@
   z-index: 30;
   opacity: 0;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .rootMobileForm {
@@ -153,8 +153,8 @@
   font-family: var(--font-space-grotesk);
   color: rgb(213, 253, 16);
   font-size: 64px;
-  font-weight: 700;
   line-height: 75px;
+  font-weight: 700;
   max-width: 486px;
   width: auto;
   @media (max-width: $mq-tablet-max) {
@@ -268,13 +268,13 @@
   font-weight: 400;
   line-height: 20px;
   text-align: start;
-  margin-bottom: 50px;
-  @media (max-width: $mq-mobile-max) {
-    margin-bottom: 250px;
+  margin-bottom: 80px;
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), (max-width: $mq-tablet-max) {
+    margin-bottom: 140px;
     transition: 1s;
   }
-  @media (max-height: $mq-mobile-max) {
-    margin-bottom: 600px;
+  @media (max-height: 850px) {
+    margin-bottom: 320px;
     transition: 1s;
   }
 }
@@ -331,9 +331,12 @@
   grid-template-columns: repeat(2, 1fr);
   margin-bottom: 80px;
   gap: 40px;
+  @media (max-width: $mq-tablet-max) {
+    margin-top: 80px;
+  }
   @media (max-width: $mq-mobile-max) {
     display: block;
-    margin-bottom: 40px;
+    margin: 40px 0 40px 0;
   }
 }
 
@@ -346,6 +349,12 @@
   margin: 80px 0 40px 0;
   @media (max-width: $mq-tablet-max) {
     margin: 0 0 24px 0;
+  }
+}
+
+.titleMission {
+  @media (max-width: $mq-mobile-max) {
+    margin-top: 40px;
   }
 }
 
@@ -370,8 +379,6 @@
   font-weight: 700;
   line-height: 43px;
   flex-wrap: wrap;
-  letter-spacing: -4%;
-  vertical-align: top;
 }
 
 .buttonPopup {

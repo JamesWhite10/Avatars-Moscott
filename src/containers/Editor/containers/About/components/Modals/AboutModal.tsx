@@ -33,8 +33,7 @@ const AboutModal: FC<PropsWithChildren<AboutModalProps>> = (props) => {
     >
       <Scrollbars
         autoHeight
-        autoHeightMin={300}
-        autoHeightMax={970}
+        autoHeightMin={925}
         autoHide
       >
         {children}
