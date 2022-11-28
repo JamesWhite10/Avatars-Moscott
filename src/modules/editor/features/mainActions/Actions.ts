@@ -64,7 +64,7 @@ export class Actions {
     this.sceneViewport = options.sceneViewport;
     this.eventEmitter = new EventEmitter<SceneEventType>();
     this.textureEditor = options.textureEditor;
-    this.raycastSystem = new RaycastSystem(options.sceneViewport.threeScene, options.sceneViewport.threeCamera);
+    this.raycastSystem = new RaycastSystem(this.sceneViewport, options.sceneViewport.threeCamera);
     this.characterAction = new CharacterAction({
       actions: this,
       textureEditor: options.textureEditor,
@@ -140,16 +140,24 @@ export class Actions {
     });
 
     this.subscribe('characterChange', () => {
-      this.animationAction?.playAnimation('activeStart', true);
-      if (this.startObject) this.animationAction?.playAnimation('activeBack', false);
+      if (this.animationAction) {
+        this.animationAction.playAnimation('activeStart', true);
+        this.animationAction.clearInActiveAnimation();
+        if (this.startObject) this.animationAction.playAnimation('activeBack', false);
+      }
     });
 
     this.subscribe('styleChange', () => {
       if (this.animationAction && this.animationAction.mixer) {
+        this.textureEditor.charactersData.forEach((item) => {
+          if (!item.model.visible) item.vrmAvatar.stopAllAnimations();
+        });
+
+        this.animationAction.clearInActiveAnimation();
         mouseControls.setIsLockRotate(true);
         touchControls.setIsLockRotate(true);
         if (this.startObject) this.startObject.rotation.y = 0;
-        this.animationAction.playAnimation('switchStyle', true, 1);
+        this.animationAction.playAnimation('switchStyle', true, 1, false);
 
         this.animationAction.mixer.addEventListener('finished', () => {
           if (this.animationAction && this.stylesAction && this.stylesAction.isLoadStyle) {

@@ -1,9 +1,10 @@
 import * as THREE from 'three';
+import { SceneViewport } from '../scene/viewports/SceneViewport';
 
 export class RaycastSystem {
   private raycaster = new THREE.Raycaster();
 
-  public threeScene: THREE.Scene;
+  public threeScene: SceneViewport;
 
   public threeCamera: THREE.PerspectiveCamera;
 
@@ -11,7 +12,7 @@ export class RaycastSystem {
 
   private touch = new THREE.Vector2();
 
-  constructor(threeScene: THREE.Scene, threeCamera: THREE.PerspectiveCamera) {
+  constructor(threeScene: SceneViewport, threeCamera: THREE.PerspectiveCamera) {
     this.threeScene = threeScene;
     this.threeCamera = threeCamera;
   }
@@ -34,8 +35,7 @@ export class RaycastSystem {
 
   public raycast(value: string, position: THREE.Vector2): THREE.Intersection<THREE.Object3D<THREE.Event>>[] {
     this.raycaster.setFromCamera(position, this.threeCamera);
-
-    const object = this.threeScene.getObjectByName(value);
-    return this.raycaster.intersectObjects(object?.children || this.threeScene.children, false);
+    const object = this.threeScene.textureEditor.charactersData.find((item) => item.name === value);
+    return this.raycaster.intersectObjects(object?.model.children || this.threeScene.threeScene.children, false);
   }
 }

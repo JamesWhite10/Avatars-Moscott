@@ -52,57 +52,71 @@ export class StylesAction {
   }
 
   public changeStyleCharacter(characterName: string): void {
-    const modelObject = this._sceneViewport.threeScene.getObjectByName(characterName);
-    if (this._actions && this._actions.startObject) {
-      if (this._textureEditor && modelObject) {
-        const dissolveTo = { dissolve: 1.0 };
-        const dissolveFrom = { dissolve: 0.0 };
+    const data = this._textureEditor.charactersData.find((item) => item.name === characterName);
+    if (data) {
+      const modelObject = data.model;
+      if (this._actions && this._actions.startObject) {
+        if (this._textureEditor && modelObject) {
+          const dissolveTo = { dissolve: 1.0 };
+          const dissolveFrom = { dissolve: 0.0 };
 
-        const dissolveTween = new TWEEN.Tween(dissolveFrom)
-          .to(dissolveTo, 900)
-          .onUpdate(({ dissolve }) => {
-            this._textureEditor.vrmMaterials.forEach((material) => {
-              if (this._actions && this._actions.startObject) {
-                if (material.userData.shader && material.userData.name === this._actions.startObject.name) {
-                  material.userData.shader.uniforms.uTime = { value: dissolve };
+          const dissolveTween = new TWEEN.Tween(dissolveFrom)
+            .to(dissolveTo, 900)
+            .onUpdate(({ dissolve }) => {
+              this._textureEditor.vrmMaterials.forEach((material) => {
+                if (this._actions && this._actions.startObject) {
+                  if (material.userData.shader && material.userData.name === this._actions.startObject.name) {
+                    material.userData.shader.uniforms.uTime = { value: dissolve };
+                  }
+                }
+              });
+            });
+
+          const moveTween = new TWEEN.Tween(modelObject.position)
+            .to(this._actions.startPosition, 0)
+            .onUpdate(({ x, z, y }) => {
+              if (this._actions) {
+                const lastStartObject = this._actions.startObject;
+                if (lastStartObject) {
+                  this._textureEditor.charactersGroup.remove(lastStartObject);
+                  console.log(lastStartObject);
+                  this._textureEditor.charactersData.forEach((item) => {
+                    if (item.name === lastStartObject.name) item.model.visible = false;
+                  });
+                  modelObject.position.set(x, y, z);
+                  this._textureEditor.charactersGroup.add(modelObject);
+                  this._actions.startObject = modelObject;
+                  this._actions.eventEmitter.emit('styleChange', characterName);
+                  this._sceneViewport.mouseControls.setObject(modelObject);
+                  this._sceneViewport.touchControls.setObject(modelObject);
+                  modelObject.visible = true;
+
+                  this._textureEditor.vrmMaterials.forEach((material) => {
+                    if (material.userData.shader && material.userData.name === characterName) {
+                      material.userData.shader.uniforms.uTime = { value: 1.0 };
+                    }
+                  });
                 }
               }
             });
-          });
 
-        const moveTween = new TWEEN.Tween(modelObject.position)
-          .to(this._actions.startPosition, 0)
-          .onUpdate(({ x, z, y }) => {
-            const lastStartObject = this._actions?.startObject;
-            if (lastStartObject) {
-              lastStartObject.position.set(0, 0, 0);
-              lastStartObject.visible = false;
-              if (this._actions) {
-                modelObject.position.set(x, y, z);
-                this._actions.startObject = modelObject;
-                this._sceneViewport.mouseControls.setObject(modelObject);
-                this._sceneViewport.touchControls.setObject(modelObject);
-                this._actions.startObject.visible = true;
-                this._actions.eventEmitter.emit('styleChange', characterName);
-              }
-            }
-          });
+          const appearanceFrom = { appearance: 1.0 };
+          const appearanceTo = { appearance: 0.0 };
 
-        const appearanceFrom = { appearance: 1.0 };
-        const appearanceTo = { appearance: 0.0 };
-
-        const appearanceTween = new TWEEN.Tween(appearanceFrom)
-          .to(appearanceTo, 900)
-          .onUpdate(({ appearance }) => {
-            this._textureEditor.vrmMaterials.forEach((material) => {
-              if (material.userData.shader && material.userData.name === characterName) {
-                material.userData.shader.uniforms.uTime = { value: appearance };
-              }
+          const appearanceTween = new TWEEN.Tween(appearanceFrom)
+            .to(appearanceTo, 900)
+            .delay(300)
+            .onUpdate(({ appearance }) => {
+              this._textureEditor.vrmMaterials.forEach((material) => {
+                if (material.userData.shader && material.userData.name === characterName) {
+                  material.userData.shader.uniforms.uTime = { value: appearance };
+                }
+              });
             });
-          });
 
-        dissolveTween.chain(moveTween.chain(appearanceTween));
-        dissolveTween.start();
+          dissolveTween.chain(moveTween.chain(appearanceTween));
+          dissolveTween.start();
+        }
       }
     }
   }

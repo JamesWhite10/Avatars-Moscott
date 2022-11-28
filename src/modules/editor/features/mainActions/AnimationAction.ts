@@ -12,14 +12,6 @@ export interface AnimationData {
   animations: IdleAnimationType[];
 }
 
-export interface AnimationPlayOptions {
-  animationName: string;
-  isStartObject: boolean;
-  repetitions: number;
-  isFade: boolean;
-  idle: boolean;
-}
-
 export class AnimationAction {
   public inActiveTime = 20000;
 
@@ -53,20 +45,20 @@ export class AnimationAction {
 
   public init(characters: Avatar[], styles: Style[], animations: AnimationsType[]): void {
     characters.forEach((character) => {
-      const findAvatars = this._textureEditor.vrmAvatars
-        .filter((avatar) => avatar.vrm.scene.name.includes(character.name.toLowerCase()));
+      const findAvatars = this._textureEditor.charactersData
+        .filter((avatar) => avatar.vrmAvatar.vrm.scene.name.includes(character.name.toLowerCase()));
       findAvatars.forEach((avatar) => {
         if (character.animations) {
-          this.animationsData.push({ vrmAvatar: avatar, animations: character.animations });
+          this.animationsData.push({ vrmAvatar: avatar.vrmAvatar, animations: character.animations });
         }
       });
     });
 
     styles.forEach((style) => {
-      const findAvatars = this._textureEditor.vrmAvatars
-        .filter((avatar) => avatar.vrm.scene.name === style.id);
+      const findAvatars = this._textureEditor.charactersData
+        .filter((avatar) => avatar.vrmAvatar.vrm.scene.name === style.id);
       findAvatars.forEach((avatar) => {
-        if (style.animations) this._animationsStyles.push({ vrmAvatar: avatar, animations: style.animations });
+        if (style.animations) this._animationsStyles.push({ vrmAvatar: avatar.vrmAvatar, animations: style.animations });
       });
     });
     this.loadAnimation(animations);
@@ -147,8 +139,8 @@ export class AnimationAction {
   }
 
   public pauseAnimation(): void {
-    this._textureEditor.vrmAvatars.forEach((item) => {
-      if (this._actions && item.vrm.scene.name === this._actions.startObject?.name && !this.isIdle) {
+    this._textureEditor.charactersData.forEach((item) => {
+      if (this._actions && item.vrmAvatar.vrm.scene.name === this._actions.startObject?.name && !this.isIdle) {
         if (this.startCharacterAnimation) {
           this.startCharacterAnimation.timeScale = 0.00001;
         }
@@ -157,8 +149,8 @@ export class AnimationAction {
   }
 
   public continueAnimation(): void {
-    this._textureEditor.vrmAvatars.forEach((item) => {
-      if (item.vrm.scene.name === this._actions?.startObject?.name) {
+    this._textureEditor.charactersData.forEach((item) => {
+      if (item.vrmAvatar.vrm.scene.name === this._actions?.startObject?.name) {
         if (this.startCharacterAnimation) this.startCharacterAnimation.timeScale = 1;
       }
     });
@@ -211,7 +203,9 @@ export class AnimationAction {
             action.enabled = true;
             action.repetitions = repetitions;
             this.mixer = action.getMixer();
-            this.mixer.dispatchEvent({ type: 'finished', action: this.startCharacterAnimation });
+            if (repetitions === 1) {
+              this.mixer.dispatchEvent({ type: 'finished', action: this.startCharacterAnimation });
+            }
           }
         } else if (startObject?.name !== data.vrmAvatar.vrm.scene.name && !isStartObject) {
           data.vrmAvatar.playAnimation(AnimationCode.stringToAnimationCode(animationName));
