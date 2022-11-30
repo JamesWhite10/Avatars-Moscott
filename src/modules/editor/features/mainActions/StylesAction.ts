@@ -79,7 +79,6 @@ export class StylesAction {
                 const lastStartObject = this._actions.startObject;
                 if (lastStartObject) {
                   this._textureEditor.charactersGroup.remove(lastStartObject);
-                  console.log(lastStartObject);
                   this._textureEditor.charactersData.forEach((item) => {
                     if (item.name === lastStartObject.name) item.model.visible = false;
                   });
