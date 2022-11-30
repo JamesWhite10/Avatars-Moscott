@@ -13,9 +13,16 @@ import dissolveFragment from '../shaders/DissolveShader/DissolveFragment.glsl';
 import dissolveVertex from '../shaders/DissolveShader/DissolveVertex.glsl';
 import { NOISE } from '../../constans/TextureUrl';
 import { VrmAvatar } from '@avs/vrm-avatar';
+import { ThreeMemoryCleaner } from '../ThreeMemoryCleaner';
 
 export interface MainViewOptions {
   sceneViewport: SceneViewport.SceneViewport;
+}
+
+export interface CharactersData {
+  name: string;
+  model: THREE.Object3D;
+  vrmAvatar: VrmAvatar;
 }
 
 export class TextureEditor {
@@ -25,11 +32,13 @@ export class TextureEditor {
 
   private _mixers: THREE.AnimationMixer[] = [];
 
-  public vrmAvatars: VrmAvatar[] = [];
-
   public vrmMaterials: THREE.MeshStandardMaterial[] = [];
 
   public sceneMaterials: THREE.MeshStandardMaterial[] = [];
+
+  public charactersGroup: THREE.Group = new THREE.Group();
+
+  public charactersData: CharactersData[] = [];
 
   constructor(options: MainViewOptions) {
     this._sceneViewport = options.sceneViewport;
@@ -74,7 +83,10 @@ export class TextureEditor {
       if (node instanceof THREE.Mesh) {
         this.blendingShader.sortVideoTextureStyles(this._sceneViewport.resourcesManager, videos, 'portal_video');
         const material = this.blendingShader.getMaterialByName('portal_video');
-        if (material && node.name === 'portal_video') node.material = material;
+        if (material && node.name === 'portal_video') {
+          node.material = material;
+          node.material.dispose();
+        }
       }
     });
   };
@@ -112,9 +124,9 @@ export class TextureEditor {
             shader.uniforms.blendingFourthTexture = { value: 0.0 };
 
             shader.vertexShader = standardBlendingVertex.replace('#include <uv_pars_vertex>', '#include <common>\n'
-                + '#include <uv_pars_vertex>');
+              + '#include <uv_pars_vertex>');
             shader.fragmentShader = standardBlendingFragment.replace('#include <packing>', '#include <common>\n'
-                + '#include <packing>');
+              + '#include <packing>');
 
             node.material.userData.shader = shader;
           };
@@ -124,6 +136,7 @@ export class TextureEditor {
             node.material.depthTest = true;
             node.material.depthWrite = false;
           }
+          ThreeMemoryCleaner.disposeThreeMaterial(node.material);
           node.material.needsUpdate = true;
           this.sceneMaterials.push(node.material);
         }
@@ -143,13 +156,15 @@ export class TextureEditor {
 
   public addCharacters(config: SceneViewport.SceneConfig): void {
     const { styles } = config;
-    styles.forEach((style) => {
+    styles.forEach((style, index) => {
       const characterModel = this._sceneViewport.resourcesManager.getVrmByUrlOrFail(style.model || '');
-      this.applyCharacterTexture(characterModel.userData.vrm, style.id);
+      this.applyCharacterTexture(characterModel.userData.vrm, style.id, index === 0 || index === 2);
     });
+
+    this._sceneViewport.threeScene.add(this.charactersGroup);
   }
 
-  public applyCharacterTexture = (model: ThreeVRM.VRM, textureName: string): void => {
+  public applyCharacterTexture = (model: ThreeVRM.VRM, textureName: string, visible = true): void => {
     const primitiveCollider = new PrimitiveCollider({
       data: { position: new THREE.Vector3(0, 0.8, 0) },
     });
@@ -164,13 +179,14 @@ export class TextureEditor {
       if (node instanceof THREE.Mesh) {
         if (Array.isArray(node.material)) {
           const materials: THREE.MeshStandardMaterial[] = [];
-          node.material.forEach((material: THREE.ShaderMaterial) => {
-            const map = material.uniforms.map.value;
-
+          node.material.forEach((material) => {
+            const map = material.uniforms ? material.uniforms?.map.value : material.map;
             const newMaterial = new THREE.MeshStandardMaterial({ map, side: THREE.DoubleSide, transparent: true });
+
             newMaterial.onBeforeCompile = (shader: THREE.Shader) => {
               shader.uniforms.uHeightMap = { value: noiseTexture };
-              shader.uniforms.uTime = { value: 0.0 };
+              if (visible) shader.uniforms.uTime = { value: 0.0 };
+              else shader.uniforms.uTime = { value: 1.0 };
 
               shader.vertexShader = dissolveVertex.replace('#include <uv_pars_vertex>', '#include <common>\n'
                 + '#include <uv_pars_vertex>');
@@ -179,30 +195,26 @@ export class TextureEditor {
               newMaterial.userData.shader = shader;
               newMaterial.userData.name = textureName;
             };
-
             materials.push(newMaterial);
+
             this.vrmMaterials.push(newMaterial);
+            ThreeMemoryCleaner.disposeThreeMaterial(newMaterial);
           });
           node.castShadow = true;
-          node.receiveShadow = true;
+          node.receiveShadow = false;
           node.material = materials;
         }
       }
     });
 
     model.scene.name = textureName;
-    this.vrmAvatars.push(new VrmAvatar(model));
 
     primitiveCollider.object.add(model.scene);
-
-    this._sceneViewport.threeScene.add(primitiveCollider.object);
-  };
-
-  public hideObjects(objectName: string): void {
-    const objectModel = this._sceneViewport.threeScene.getObjectByName(objectName);
-    if (objectModel) {
-      objectModel.position.set(1.3, -2, 0);
-      objectModel.visible = true;
+    this.charactersData.push({ name: textureName || '', model: primitiveCollider.object, vrmAvatar: new VrmAvatar(model) });
+    if (visible) this.charactersGroup.add(primitiveCollider.object);
+    else {
+      primitiveCollider.object.position.set(0, 1.3, 0);
+      primitiveCollider.object.visible = false;
     }
-  }
+  };
 }

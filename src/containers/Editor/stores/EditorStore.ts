@@ -113,8 +113,10 @@ export default class EditorStore {
       if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
         this.animationStore.setProgress(0);
         if (activeId) {
-          this.threeScene.actions.animationAction.stopAnimation();
-          this.threeScene.actions.animationAction.playAnimation('activeStart', true, Infinity, false);
+          if (!this.threeScene.actions.animationAction.isIdle) {
+            this.threeScene.actions.animationAction.stopAnimation();
+            this.threeScene.actions.animationAction.playAnimation('activeStart', true, Infinity, false);
+          }
         }
         activeId = undefined;
       }
@@ -162,11 +164,6 @@ export default class EditorStore {
               style.targetTextureName,
               style.currentTextureName,
             );
-            this.styleStore.styles.forEach((item) => {
-              if (item.name !== 'Base') {
-                if (this.threeScene && this.threeScene.textureEditor) this.threeScene.textureEditor.hideObjects(item.id);
-              }
-            });
           }
         }
       });

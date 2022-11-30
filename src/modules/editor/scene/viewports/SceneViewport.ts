@@ -23,7 +23,7 @@ export class SceneViewport {
 
   public clock: THREE.Clock;
 
-  public textureEditor: TextureEditor.TextureEditor | null = null;
+  public textureEditor: TextureEditor.TextureEditor;
 
   public actions: Actions.Actions | null = null;
 
@@ -42,6 +42,7 @@ export class SceneViewport {
     this.snapshotThreeCamera = this.makeThreeCamera();
     this.resourcesManager = new ResourcesManager();
     this.clock = new THREE.Clock();
+    this.textureEditor = new TextureEditor.TextureEditor({ sceneViewport: this });
     this.setupEnvironment();
 
     this.threeRenderer.domElement.addEventListener('click', this.clickHandler.bind(this));
@@ -90,6 +91,7 @@ export class SceneViewport {
     if (!parentElement) return;
 
     const parentSize = new THREE.Vector2(parentElement.offsetWidth, parentElement.offsetHeight);
+
     const rendererSize = this.threeRenderer.getSize(new THREE.Vector2());
 
     if (parentSize.equals(rendererSize)) return;
@@ -111,12 +113,18 @@ export class SceneViewport {
   }
 
   public init(config: SceneConfig, onProgress: (value: number) => void): Promise<void> {
-    return Promise.all([this.loadSceneTexture(onProgress, config)])
+    return Promise.all([
+      this.loadHdrTexture(onProgress, config),
+      this.loadSceneTexture(onProgress, config),
+      this.loadAnimation(onProgress, config),
+      this.loadCharacters(onProgress, config),
+    ])
       .then(() => {
         this.runRenderCycle();
+        this.initTexture(config);
         this.initControls();
         this.initLight();
-        this.initTexture(config);
+        this.initCharacters(config);
         this.initMainActions(config);
       });
   }
@@ -132,13 +140,17 @@ export class SceneViewport {
     }
   }
 
+  public initCharacters(config: SceneConfig): void {
+    if (this.textureEditor) this.textureEditor.addCharacters(config);
+  }
+
   public initTexture(config: SceneConfig): void {
-    this.textureEditor = new TextureEditor.TextureEditor({ sceneViewport: this });
-    this.textureEditor.addCharacters(config);
-    this.textureEditor.applyTexture(config);
-    this.textureEditor.applyVideoTexture(config);
-    this.textureEditor.applyHdrTexture(config.environment);
-    this.initMainActions(config);
+    if (this.textureEditor) {
+      this.textureEditor.applyTexture(config);
+      this.textureEditor.applyVideoTexture(config);
+      this.textureEditor.applyHdrTexture(config.environment);
+      this.initMainActions(config);
+    }
   }
 
   public initControls(): void {
@@ -155,10 +167,20 @@ export class SceneViewport {
     });
   }
 
-  public loadSceneTexture(progress: (progress: number) => void, config: SceneConfig): Promise<void> {
-    const { styles, environment, characters, animations } = config;
+  public loadHdrTexture(progress: (progress: number) => void, config: SceneConfig): Promise<void> {
+    const { environment } = config;
 
-    this.resourcesManager.addGlb(environment.background);
+    this.resourcesManager.addHdrTexture(environment.environment);
+
+    return this.resourcesManager.load(progress);
+  }
+
+  public loadAnimation(progress: (progress: number) => void, config: SceneConfig): Promise<void> {
+    const { characters, animations } = config;
+
+    animations.forEach((item) => {
+      this.resourcesManager.addFbx(item.animation);
+    });
 
     characters.forEach((avatar) => {
       if (avatar.animations) {
@@ -168,6 +190,25 @@ export class SceneViewport {
         });
       }
     });
+    return this.resourcesManager.load(progress);
+  }
+
+  public loadCharacters(progress: (progress: number) => void, config: SceneConfig): Promise<void> {
+    const { styles } = config;
+
+    this.resourcesManager.addTexture(NOISE);
+
+    styles.forEach((style) => {
+      this.resourcesManager.addVrm(style.model || '');
+    });
+
+    return this.resourcesManager.load(progress);
+  }
+
+  public loadSceneTexture(progress: (progress: number) => void, config: SceneConfig): Promise<void> {
+    const { styles, environment } = config;
+
+    this.resourcesManager.addGlb(environment.background);
 
     styles.forEach((style) => {
       if (style.animations) {
@@ -178,21 +219,10 @@ export class SceneViewport {
       }
     });
 
-    animations.forEach((item) => {
-      this.resourcesManager.addFbx(item.animation);
-    });
-
-    this.resourcesManager.addHdrTexture(environment.environment);
-    this.resourcesManager.addTexture(NOISE);
-
     styles.forEach((style) => {
       Object.values(style.background).forEach((texture) => {
         this.resourcesManager.addTexture(texture);
       });
-    });
-
-    styles.forEach((style) => {
-      this.resourcesManager.addVrm(style.model || '');
     });
 
     return this.resourcesManager.load(progress);
@@ -208,7 +238,7 @@ export class SceneViewport {
     this.threeRenderer.domElement.setAttribute('tabindex', '0');
 
     this.threeRenderer.setClearColor(0x95b1cc);
-    this.threeRenderer.setPixelRatio(1);
+    this.threeRenderer.setPixelRatio(0.8);
     this.threeRenderer.setSize(window.innerWidth, window.innerHeight);
 
     this.threeRenderer.physicallyCorrectLights = false;
@@ -235,6 +265,7 @@ export class SceneViewport {
   }
 
   public clickHandler(event: MouseEvent): void {
+    event.preventDefault();
     if (this.actions && this.actions.characterAction && this.actions.animationAction) {
       if (this.mouseControls.object && !this.mouseControls.isRotateObject) {
         this.actions.characterAction.characterClickHandler(event);
@@ -274,6 +305,8 @@ export class SceneViewport {
   }
 
   public touchStartHandler(event: TouchEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
     this.threeRenderer.domElement.focus();
     this.touchControls.onTouchStart(event);
     if (this.actions && this.actions.animationAction) this.actions.animationAction.clearInActiveAnimation();
