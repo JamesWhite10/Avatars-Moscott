@@ -1,0 +1,50 @@
+.root {
+  width: 48px;
+  height: 48px;
+  border: none;
+  outline: none;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: all .2s ease;
+  background: inherit;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.rootEnable {
+  background: #FFFFFF;
+
+  &:hover {
+    background: #4145A7;
+    .iconColor {
+      svg, path {
+        fill: #FFFFFF;
+      }
+    }
+  }
+
+  &:active {
+    background: #2E3075;
+  }
+}
+
+.rootLoading {
+  &:hover {
+    background: #FFFFFF;
+  }
+
+  &:active {
+    background: #FFFFFF;
+  }
+}
+
+.iconHide {
+  display: none;
+}

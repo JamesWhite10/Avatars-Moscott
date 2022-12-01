@@ -9,6 +9,9 @@ import FormInput from '@app/components/FormInput/FormInput';
 import { FieldValues, useForm } from 'react-hook-form';
 import FormTextArea from '@app/components/FormTextArea/FormTextArea';
 import AnimatedButton from '@app/components/AnimatedButton/AnimatedButton';
+import NavButton from '@app/components/NavButton';
+import AnimationIcon from '@app/components/Icons/AnimationIcon';
+import HairstyleIcon from '@app/components/Icons/HairstyleIcon';
 
 export interface FormValues extends FieldValues {
   userName: string;
@@ -20,6 +23,7 @@ export interface FormValues extends FieldValues {
 const Components = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [disabled] = useState<boolean>(false);
+  const [enable, setEnable] = useState<boolean>(false);
   const [active, setIsActive] = useState(false);
   const [progress, setProgress] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -63,6 +67,14 @@ const Components = () => {
       alignItems: 'center',
       flexDirection: 'row' as 'row',
     },
+  };
+
+  const stateButton = () => {
+    setEnable(!enable);
+    if (enable) {
+      setLoading(!loading);
+      setEnable(true);
+    }
   };
 
   return (
@@ -192,6 +204,16 @@ const Components = () => {
         >
           Animation
         </AnimatedButton>
+      </div>
+      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+        <NavButton
+          enable={enable}
+          loading={loading}
+          onClick={() => {
+            stateButton();
+          }}
+          icon={<AnimationIcon />}
+        />
       </div>
     </div>
   );
