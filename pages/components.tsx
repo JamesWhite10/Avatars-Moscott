@@ -11,7 +11,6 @@ import FormTextArea from '@app/components/FormTextArea/FormTextArea';
 import AnimatedButton from '@app/components/AnimatedButton/AnimatedButton';
 import NavButton from '@app/components/NavButton';
 import AnimationIcon from '@app/components/Icons/AnimationIcon';
-import HairstyleIcon from '@app/components/Icons/HairstyleIcon';
 
 export interface FormValues extends FieldValues {
   userName: string;
