@@ -112,6 +112,7 @@ const Components = () => {
           contentType="video"
         />
         <Card
+          isLoading
           active
           label="Mira"
           image={MiraImage.src}
@@ -121,6 +122,35 @@ const Components = () => {
           image={YukiImage.src}
           label="Yuki"
           contentType="image"
+        />
+        <Card
+          video="/avatars/mira_style1.MP4"
+          contentType="video"
+          active
+          isLoading
+          cardSize="small"
+          contentSize="sm"
+        />
+        <Card
+          video="/avatars/mira_style1.MP4"
+          contentType="video"
+          cardSize="small"
+          contentSize="sm"
+        />
+        <Card
+          active
+          label="Mira"
+          image={MiraImage.src}
+          contentType="image"
+          cardSize="small"
+          contentSize="sm"
+        />
+        <Card
+          image={YukiImage.src}
+          label="Yuki"
+          contentType="image"
+          cardSize="small"
+          contentSize="sm"
         />
       </div>
       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>

@@ -1,8 +1,13 @@
-import {
+import React, {
   FC, PropsWithChildren, useCallback, useMemo, useRef, useState,
 } from 'react';
 import classNames from './Card.module.scss';
 import cn from 'classnames';
+import Spin from '@app/components/Spin/Spin';
+
+export type CardSize = 'large' | 'small';
+
+export type ContentSize = 'lg' | 'sm';
 
 export interface CardProps {
   image?: string;
@@ -11,6 +16,9 @@ export interface CardProps {
   label?: string;
   contentType?: 'image' | 'video';
   onClick?: () => void;
+  cardSize?: CardSize;
+  contentSize?: ContentSize;
+  isLoading?: boolean;
 }
 
 const Card: FC<PropsWithChildren<CardProps>> = (props) => {
@@ -20,7 +28,10 @@ const Card: FC<PropsWithChildren<CardProps>> = (props) => {
     active,
     contentType = 'image',
     label,
+    isLoading = false,
     onClick = () => undefined,
+    cardSize = 'large',
+    contentSize = 'lg',
   } = props;
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isLoopPlay, setLoopPlay] = useState<boolean>(false);
@@ -47,24 +58,32 @@ const Card: FC<PropsWithChildren<CardProps>> = (props) => {
 
   return (
     <div
-      className={cn(classNames.overlay, { [classNames.overlay_active]: active })}
+      className={cn(classNames.overlay, { [classNames.overlay_active]: active }, classNames[cardSize])}
       onMouseEnter={playVideoHandler}
       onMouseLeave={stopVideoHandler}
       onTouchStart={playVideoHandler}
       onTouchEnd={stopVideoHandler}
     >
       <div
-        className={classNames.root}
+        className={cn(classNames.root, classNames[contentSize])}
         onClick={onClick}
       >
+        <Spin
+          isActive={active && isLoading}
+          overlayBackgroundColor="rgba(255,255,255,0.5)"
+          color="#4145A7"
+          borderRadius={12}
+          position="fullscreen"
+          indicatorSize={44}
+        />
         {needShowImage && <img
-          className={classNames.image}
+          className={cn(classNames.image, classNames[contentSize])}
           src={image}
           alt="image"
         />}
         {needShowVideo && <video
           ref={videoRef}
-          style={{ width: 80, height: 160 }}
+          className={cn(classNames[contentSize])}
           muted
           controls={false}
           loop={isLoopPlay}
