@@ -23,7 +23,7 @@ export class StylesAction {
     if (this._textureEditor && this._actions) this._actions.eventEmitter.emit('loadNewStyle', characterName, texture);
   }
 
-  public changeStyleTexture(texture: string): void {
+  public changeStyleTexture(texture: string, characterName: string): void {
     const { currentTextureName } = this._textureEditor.blendingShader;
     if (this._textureEditor) {
       this._textureEditor.blendingShader.currentTextureName = texture;
@@ -42,6 +42,7 @@ export class StylesAction {
           });
           this._textureEditor.sceneMaterials.forEach((item) => {
             if (item.userData.shader) {
+              if (this._actions && additional === 1) this._actions.eventEmitter.emit('styleChange', characterName);
               item.userData.shader.uniforms[currentBlendingName].value = current;
               item.userData.shader.uniforms[additionalBlendingName].value = additional;
             }
@@ -51,6 +52,7 @@ export class StylesAction {
     }
   }
 
+  // todo: remake as part of another task breaking into parts
   public changeStyleCharacter(characterName: string): void {
     const data = this._textureEditor.charactersData.find((item) => item.name === characterName);
     if (data) {
@@ -79,14 +81,12 @@ export class StylesAction {
                 const lastStartObject = this._actions.startObject;
                 if (lastStartObject) {
                   this._textureEditor.charactersGroup.remove(lastStartObject);
-                  console.log(lastStartObject);
                   this._textureEditor.charactersData.forEach((item) => {
                     if (item.name === lastStartObject.name) item.model.visible = false;
                   });
                   modelObject.position.set(x, y, z);
                   this._textureEditor.charactersGroup.add(modelObject);
                   this._actions.startObject = modelObject;
-                  this._actions.eventEmitter.emit('styleChange', characterName);
                   this._sceneViewport.mouseControls.setObject(modelObject);
                   this._sceneViewport.touchControls.setObject(modelObject);
                   modelObject.visible = true;

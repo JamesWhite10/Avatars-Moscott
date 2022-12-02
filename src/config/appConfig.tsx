@@ -4,30 +4,74 @@ import MiraImage from '@app/assets/mira.png';
 import YukiImage from '@app/assets/yuki.png';
 import MiraImageRender from '@app/assets/about/MiraAbout.png';
 import YukiImageRender from '@app/assets/about/YukiAbout.png';
+import {
+  MiraBase,
+  MiraCostumeDress,
+  MiraLashes,
+  MiraCostumeSpace,
+  MiraEyes,
+  MiraHairBraids,
+  MiraHairTail,
+  MiraShoesDress,
+  MiraShoesSpace,
+} from '@app/config/avatarParts/MiraParts';
+import {
+  YukiBase,
+  YukiCostumeCoat,
+  YukiCostumeHacker,
+  YukiEyes,
+  YukiHairCoats,
+  YukiHairHacker,
+  YukiShoesCoat,
+  YukiShoesHacker,
+} from '@app/config/avatarParts/YukiParts';
 
 const avatars: Avatar[] = [
   {
     id: 'mira',
+    basePart: 'base',
     image: MiraImage.src,
     renderImage: MiraImageRender.src,
-    model: '/3d/assets/models/miraBase.vrm',
     animations: [
       { id: 'forgivenessMira', name: 'forgiveness' },
       { id: 'inActiveMira', name: 'inActive' },
     ],
+    slots: ['hair', 'eye', 'costume', 'base', 'shoes', 'lashes'],
     name: 'Mira',
     description: 'Cyberfox',
     icon: <CyberfoxIcon />,
+    parts: [
+      MiraBase,
+      MiraEyes,
+      MiraCostumeDress,
+      MiraCostumeSpace,
+      MiraShoesDress,
+      MiraLashes,
+      MiraShoesSpace,
+      MiraHairBraids,
+      MiraHairTail,
+    ],
   },
   {
     id: 'yuki',
+    basePart: 'base',
     image: YukiImage.src,
     renderImage: YukiImageRender.src,
     animations: [
       { id: 'forgivenessYuki', name: 'forgiveness' },
       { id: 'inActiveYuki', name: 'inActive' },
     ],
-    model: '/3d/assets/models/yukiBase.vrm',
+    slots: ['hair', 'eye', 'costume', 'base', 'shoes'],
+    parts: [
+      YukiBase,
+      YukiEyes,
+      YukiCostumeCoat,
+      YukiCostumeHacker,
+      YukiShoesCoat,
+      YukiShoesHacker,
+      YukiHairCoats,
+      YukiHairHacker,
+    ],
     name: 'Yuki',
     description: 'web3dev',
     icon: <Web3devIcon />,
@@ -38,7 +82,7 @@ const styles: Style[] = [
   {
     id: 'mira_base',
     name: 'Base',
-    model: '/3d/assets/models/miraBase.vrm',
+    parts: [MiraBase, MiraEyes, MiraCostumeDress, MiraShoesDress, MiraLashes, MiraHairTail],
     videoUrl: '/avatars/mira_style1.MP4',
     animations: [
       { id: 'activeMiraBaseStart', name: 'activeStart' },
@@ -65,7 +109,7 @@ const styles: Style[] = [
       { id: 'activeMiraRetroBack', name: 'activeBack' },
       { id: 'lookAroundMiraRetro', name: 'switchStyle' },
     ],
-    model: '/3d/assets/models/mira_space.vrm',
+    parts: [MiraBase, MiraEyes, MiraCostumeSpace, MiraLashes, MiraShoesSpace, MiraHairBraids],
     videoUrl: '/avatars/mira_style2.MP4',
     background: {
       mountains_mesh: '/3d/assets/texture/retro/mountains_retro_color.png',
@@ -87,7 +131,7 @@ const styles: Style[] = [
       { id: 'activeYukiBaseBack', name: 'activeBack' },
       { id: 'lookAroundYukiBase', name: 'switchStyle' },
     ],
-    model: '/3d/assets/models/yukiBase.vrm',
+    parts: [YukiBase, YukiEyes, YukiCostumeCoat, YukiShoesCoat, YukiHairCoats],
     videoUrl: '/avatars/mira_style1.MP4',
     background: {
       mountains_mesh: '/3d/assets/texture/YukiBase/mountains_orange_color.png',
@@ -109,7 +153,7 @@ const styles: Style[] = [
       { id: 'activeYukiHackerBack', name: 'activeBack' },
       { id: 'lookAroundYukiHacker', name: 'switchStyle' },
     ],
-    model: '/3d/assets/models/yuki_hacker.vrm',
+    parts: [YukiEyes, YukiCostumeHacker, YukiShoesHacker, YukiHairHacker],
     videoUrl: '/avatars/mira_style2.MP4',
     background: {
       mountains_mesh: '/3d/assets/texture/hacker/mountains_hacker_color.png',

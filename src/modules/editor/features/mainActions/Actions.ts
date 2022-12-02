@@ -48,7 +48,7 @@ export class Actions {
 
   public raycastSystem: RaycastSystem;
 
-  public startPosition: THREE.Vector3 = new THREE.Vector3(1.3, 0.19, 0);
+  public startPosition: THREE.Vector3 = new THREE.Vector3(1.3, 0, 0);
 
   public startObject: THREE.Object3D | null = null;
 
@@ -110,8 +110,7 @@ export class Actions {
           touchControls.targetRotationX = 0;
           this.rotateToDefault();
           this.stylesAction.isLoadStyle = true;
-          this.stylesAction.changeStyleTexture(texture);
-          this.stylesAction.changeStyleCharacter(characterName);
+          if (this.startObject) this.stylesAction.changeStyleTexture(texture, this.startObject?.name);
         }
       }
     });
@@ -149,28 +148,15 @@ export class Actions {
 
     this.subscribe('styleChange', () => {
       if (this.animationAction && this.animationAction.mixer) {
-        this.textureEditor.charactersData.forEach((item) => {
-          if (!item.model.visible) item.vrmAvatar.stopAllAnimations();
-        });
-
         this.animationAction.clearInActiveAnimation();
-        mouseControls.setIsLockRotate(true);
-        touchControls.setIsLockRotate(true);
         if (this.startObject) this.startObject.rotation.y = 0;
-        this.animationAction.playAnimation('switchStyle', true, 1, false);
+        if (this.animationAction && this.stylesAction && this.stylesAction.isLoadStyle) {
+          this.stylesAction.isLoadStyle = false;
 
-        this.animationAction.mixer.addEventListener('finished', () => {
-          if (this.animationAction && this.stylesAction && this.stylesAction.isLoadStyle) {
-            this.stylesAction.isLoadStyle = false;
-            mouseControls.setIsLockRotate(false);
-            touchControls.setIsLockRotate(false);
-
-            mouseControls.targetRotationX = 0;
-            touchControls.targetRotationX = 0;
-            this.eventEmitter.emit('animationEnded');
-            this.animationAction.playAnimation('activeStart', true);
-          }
-        });
+          mouseControls.targetRotationX = 0;
+          touchControls.targetRotationX = 0;
+          this.eventEmitter.emit('animationEnded');
+        }
       }
     });
 

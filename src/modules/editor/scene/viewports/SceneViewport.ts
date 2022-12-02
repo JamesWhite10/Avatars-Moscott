@@ -3,7 +3,7 @@ import ResourcesManager, { ResourceType } from '../ResourcesManager';
 import { TextureEditor } from '../textureEditor/index';
 import { MouseControl, TouchControl } from '../cameraControls/index';
 import { AnimationsType, Avatar, EnvironmentConfigType, Style } from '../../../../types/index';
-import { NOISE } from '../../constans/TextureUrl';
+import { NOISE } from '@app/config/textures';
 import { Actions } from '../../features/mainActions/index';
 import { getAnimationFile } from '../../utils/getAnimationFile';
 
@@ -124,6 +124,7 @@ export class SceneViewport {
         this.initTexture(config);
         this.initControls();
         this.initLight();
+        this.initMainSkeleton(config);
         this.initCharacters(config);
         this.initMainActions(config);
       });
@@ -138,10 +139,6 @@ export class SceneViewport {
       }
       this.actions.init(config.styles);
     }
-  }
-
-  public initCharacters(config: SceneConfig): void {
-    if (this.textureEditor) this.textureEditor.addCharacters(config);
   }
 
   public initTexture(config: SceneConfig): void {
@@ -171,7 +168,6 @@ export class SceneViewport {
     const { environment } = config;
 
     this.resourcesManager.addHdrTexture(environment.environment);
-
     return this.resourcesManager.load(progress);
   }
 
@@ -194,21 +190,60 @@ export class SceneViewport {
   }
 
   public loadCharacters(progress: (progress: number) => void, config: SceneConfig): Promise<void> {
-    const { styles } = config;
+    const { characters } = config;
 
-    this.resourcesManager.addTexture(NOISE);
-
-    styles.forEach((style) => {
-      this.resourcesManager.addVrm(style.model || '');
+    characters.forEach((character) => {
+      character.parts.forEach((part) => {
+        if (part.source) this.resourcesManager.addVrm(part.source);
+        Object.values(part.texturesMap).forEach((texture) => {
+          this.resourcesManager.addTexture(texture);
+        });
+      });
     });
 
     return this.resourcesManager.load(progress);
+  }
+
+  public initMainSkeleton(config: SceneConfig): void {
+    config.characters.forEach((character) => {
+      character.parts.forEach((avatarPart) => {
+        if (avatarPart.slots.includes(character.basePart) && avatarPart.source) {
+          const rootPart = this.resourcesManager.getVrmByUrlOrFail(avatarPart.source);
+          this.textureEditor.addSkeleton(rootPart.userData.vrm, `${character.name}_base`.toLowerCase());
+          const texture = this.resourcesManager.getTextureByUrlOrFail(avatarPart.texturesMap.base);
+          this.textureEditor.applyPartTexture(avatarPart.id, `${character.name}_base`.toLowerCase(), texture);
+        }
+      });
+    });
+  }
+
+  public initCharacters(config: SceneConfig): void {
+    const { styles, characters } = config;
+    if (this.textureEditor) {
+      styles.forEach((style) => {
+        const object = characters.find((character) => style.id.includes(character.id));
+        style.parts.forEach((avatarPart) => {
+          if (object && !avatarPart.slots.includes(object.basePart)) {
+            if (avatarPart.source) {
+              const rootPart = this.resourcesManager.getVrmByUrlOrFail(avatarPart.source);
+              this.textureEditor.addCharacterParts(rootPart.userData.vrm, avatarPart.id, style.id);
+            }
+            const texture = this.resourcesManager.getTextureByUrlOrFail(avatarPart.texturesMap.base);
+            this.textureEditor.applyPartTexture(avatarPart.id, style.id, texture);
+          }
+        });
+      });
+    }
+
+    const dissolveTexture = this.resourcesManager.getTextureByUrlOrFail(NOISE);
+    this.textureEditor.prepareAndAddObjects(dissolveTexture);
   }
 
   public loadSceneTexture(progress: (progress: number) => void, config: SceneConfig): Promise<void> {
     const { styles, environment } = config;
 
     this.resourcesManager.addGlb(environment.background);
+    this.resourcesManager.addTexture(NOISE);
 
     styles.forEach((style) => {
       if (style.animations) {
