@@ -8,6 +8,7 @@ import StyleStore from './StyleStore';
 import SoundSystem from '../../../sound/SoundSystem';
 import AnimationStore from './AnimationStore';
 import AboutStore from './AboutStore';
+import PanelsStore from './PanelsStore';
 
 export default class EditorStore {
   public isReady = false;
@@ -34,6 +35,8 @@ export default class EditorStore {
 
   public soundSystem!: SoundSystem;
 
+  public panelsStore!: PanelsStore;
+
   constructor(soundSystem: SoundSystem) {
     this.resourceManager = new ResourcesManager();
     makeAutoObservable(this, {}, { autoBind: true });
@@ -43,6 +46,7 @@ export default class EditorStore {
     this.styleStore = new StyleStore();
     this.animationStore = new AnimationStore();
     this.soundSystem = soundSystem;
+    this.panelsStore = new PanelsStore(this.threeScene);
     this.subscribe();
   }
 
