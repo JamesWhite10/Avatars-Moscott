@@ -5,8 +5,6 @@ import classNames from './Card.module.scss';
 import cn from 'classnames';
 import Spin from '@app/components/Spin/Spin';
 
-export type CardSize = 'large' | 'small';
-
 export type ContentSize = 'lg' | 'sm';
 
 export interface CardProps {
@@ -16,7 +14,6 @@ export interface CardProps {
   label?: string;
   contentType?: 'image' | 'video';
   onClick?: () => void;
-  cardSize?: CardSize;
   contentSize?: ContentSize;
   isLoading?: boolean;
 }
@@ -30,7 +27,6 @@ const Card: FC<PropsWithChildren<CardProps>> = (props) => {
     label,
     isLoading = false,
     onClick = () => undefined,
-    cardSize = 'large',
     contentSize = 'lg',
   } = props;
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -58,7 +54,7 @@ const Card: FC<PropsWithChildren<CardProps>> = (props) => {
 
   return (
     <div
-      className={cn(classNames.overlay, { [classNames.overlay_active]: active }, classNames[cardSize])}
+      className={cn(classNames.overlay, { [classNames.overlay_active]: active }, { [classNames.cardSmall]: contentSize === 'sm' })}
       onMouseEnter={playVideoHandler}
       onMouseLeave={stopVideoHandler}
       onTouchStart={playVideoHandler}

@@ -128,13 +128,11 @@ const Components = () => {
           contentType="video"
           active
           isLoading
-          cardSize="small"
           contentSize="sm"
         />
         <Card
           video="/avatars/mira_style1.MP4"
           contentType="video"
-          cardSize="small"
           contentSize="sm"
         />
         <Card
@@ -142,14 +140,12 @@ const Components = () => {
           label="Mira"
           image={MiraImage.src}
           contentType="image"
-          cardSize="small"
           contentSize="sm"
         />
         <Card
           image={YukiImage.src}
           label="Yuki"
           contentType="image"
-          cardSize="small"
           contentSize="sm"
         />
       </div>

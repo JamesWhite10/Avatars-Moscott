@@ -10,6 +10,8 @@
 }
 
 .overlay {
+  width: 96px;
+  height: 176px;
   background: transparent;
   border: 6px solid transparent;
   border-radius: 28px;
@@ -76,6 +78,11 @@
   line-height: 20px;
 }
 
+.cardSmall {
+  width: 96px;
+  height: 96px;
+}
+
 .lg {
   width: 80px;
   height: 160px;
@@ -86,14 +93,4 @@
   width: 80px;
   height: 80px;
   object-fit: cover;
-}
-
-.large {
-  width: 96px;
-  height: 176px;
-}
-
-.small {
-  width: 96px;
-  height: 96px;
 }
