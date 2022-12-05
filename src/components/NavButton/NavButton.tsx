@@ -1,11 +1,11 @@
-import React, { forwardRef, ReactElement, useMemo } from 'react';
+import React, { forwardRef, ReactElement } from 'react';
 import cn from 'classnames';
 import classNames from '@app/components/NavButton/NavButton.module.scss';
 import Spin from '@app/components/Spin/Spin';
 import { IconProps } from '@app/components/Icons/iconTypes';
 
 export interface NavButtonProps {
-  enable?: boolean;
+  active?: boolean;
   disabled?: boolean;
   onClick?: () => void;
   onMouseEnter?: () => void;
@@ -16,7 +16,7 @@ export interface NavButtonProps {
 
 const NavButton = forwardRef<HTMLButtonElement, NavButtonProps>((props, ref) => {
   const {
-    enable = false,
+    active = false,
     disabled = false,
     onClick = () => undefined,
     onMouseEnter = () => undefined,
@@ -25,23 +25,12 @@ const NavButton = forwardRef<HTMLButtonElement, NavButtonProps>((props, ref) => 
     icon,
   } = props;
 
-  const innerIcon = useMemo(() => {
-    const elementFill = enable ? '#4145A7' : '#FFFFFF';
-    return React.cloneElement(
-      icon,
-      {
-        fill: elementFill,
-        className: classNames.iconColor,
-      },
-    );
-  }, [icon, enable]);
-
   return (
     <button
       tabIndex={1}
       ref={ref}
       type="button"
-      className={cn(classNames.root, className, { [classNames.rootEnable]: enable }, { [classNames.rootLoading]: loading })}
+      className={cn(classNames.root, className, { [classNames.rootActive]: active }, { [classNames.rootLoading]: loading })}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       disabled={disabled}
@@ -56,7 +45,7 @@ const NavButton = forwardRef<HTMLButtonElement, NavButtonProps>((props, ref) => 
       <div
         className={cn({ [classNames.iconHide]: loading })}
       >
-        {innerIcon}
+        {icon}
       </div>
     </button>
   );

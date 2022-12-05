@@ -22,7 +22,6 @@ export interface FormValues extends FieldValues {
 const Components = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [disabled] = useState<boolean>(false);
-  const [enable, setEnable] = useState<boolean>(false);
   const [active, setIsActive] = useState(false);
   const [progress, setProgress] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -69,10 +68,10 @@ const Components = () => {
   };
 
   const stateButton = () => {
-    setEnable(!enable);
-    if (enable) {
+    setIsActive(!active);
+    if (active) {
       setLoading(!loading);
-      setEnable(true);
+      setIsActive(true);
     }
   };
 
@@ -206,7 +205,7 @@ const Components = () => {
       </div>
       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
         <NavButton
-          enable={enable}
+          active={active}
           loading={loading}
           onClick={() => {
             stateButton();

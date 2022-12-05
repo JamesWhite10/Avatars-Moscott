@@ -12,47 +12,41 @@
   background: inherit;
 
   &:hover {
-    background: #4145A7;
-    .iconColor {
+    background:  var(--primary-600);
       svg, path {
         fill: #FFFFFF;
-      }
     }
   }
 
   &:active {
-    background: #2E3075;
+    background: var(--primary-700);
   }
 
   &:disabled {
+    background: inherit;
     opacity: 0.5;
     cursor: not-allowed;
-    pointer-events: none;
   }
 }
 
-.rootEnable {
+.rootActive {
   background: #FFFFFF;
-
+  svg, path {
+    fill: #4145A7;
+  }
   &:hover {
-    background: #4145A7;
-    .iconColor {
+    background:  var(--primary-600);
       svg, path {
         fill: #FFFFFF;
-      }
     }
   }
 
   &:active {
-    background: #2E3075;
+    background:  var(--primary-700);
   }
 }
 
 .rootLoading {
-  &:hover {
-    background: #FFFFFF;
-  }
-
   &:active {
     background: #FFFFFF;
   }
