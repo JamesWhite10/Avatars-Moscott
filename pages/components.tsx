@@ -9,6 +9,8 @@ import FormInput from '@app/components/FormInput/FormInput';
 import { FieldValues, useForm } from 'react-hook-form';
 import FormTextArea from '@app/components/FormTextArea/FormTextArea';
 import AnimatedButton from '@app/components/AnimatedButton/AnimatedButton';
+import NavButton from '@app/components/NavButton';
+import AnimationIcon from '@app/components/Icons/AnimationIcon';
 
 export interface FormValues extends FieldValues {
   userName: string;
@@ -63,6 +65,14 @@ const Components = () => {
       alignItems: 'center',
       flexDirection: 'row' as 'row',
     },
+  };
+
+  const stateButton = () => {
+    setIsActive(!active);
+    if (active) {
+      setLoading(!loading);
+      setIsActive(true);
+    }
   };
 
   return (
@@ -192,6 +202,16 @@ const Components = () => {
         >
           Animation
         </AnimatedButton>
+      </div>
+      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+        <NavButton
+          active={active}
+          loading={loading}
+          onClick={() => {
+            stateButton();
+          }}
+          icon={<AnimationIcon />}
+        />
       </div>
     </div>
   );
