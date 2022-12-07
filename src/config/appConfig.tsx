@@ -7,9 +7,7 @@ import YukiImageRender from '@app/assets/about/YukiAbout.png';
 import {
   MiraBase,
   MiraCostumeDress,
-  MiraLashes,
   MiraCostumeSpace,
-  MiraEyes,
   MiraHairBraids,
   MiraHairTail,
   MiraShoesDress,
@@ -19,7 +17,6 @@ import {
   YukiBase,
   YukiCostumeCoat,
   YukiCostumeHacker,
-  YukiEyes,
   YukiHairCoats,
   YukiHairHacker,
   YukiShoesCoat,
@@ -42,11 +39,9 @@ const avatars: Avatar[] = [
     icon: <CyberfoxIcon />,
     parts: [
       MiraBase,
-      MiraEyes,
       MiraCostumeDress,
       MiraCostumeSpace,
       MiraShoesDress,
-      MiraLashes,
       MiraShoesSpace,
       MiraHairBraids,
       MiraHairTail,
@@ -64,7 +59,6 @@ const avatars: Avatar[] = [
     slots: ['hair', 'eye', 'costume', 'base', 'shoes'],
     parts: [
       YukiBase,
-      YukiEyes,
       YukiCostumeCoat,
       YukiCostumeHacker,
       YukiShoesCoat,
@@ -82,7 +76,7 @@ const styles: Style[] = [
   {
     id: 'mira_base',
     name: 'Base',
-    parts: [MiraBase, MiraEyes, MiraCostumeDress, MiraShoesDress, MiraLashes, MiraHairTail],
+    parts: [MiraBase, MiraCostumeDress, MiraShoesDress, MiraHairTail],
     videoUrl: '/avatars/mira_style1.MP4',
     animations: [
       { id: 'activeMiraBaseStart', name: 'activeStart' },
@@ -109,7 +103,7 @@ const styles: Style[] = [
       { id: 'activeMiraRetroBack', name: 'activeBack' },
       { id: 'lookAroundMiraRetro', name: 'switchStyle' },
     ],
-    parts: [MiraBase, MiraEyes, MiraCostumeSpace, MiraLashes, MiraShoesSpace, MiraHairBraids],
+    parts: [MiraBase, MiraCostumeSpace, MiraShoesSpace, MiraHairBraids],
     videoUrl: '/avatars/mira_style2.MP4',
     background: {
       mountains_mesh: '/3d/assets/texture/retro/mountains_retro_color.png',
@@ -131,7 +125,7 @@ const styles: Style[] = [
       { id: 'activeYukiBaseBack', name: 'activeBack' },
       { id: 'lookAroundYukiBase', name: 'switchStyle' },
     ],
-    parts: [YukiBase, YukiEyes, YukiCostumeCoat, YukiShoesCoat, YukiHairCoats],
+    parts: [YukiBase, YukiCostumeCoat, YukiShoesCoat, YukiHairCoats],
     videoUrl: '/avatars/mira_style1.MP4',
     background: {
       mountains_mesh: '/3d/assets/texture/YukiBase/mountains_orange_color.png',
@@ -153,7 +147,7 @@ const styles: Style[] = [
       { id: 'activeYukiHackerBack', name: 'activeBack' },
       { id: 'lookAroundYukiHacker', name: 'switchStyle' },
     ],
-    parts: [YukiEyes, YukiCostumeHacker, YukiShoesHacker, YukiHairHacker],
+    parts: [YukiCostumeHacker, YukiShoesHacker, YukiHairHacker],
     videoUrl: '/avatars/mira_style2.MP4',
     background: {
       mountains_mesh: '/3d/assets/texture/hacker/mountains_hacker_color.png',

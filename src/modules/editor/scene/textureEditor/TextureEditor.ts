@@ -220,30 +220,36 @@ export class TextureEditor {
     const { textureName, dissolveTexture, textures, model } = options;
     model.scene.traverse((node) => {
       if (node instanceof THREE.Mesh) {
-        const textureObject = textures.find((item) => item[node.name]);
-        if (textureObject) {
-          const map = textureObject[node.name];
-          if (map) {
-            map.flipY = false;
-            node.material.map = map;
-            const newMaterial = new THREE.MeshStandardMaterial({ map, transparent: true, side: THREE.DoubleSide });
-            newMaterial.onBeforeCompile = (shader: THREE.Shader) => {
-              shader.uniforms.uHeightMap = { value: dissolveTexture };
-              shader.uniforms.uTime = { value: 0.0 };
+        const textureObject = textures.find((item) => {
+          const key = Object.keys(item).find((value) => value.includes(node.name));
+          if (key) return item;
+          return undefined;
+        });
 
-              shader.vertexShader = dissolveVertex.replace('#include <uv_pars_vertex>', '#include <common>\n'
-                + '#include <uv_pars_vertex>');
-              shader.fragmentShader = dissolveFragment.replace('#include <packing>', '#include <common>\n'
-                + '#include <packing>');
-              newMaterial.userData.shader = shader;
-              newMaterial.userData.name = textureName;
-            };
-            node.material = newMaterial;
-            node.castShadow = true;
-            node.material.envMapIntensity = 0.7;
-            node.receiveShadow = false;
-            this.vrmMaterials.push(newMaterial);
-          }
+        if (textureObject) {
+          Object.values(textureObject).forEach((item) => {
+            if (textureObject) {
+              item.flipY = false;
+              node.material.map = item;
+              const newMaterial = new THREE.MeshStandardMaterial({ map: item, transparent: true, side: THREE.DoubleSide });
+              newMaterial.onBeforeCompile = (shader: THREE.Shader) => {
+                shader.uniforms.uHeightMap = { value: dissolveTexture };
+                shader.uniforms.uTime = { value: 0.0 };
+
+                shader.vertexShader = dissolveVertex.replace('#include <uv_pars_vertex>', '#include <common>\n'
+                  + '#include <uv_pars_vertex>');
+                shader.fragmentShader = dissolveFragment.replace('#include <packing>', '#include <common>\n'
+                  + '#include <packing>');
+                newMaterial.userData.shader = shader;
+                newMaterial.userData.name = textureName;
+              };
+              node.material = newMaterial;
+              node.castShadow = true;
+              node.material.envMapIntensity = 0.7;
+              node.receiveShadow = false;
+              this.vrmMaterials.push(newMaterial);
+            }
+          });
         }
       }
     });

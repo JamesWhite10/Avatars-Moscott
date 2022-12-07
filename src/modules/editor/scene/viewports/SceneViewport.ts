@@ -210,8 +210,18 @@ export class SceneViewport {
         if (avatarPart.slots.includes(character.basePart) && avatarPart.source) {
           const rootPart = this.resourcesManager.getVrmByUrlOrFail(avatarPart.source);
           this.textureEditor.addSkeleton(rootPart.userData.vrm, `${character.name}_base`.toLowerCase());
-          const texture = this.resourcesManager.getTextureByUrlOrFail(avatarPart.texturesMap.base);
-          this.textureEditor.applyPartTexture(avatarPart.id, `${character.name}_base`.toLowerCase(), texture);
+
+          const keys: Record<string, string>[] = [];
+          Object.keys(avatarPart.texturesMap).forEach((key: string) => {
+            if (key === 'base') keys.push({ name: avatarPart.id, key });
+            else if (key.includes('base') && key !== 'base') keys.push({ name: key, key });
+          });
+
+          keys.forEach((value) => {
+            const textureUrl = avatarPart.texturesMap[value.key];
+            const texture = this.resourcesManager.getTextureByUrlOrFail(textureUrl);
+            this.textureEditor.applyPartTexture(value.name, `${character.name}_base`.toLowerCase(), texture);
+          });
         }
       });
     });
