@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import ResourcesManager, { ResourceType } from '../ResourcesManager';
-import { TextureEditor } from '../textureEditor/index';
+import { TextureEditor, VrmEditor } from '../textureEditor/index';
 import { MouseControl, TouchControl } from '../cameraControls/index';
 import { AnimationsType, Avatar, EnvironmentConfigType, Style } from '../../../../types/index';
 import { NOISE } from '@app/config/textures';
@@ -25,6 +25,8 @@ export class SceneViewport {
 
   public textureEditor: TextureEditor.TextureEditor;
 
+  public vrmEditor: VrmEditor.VrmEditor;
+
   public actions: Actions.Actions | null = null;
 
   public snapshotThreeCamera: THREE.PerspectiveCamera;
@@ -43,6 +45,7 @@ export class SceneViewport {
     this.resourcesManager = new ResourcesManager();
     this.clock = new THREE.Clock();
     this.textureEditor = new TextureEditor.TextureEditor({ sceneViewport: this });
+    this.vrmEditor = new VrmEditor.VrmEditor({ sceneViewport: this });
     this.setupEnvironment();
 
     this.threeRenderer.domElement.addEventListener('click', this.clickHandler.bind(this));
@@ -132,7 +135,12 @@ export class SceneViewport {
 
   public initMainActions(config: SceneConfig): void {
     if (this.textureEditor) {
-      this.actions = new Actions.Actions({ sceneViewport: this, textureEditor: this.textureEditor });
+      this.actions = new Actions.Actions({
+        config,
+        sceneViewport: this,
+        textureEditor: this.textureEditor,
+        vrmEditor: this.vrmEditor,
+      });
       if (this.actions.animationAction) {
         this.actions.animationAction.init(config.characters, config.styles, config.animations);
         this.actions.animationAction.waitInActiveAnimation();
@@ -190,14 +198,16 @@ export class SceneViewport {
   }
 
   public loadCharacters(progress: (progress: number) => void, config: SceneConfig): Promise<void> {
-    const { characters } = config;
+    const { styles } = config;
 
-    characters.forEach((character) => {
-      character.parts.forEach((part) => {
-        if (part.source) this.resourcesManager.addVrm(part.source);
-        Object.values(part.texturesMap).forEach((texture) => {
-          this.resourcesManager.addTexture(texture);
-        });
+    styles.forEach((style, index) => {
+      style.parts.forEach((part) => {
+        if (index === 0 || index === 2) {
+          if (part.source) this.resourcesManager.addVrm(part.source);
+          Object.values(part.texturesMap).forEach((texture) => {
+            this.resourcesManager.addTexture(texture);
+          });
+        }
       });
     });
 
@@ -205,13 +215,24 @@ export class SceneViewport {
   }
 
   public initMainSkeleton(config: SceneConfig): void {
-    config.characters.forEach((character) => {
+    const { characters } = config;
+    characters.forEach((character) => {
       character.parts.forEach((avatarPart) => {
         if (avatarPart.slots.includes(character.basePart) && avatarPart.source) {
           const rootPart = this.resourcesManager.getVrmByUrlOrFail(avatarPart.source);
-          this.textureEditor.addSkeleton(rootPart.userData.vrm, `${character.name}_base`.toLowerCase());
-          const texture = this.resourcesManager.getTextureByUrlOrFail(avatarPart.texturesMap.base);
-          this.textureEditor.applyPartTexture(avatarPart.id, `${character.name}_base`.toLowerCase(), texture);
+          this.vrmEditor.addBaseSkeleton(rootPart.userData.vrm, `${character.name}_base`.toLowerCase());
+
+          const keys: Record<string, string>[] = [];
+          Object.keys(avatarPart.texturesMap).forEach((key: string) => {
+            if (key === 'base') keys.push({ name: avatarPart.id, key });
+            else if (key.includes('base') && key !== 'base') keys.push({ name: key, key });
+          });
+
+          keys.forEach((value) => {
+            const textureUrl = avatarPart.texturesMap[value.key];
+            const texture = this.resourcesManager.getTextureByUrlOrFail(textureUrl);
+            this.vrmEditor.applyToBaseTexture(value.name, `${character.name}_base`.toLowerCase(), texture);
+          });
         }
       });
     });
@@ -219,24 +240,23 @@ export class SceneViewport {
 
   public initCharacters(config: SceneConfig): void {
     const { styles, characters } = config;
-    if (this.textureEditor) {
-      styles.forEach((style) => {
+    styles.forEach((style, index) => {
+      if (index === 0 || index === 2) {
         const object = characters.find((character) => style.id.includes(character.id));
         style.parts.forEach((avatarPart) => {
           if (object && !avatarPart.slots.includes(object.basePart)) {
             if (avatarPart.source) {
               const rootPart = this.resourcesManager.getVrmByUrlOrFail(avatarPart.source);
-              this.textureEditor.addCharacterParts(rootPart.userData.vrm, avatarPart.id, style.id);
+              this.vrmEditor.applyToBaseParts(rootPart.userData.vrm, avatarPart.id, style.id, avatarPart.slots[0]);
             }
             const texture = this.resourcesManager.getTextureByUrlOrFail(avatarPart.texturesMap.base);
-            this.textureEditor.applyPartTexture(avatarPart.id, style.id, texture);
+            this.vrmEditor.applyToBaseTexture(avatarPart.id, style.id, texture);
           }
         });
-      });
-    }
-
+      }
+    });
     const dissolveTexture = this.resourcesManager.getTextureByUrlOrFail(NOISE);
-    this.textureEditor.prepareAndAddObjects(dissolveTexture);
+    this.vrmEditor.prepareAndAddObjects(dissolveTexture);
   }
 
   public loadSceneTexture(progress: (progress: number) => void, config: SceneConfig): Promise<void> {

@@ -3,17 +3,19 @@ import * as THREE from 'three';
 import { Style } from '../../../../types/index';
 import { textures } from '../../constans/Textures';
 import { Actions, ActionOptions, CharacterOptions } from './Actions';
-import { TextureEditor } from '../../scene/textureEditor/TextureEditor';
+import { TextureEditor, VrmEditor } from '../../scene/textureEditor/index';
 import { SceneViewport } from '../../scene/viewports/index';
 import { VrmAvatar } from '@avs/vrm-avatar';
 import * as ThreeVrm from '@pixiv/three-vrm';
 
 export class CharacterAction {
-  public _sceneViewport: SceneViewport.SceneViewport;
+  public readonly _sceneViewport: SceneViewport.SceneViewport;
 
-  private _textureEditor: TextureEditor;
+  private readonly _textureEditor: TextureEditor.TextureEditor;
 
-  public _actions: Actions | null = null;
+  private readonly _vrmEditor: VrmEditor.VrmEditor;
+
+  private _actions: Actions | null = null;
 
   public characters: CharacterOptions[] = [];
 
@@ -24,13 +26,14 @@ export class CharacterAction {
   constructor(options: ActionOptions) {
     this._sceneViewport = options.sceneViewport;
     this._textureEditor = options.textureEditor;
+    this._vrmEditor = options.vrmEditor;
     this._actions = options.actions || null;
     this.blinkEyes();
   }
 
   public charactersInit(styles: Style[]): void {
     styles.forEach((style) => {
-      const modelObject = this._textureEditor.charactersGroup.getObjectByName(style.id);
+      const modelObject = this._vrmEditor.charactersGroup.getObjectByName(style.id);
       if (modelObject) {
         this.characters.push({
           characterObject: modelObject,
@@ -47,7 +50,7 @@ export class CharacterAction {
   }
 
   public changeData(characterName: string): void {
-    const modelObject = this._textureEditor.charactersGroup.children
+    const modelObject = this._vrmEditor.charactersGroup.children
       .find((node) => node.name.includes(characterName) && node.visible);
     if (modelObject) {
       const { threeScene } = this._sceneViewport;
@@ -62,7 +65,7 @@ export class CharacterAction {
 
   public moveBodyParts(delta: number): void {
     if (this._actions && this._actions.animationAction) {
-      this._textureEditor.charactersData.forEach((avatar) => {
+      this._vrmEditor.charactersData.forEach((avatar) => {
         avatar.vrmAvatar.vrm.humanoid.autoUpdateHumanBones = false;
         avatar.vrmAvatar.update(delta);
         this.moveHead(avatar.vrmAvatar);
@@ -85,7 +88,7 @@ export class CharacterAction {
   }
 
   public blinkEyes(): void {
-    this._textureEditor.charactersData.forEach((item, index) => {
+    this._vrmEditor.charactersData.forEach((item, index) => {
       const durationClip = 4 + Math.random() * (10 - 4);
       this.blinkMixer.push(new THREE.AnimationMixer(item.vrmAvatar.vrm.scene));
 
@@ -136,7 +139,7 @@ export class CharacterAction {
       const dissolveTween = new TWEEN.Tween(dissolveFrom)
         .to(dissolveTo, 900)
         .onUpdate(({ dissolve }) => {
-          this._textureEditor.vrmMaterials.forEach((material) => {
+          this._vrmEditor.vrmMaterials.forEach((material) => {
             if (material.userData.shader) {
               material.userData.shader.uniforms.uTime = { value: dissolve };
             }
@@ -168,7 +171,7 @@ export class CharacterAction {
       const appearanceTween = new TWEEN.Tween(appearanceFrom)
         .to(appearanceTo, 900)
         .onUpdate(({ appearance }) => {
-          this._textureEditor.vrmMaterials.forEach((material) => {
+          this._vrmEditor.vrmMaterials.forEach((material) => {
             if (material.userData.shader) {
               material.userData.shader.uniforms.uTime = { value: appearance };
             }
@@ -218,7 +221,7 @@ export class CharacterAction {
   }
 
   public characterClickHandler(event: MouseEvent): void {
-    this._textureEditor.charactersData.forEach((character) => {
+    this._vrmEditor.charactersData.forEach((character) => {
       if (this._actions && !this.isLoadCharacter && !this._actions.stylesAction?.isLoadStyle) {
         const intersects = this._actions.raycastSystem.mouseRaycast(event, character.name);
         if (intersects.length !== 0) {

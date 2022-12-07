@@ -20,25 +20,26 @@ export class Configurator extends VrmAvatar {
     this.colliders = this.getAllColliders();
   }
 
-  applyAsset(part: ThreeVrm.VRM, type: string) {
-    this.removeAsset(type);
+  applyAsset(part: ThreeVrm.VRM, slot: string, partName: string) {
+    this.removeAsset(slot);
     this.resetInitPose();
-    this.assetsBones[type] = this.appendSpringBones(part);
-    this.assetsMeshes[type] = this.moveAssetSkeletonToBase(part, type);
-    this.assetsSpringJointsSets[type] = this.addSpringsJoints(part);
-    this.addSpringJointsColliders(this.assetsSpringJointsSets[type], this.colliders);
+    const newPart = { ...part } as ThreeVrm.VRM;
+    this.assetsBones[slot] = this.appendSpringBones(newPart);
+    this.assetsMeshes[slot] = this.moveAssetSkeletonToBase(newPart, partName);
+    this.assetsSpringJointsSets[slot] = this.addSpringsJoints(newPart);
     this.vrm.springBoneManager?.reset();
   }
 
-  removeAsset(type: string) {
-    this.clearBones(this.assetsBones[type]);
-    this.removeAssetMeshes(this.assetsMeshes[type]);
-    this.removeSpringsJoints(this.assetsSpringJointsSets[type]);
+  removeAsset(slot: string) {
+    this.removeAssetMeshes(this.assetsMeshes[slot]);
+    this.removeSpringsJoints(this.assetsSpringJointsSets[slot]);
   }
 
   private appendSpringBones(asset: ThreeVrm.VRM) {
     const newBones: THREE.Bone[] = [];
-    const rootBone: THREE.Bone | undefined = this.getVrmRootBone(asset);
+    const newAsset = { ...asset } as ThreeVrm.VRM;
+
+    const rootBone: THREE.Bone | undefined = this.getVrmRootBone(newAsset);
     if (rootBone) {
       rootBone.traverse((bone) => {
         if (!this.vrm.scene.getObjectByName(bone.name)) newBones.push(bone as THREE.Bone);
@@ -50,20 +51,24 @@ export class Configurator extends VrmAvatar {
     return newBones;
   }
 
-  private moveAssetSkeletonToBase(asset: ThreeVrm.VRM, type: string): THREE.SkinnedMesh[] {
+  private moveAssetSkeletonToBase(asset: ThreeVrm.VRM, namePart: string): THREE.SkinnedMesh[] {
     const objects: THREE.SkinnedMesh[] = [];
-    asset.scene.children.forEach((node) => {
+
+    const newAsset = asset.scene.clone(true);
+
+    newAsset.children.forEach((node) => {
       if (node instanceof THREE.SkinnedMesh) {
-        node.name = type;
+        node.name = namePart;
         const bones: THREE.Bone[] = [];
         const objSkeleton = node.skeleton;
         (node.skeleton as THREE.Skeleton).dispose();
         this.vrm.scene.add(node);
         objSkeleton.bones.forEach((bone: THREE.Bone) => {
-          const { parent } = bone;
-          if (parent) {
-            this._sceneViewport.threeScene.attach(bone);
-            parent.attach(bone);
+          if (bone) {
+            bone.parent?.attach(bone);
+            bone.updateWorldMatrix(true, true);
+            bone.updateMatrixWorld(true);
+
             bones.push(this.vrm.scene.getObjectByName(bone.name) as THREE.Bone);
           }
         });
@@ -72,31 +77,20 @@ export class Configurator extends VrmAvatar {
         objects.push(node);
       }
     });
+
     return objects;
   }
 
   private addSpringsJoints(asset: ThreeVrm.VRM): ThreeVrm.VRMSpringBoneJoint[] {
     const joints: ThreeVrm.VRMSpringBoneJoint[] = [];
-    if (asset.springBoneManager) {
-      asset.springBoneManager.joints.forEach((joint) => {
+    const newAsset = { ...asset };
+    if (newAsset.springBoneManager) {
+      newAsset.springBoneManager.joints.forEach((joint) => {
         this.vrm.springBoneManager?.addJoint(joint);
         joints.push(joint);
       });
     }
     return joints;
-  }
-
-  private addSpringJointsColliders(
-    joints: ThreeVrm.VRMSpringBoneJoint[] | undefined,
-    colliders: ThreeVrm.VRMSpringBoneCollider[],
-  ): void {
-    const name = 'base';
-    const group = { name, colliders };
-    joints?.forEach((joint) => {
-      if (!joint.colliderGroups.find((boneGroup) => boneGroup.name === name)) {
-        joint.colliderGroups.push(group);
-      }
-    });
   }
 
   private removeAssetMeshes(meshes?: THREE.Mesh[]): void {

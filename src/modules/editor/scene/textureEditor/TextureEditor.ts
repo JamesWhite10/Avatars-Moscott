@@ -3,33 +3,15 @@ import * as ThreeVRM from '@pixiv/three-vrm';
 import { HdrTextureResource, ResourceType } from '../ResourcesManager';
 import { BlendingShader } from '../shaders/index';
 import { SceneViewport } from '../viewports/index';
-import PrimitiveCollider from '../../features/PrimitiveCollider';
 import { EnvironmentConfigType } from '../../../../types/index';
 import standardBlendingFragment from '../shaders/BlendingShader/StandartBlendingShader/BlendingFragment.glsl';
 import standardBlendingVertex from '../shaders/BlendingShader/StandartBlendingShader/BlendingVertex.glsl';
 import blendingCustomVertex from '../shaders/BlendingShader/CustomBlendingShader/BlendingVertex.glsl';
 import blendingCustomFragment from '../shaders/BlendingShader/CustomBlendingShader/BlendingFragment.glsl';
-import dissolveFragment from '../shaders/DissolveShader/DissolveFragment.glsl';
-import dissolveVertex from '../shaders/DissolveShader/DissolveVertex.glsl';
-import { VrmAvatar } from '@avs/vrm-avatar';
 import { ThreeMemoryCleaner } from '../ThreeMemoryCleaner';
-import { Configurator } from './index';
 
 export interface MainViewOptions {
   sceneViewport: SceneViewport.SceneViewport;
-}
-
-export interface VrmConfiguratorData {
-  name: string;
-  rootVrm: ThreeVRM.VRM;
-  configurator: Configurator.Configurator;
-  textures: Record<string, THREE.Texture>[];
-}
-
-export interface CharactersData {
-  name: string;
-  model: THREE.Object3D;
-  vrmAvatar: VrmAvatar;
 }
 
 export interface PrepareObjectMaterial {
@@ -37,6 +19,7 @@ export interface PrepareObjectMaterial {
   textureName: string;
   textures: Record<string, THREE.Texture>[];
   dissolveTexture: THREE.Texture;
+  dissolveValue?: number;
 }
 
 export class TextureEditor {
@@ -46,15 +29,7 @@ export class TextureEditor {
 
   private _mixers: THREE.AnimationMixer[] = [];
 
-  public vrmMaterials: THREE.MeshStandardMaterial[] = [];
-
   public sceneMaterials: THREE.MeshStandardMaterial[] = [];
-
-  public charactersGroup: THREE.Group = new THREE.Group();
-
-  public charactersData: CharactersData[] = [];
-
-  public vrmConfiguratorData: VrmConfiguratorData[] = [];
 
   constructor(options: MainViewOptions) {
     this._sceneViewport = options.sceneViewport;
@@ -169,86 +144,4 @@ export class TextureEditor {
 
     this._sceneViewport.threeScene.add(background.scene);
   }
-
-  public addSkeleton(part: ThreeVRM.VRM, objectName: string): void {
-    const configurator = new Configurator.Configurator(this._sceneViewport, part);
-    this.vrmConfiguratorData.push({ configurator, name: objectName, rootVrm: part, textures: [] });
-  }
-
-  public addCharacterParts(part: ThreeVRM.VRM, type: string, objectName: string) {
-    const currentObject = this.vrmConfiguratorData.find((object) => object.name === objectName);
-    if (currentObject) {
-      const configurator = (currentObject.configurator as Configurator.Configurator);
-      configurator.applyAsset(part, type);
-    }
-  }
-
-  public applyPartTexture(partType: string, objectName: string, texture: THREE.Texture): void {
-    const object = this.vrmConfiguratorData.find((item) => item.name === objectName);
-    if (object) object.textures.push({ [partType]: texture });
-  }
-
-  public prepareAndAddObjects(dissolveTexture: THREE.Texture): void {
-    this.vrmConfiguratorData.forEach((item) => {
-      const colliderObject = this.createCharacterCollider(item.rootVrm, item.name);
-      const newCurrentVrm = this.applyCharacterTexture({
-        model: item.rootVrm,
-        textureName: item.name,
-        textures: item.textures,
-        dissolveTexture,
-      });
-
-      colliderObject.add(newCurrentVrm.scene);
-
-      this.charactersGroup.add(colliderObject);
-      this.charactersData.push({ name: item.name, vrmAvatar: new VrmAvatar(item.rootVrm), model: colliderObject });
-      this._sceneViewport.threeScene.add(this.charactersGroup);
-    });
-  }
-
-  public createCharacterCollider(model: ThreeVRM.VRM, objectName: string): THREE.Object3D {
-    const primitiveCollider = new PrimitiveCollider({
-      data: { position: new THREE.Vector3(0, 0.8, 0) },
-    });
-    primitiveCollider.object.name = objectName;
-    primitiveCollider.object.position.set(2.8, 0, -1.5);
-
-    return primitiveCollider.object;
-  }
-
-  public applyCharacterTexture = (options: PrepareObjectMaterial): ThreeVRM.VRM => {
-    const { textureName, dissolveTexture, textures, model } = options;
-    model.scene.traverse((node) => {
-      if (node instanceof THREE.Mesh) {
-        const textureObject = textures.find((item) => item[node.name]);
-        if (textureObject) {
-          const map = textureObject[node.name];
-          if (map) {
-            map.flipY = false;
-            node.material.map = map;
-            const newMaterial = new THREE.MeshStandardMaterial({ map, transparent: true, side: THREE.DoubleSide });
-            newMaterial.onBeforeCompile = (shader: THREE.Shader) => {
-              shader.uniforms.uHeightMap = { value: dissolveTexture };
-              shader.uniforms.uTime = { value: 0.0 };
-
-              shader.vertexShader = dissolveVertex.replace('#include <uv_pars_vertex>', '#include <common>\n'
-                + '#include <uv_pars_vertex>');
-              shader.fragmentShader = dissolveFragment.replace('#include <packing>', '#include <common>\n'
-                + '#include <packing>');
-              newMaterial.userData.shader = shader;
-              newMaterial.userData.name = textureName;
-            };
-            node.material = newMaterial;
-            node.castShadow = true;
-            node.material.envMapIntensity = 0.7;
-            node.receiveShadow = false;
-            this.vrmMaterials.push(newMaterial);
-          }
-        }
-      }
-    });
-    model.scene.name = textureName;
-
-    return model;
-  };
 }
