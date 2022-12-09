@@ -11,6 +11,8 @@ import FormTextArea from '@app/components/FormTextArea/FormTextArea';
 import AnimatedButton from '@app/components/AnimatedButton/AnimatedButton';
 import NavButton from '@app/components/NavButton';
 import AnimationIcon from '@app/components/Icons/AnimationIcon';
+import ScrollArea from '@app/components/ScrollArea';
+import { appConfig } from '@app/config/appConfig';
 
 export interface FormValues extends FieldValues {
   userName: string;
@@ -71,7 +73,7 @@ const Components = () => {
     setIsActive(!active);
     if (active) {
       setLoading(!loading);
-      setIsActive(true);
+      setIsActive(!active);
     }
   };
 
@@ -238,6 +240,27 @@ const Components = () => {
           }}
           icon={<AnimationIcon />}
         />
+      </div>
+      <div>
+        <ScrollArea
+          active={active}
+          contentSize="lg"
+          content={appConfig.styles}
+        >
+          {
+            appConfig.styles.map((style) => (
+              <div
+                key={style.id}
+                style={{ width: '96px' }}
+              >
+                <Card
+                  contentType="video"
+                  video={style.videoUrl}
+                />
+              </div>
+            ))
+          }
+        </ScrollArea>
       </div>
     </div>
   );
