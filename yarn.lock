@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@avs/vrm-avatar@^0.3.0":
-  version "0.3.0"
-  resolved "https://gitlab.web3dev.group/api/v4/projects/339/packages/npm/@avs/vrm-avatar/-/@avs/vrm-avatar-0.3.0.tgz#0a12d0fb2b88dc8de4bf288a9b983d61b4be2011"
-  integrity sha1-ChLQ+yuI3I3kvyiKm5g9YbS+IBE=
+"@avs/vrm-avatar@^0.7.0":
+  version "0.7.0"
+  resolved "https://gitlab.web3dev.group/api/v4/projects/339/packages/npm/@avs/vrm-avatar/-/@avs/vrm-avatar-0.7.0.tgz#c7432cd8d6e7734fc86481ed9ad119778d6d3a05"
+  integrity sha1-x0Ms2Nbnc0/IZIHtmtEZd41tOgU=
 
 "@babel/code-frame@7.12.11":
   version "7.12.11"

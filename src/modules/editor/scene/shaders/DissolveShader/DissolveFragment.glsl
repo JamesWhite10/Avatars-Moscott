@@ -72,7 +72,6 @@ varying vec3 vBitangent;
 #include <clipping_planes_pars_fragment>
 
 void main() {
-
   #include <clipping_planes_fragment>
 
   vec4 diffuseColor = vec4( diffuse, opacity );

@@ -10,14 +10,25 @@ export type IdleAnimationType = {
   name: string;
 };
 
+export type Slot = 'hair' | 'eye' | 'costume' | 'base' | 'shoes' | string;
+
+export type AvatarPart = {
+  id: string;
+  source?: string;
+  texturesMap: Record<string, string>;
+  slots: Slot[];
+};
+
 export type Avatar = {
   id: string;
-  name: string;
+  name: AvatarName;
   description?: string;
+  basePart: Slot;
   image: string;
   renderImage?: string;
   icon: JSX.Element;
-  model: string;
+  parts: AvatarPart[];
+  slots: Slot[];
   animations?: IdleAnimationType[];
 };
 
@@ -26,7 +37,7 @@ export type Style = {
   background: { [key: string]: string };
   videoBackground: { [key: string]: string };
   name: string;
-  model?: string;
+  parts: AvatarPart[];
   videoUrl: string;
   animations: IdleAnimationType[];
 };
