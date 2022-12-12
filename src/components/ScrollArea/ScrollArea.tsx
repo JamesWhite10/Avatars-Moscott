@@ -1,19 +1,20 @@
-import React, { FC, PropsWithChildren } from 'react';
+import React, { FC, PropsWithChildren, useMemo } from 'react';
 import classNames from './ScrollArea.module.scss';
 import Fade from '@app/components/Transition/Fade';
 import cn from 'classnames';
-import { ContentSize } from '@app/components/Card/Card';
 
 interface ScrollAreaProps {
   active?: boolean;
-  content?: Array<any>;
-  contentSize?: ContentSize;
+  total: number;
+  columnSplitSize: number;
 }
 
 const ScrollArea: FC<PropsWithChildren<ScrollAreaProps>> = (props) => {
-  const { active, contentSize, content, children } = props;
-  const largeContent = content && content.length > 9 && contentSize === 'lg';
-  const smallContent = content && content.length > 5 && contentSize === 'sm';
+  const { active, columnSplitSize, total, children } = props;
+
+  const needColumnSplit = useMemo(() => {
+    return total > columnSplitSize;
+  }, [total, columnSplitSize]);
 
   return (
     <Fade
@@ -23,7 +24,7 @@ const ScrollArea: FC<PropsWithChildren<ScrollAreaProps>> = (props) => {
       className={classNames.root}
     >
       <div
-        className={cn(classNames.scrollWrapper, { [classNames.sizeContentStyles]: largeContent || smallContent })}
+        className={cn(classNames.scrollWrapper, { [classNames.sizeContentStyles]: needColumnSplit })}
       >
         { children }
       </div>

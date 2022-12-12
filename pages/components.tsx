@@ -244,8 +244,8 @@ const Components = () => {
       <div>
         <ScrollArea
           active={active}
-          contentSize="lg"
-          content={appConfig.styles}
+          columnSplitSize={9}
+          total={appConfig.styles.length}
         >
           {
             appConfig.styles.map((style) => (
