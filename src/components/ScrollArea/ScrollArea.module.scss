@@ -1,0 +1,42 @@
+@import "@app/../styles/media.module.scss";
+
+.root {
+  display: grid;
+  place-items: center;
+  width: auto;
+  height: 100%;
+  min-height: 100%;
+  position: absolute;
+  overflow: auto;
+  right: 50px;
+  top: 0;
+  background: initial;
+  padding: 20px 0 20px 0;
+  &::-webkit-scrollbar {
+    width: 0;
+  }
+  @media (max-width: $mq-mobile-max) {
+    display: none;
+  }
+}
+
+.scrollWrapper {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 8px;
+  @media (max-width: $mq-tablet-max) {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 8px;
+  }
+}
+
+.sizeContentStyles {
+  grid-template-columns: repeat(2, 1fr);
+  @media (max-width: $mq-tablet-max) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+.content {
+  width: 96px;
+}
