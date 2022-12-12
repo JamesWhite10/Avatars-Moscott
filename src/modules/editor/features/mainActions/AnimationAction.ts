@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { TextureEditor } from '../../scene/textureEditor/TextureEditor';
+import { TextureEditor, VrmEditor } from '../../scene/textureEditor/index';
 import { ActionOptions, Actions } from './Actions';
 import { SceneViewport } from '../../scene/viewports/index';
 import { AnimationsType, Avatar, IdleAnimationType, Style } from '@app/types/index';
@@ -25,7 +25,9 @@ export class AnimationAction {
 
   private _sceneViewport: SceneViewport.SceneViewport;
 
-  private _textureEditor: TextureEditor;
+  private _textureEditor: TextureEditor.TextureEditor;
+
+  private _vrmEditor: VrmEditor.VrmEditor;
 
   private _actions: Actions | null = null;
 
@@ -39,13 +41,14 @@ export class AnimationAction {
 
   constructor(options: ActionOptions) {
     this._sceneViewport = options.sceneViewport;
+    this._vrmEditor = options.vrmEditor;
     this._textureEditor = options.textureEditor;
     this._actions = options.actions || null;
   }
 
   public init(characters: Avatar[], styles: Style[], animations: AnimationsType[]): void {
     characters.forEach((character) => {
-      const findAvatars = this._textureEditor.charactersData
+      const findAvatars = this._vrmEditor.charactersData
         .filter((avatar) => avatar.vrmAvatar.vrm.scene.name.includes(character.name.toLowerCase()));
       findAvatars.forEach((avatar) => {
         if (character.animations) {
@@ -55,7 +58,7 @@ export class AnimationAction {
     });
 
     styles.forEach((style) => {
-      const findAvatars = this._textureEditor.charactersData
+      const findAvatars = this._vrmEditor.charactersData
         .filter((avatar) => avatar.vrmAvatar.vrm.scene.name === style.id);
       findAvatars.forEach((avatar) => {
         if (style.animations) this._animationsStyles.push({ vrmAvatar: avatar.vrmAvatar, animations: style.animations });
@@ -139,7 +142,7 @@ export class AnimationAction {
   }
 
   public pauseAnimation(): void {
-    this._textureEditor.charactersData.forEach((item) => {
+    this._vrmEditor.charactersData.forEach((item) => {
       if (this._actions && item.vrmAvatar.vrm.scene.name === this._actions.startObject?.name && !this.isIdle) {
         if (this.startCharacterAnimation) {
           this.startCharacterAnimation.timeScale = 0.00001;
@@ -149,7 +152,7 @@ export class AnimationAction {
   }
 
   public continueAnimation(): void {
-    this._textureEditor.charactersData.forEach((item) => {
+    this._vrmEditor.charactersData.forEach((item) => {
       if (item.vrmAvatar.vrm.scene.name === this._actions?.startObject?.name) {
         if (this.startCharacterAnimation) this.startCharacterAnimation.timeScale = 1;
       }

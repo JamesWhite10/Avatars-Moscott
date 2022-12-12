@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { GLTFLoader, GLTF as ThreeGLTF, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DataTexture, Texture, TextureLoader } from 'three';
+import { GLTF as ThreeGLTF, GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import * as ThreeVRM from '@pixiv/three-vrm';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
@@ -158,7 +158,7 @@ class ResourcesManager {
     return !Object.values(this.resources).some((resource) => !resource?.loaded);
   }
 
-  public load(onProgress: (progress: number) => void): Promise<void> {
+  public load(onProgress?: (progress: number) => void): Promise<void> {
     if (this.checkAllResourcesAreLoaded()) return Promise.resolve();
 
     return Promise
@@ -192,14 +192,14 @@ class ResourcesManager {
   protected loadResource(
     link: string,
     resource: Resource,
-    onProgress: (value: number) => void,
+    onProgress?: (value: number) => void,
   ): Promise<void> {
     const loader = this.getLoaderByResource(resource);
     this.manager.onProgress = (url, loaded, total) => {
       const progress = (loaded / total) * 100;
       if (this.overallProgressLoad < progress) {
         this.overallProgressLoad = progress;
-        onProgress(progress);
+        if (onProgress) onProgress(progress);
       }
     };
 

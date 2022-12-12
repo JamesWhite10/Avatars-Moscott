@@ -35,7 +35,7 @@ export class RaycastSystem {
 
   public raycast(value: string, position: THREE.Vector2): THREE.Intersection<THREE.Object3D<THREE.Event>>[] {
     this.raycaster.setFromCamera(position, this.threeCamera);
-    const object = this.threeScene.textureEditor.charactersData.find((item) => item.name === value);
+    const object = this.threeScene.vrmEditor.charactersData.find((item) => item.name === value);
     return this.raycaster.intersectObjects(object?.model.children || this.threeScene.threeScene.children, false);
   }
 }

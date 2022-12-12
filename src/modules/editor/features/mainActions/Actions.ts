@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { RaycastSystem } from '../RaycastSystem';
-import { TextureEditor } from '../../scene/textureEditor/TextureEditor';
+import { TextureEditor, VrmEditor } from '../../scene/textureEditor/index';
 import { SceneViewport } from '../../scene/viewports/index';
 import { getRendererSnapshot } from '../../utils/getRendererSnapshot';
 import EventEmitter from 'eventemitter3';
@@ -10,6 +10,7 @@ import { StylesAction } from './StylesAction';
 import { Style } from '../../../../types/index';
 import { AnimationAction } from './AnimationAction';
 import { saveSnapshot } from '../../../../helpers/saveSnapshot';
+import { SceneConfig } from '../../scene/viewports/SceneViewport';
 
 export type SceneEventType = {
   loadNewCharacter: (characterName: string, model: THREE.Object3D<THREE.Event>) => void;
@@ -26,12 +27,16 @@ export type SceneEventType = {
   rotateCharacter: () => void;
 
   startUiAnimation: () => void;
+
+  loadParts: (isLoad: boolean) => void;
 };
 
 export interface ActionOptions {
   sceneViewport: SceneViewport.SceneViewport;
-  textureEditor: TextureEditor;
+  textureEditor: TextureEditor.TextureEditor;
+  vrmEditor: VrmEditor.VrmEditor;
   actions?: Actions;
+  config?: SceneConfig;
 }
 
 export interface CharacterOptions {
@@ -44,7 +49,9 @@ export class Actions {
 
   public eventEmitter!: EventEmitter<SceneEventType>;
 
-  public textureEditor: TextureEditor;
+  public textureEditor: TextureEditor.TextureEditor;
+
+  public vrmEditor: VrmEditor.VrmEditor;
 
   public raycastSystem: RaycastSystem;
 
@@ -62,27 +69,31 @@ export class Actions {
 
   constructor(options: ActionOptions) {
     this.sceneViewport = options.sceneViewport;
+    this.vrmEditor = options.vrmEditor;
     this.eventEmitter = new EventEmitter<SceneEventType>();
     this.textureEditor = options.textureEditor;
     this.raycastSystem = new RaycastSystem(this.sceneViewport, options.sceneViewport.threeCamera);
     this.characterAction = new CharacterAction({
       actions: this,
+      vrmEditor: options.vrmEditor,
       textureEditor: options.textureEditor,
       sceneViewport: this.sceneViewport,
     });
     this.stylesAction = new StylesAction({
       actions: this,
+      vrmEditor: options.vrmEditor,
       textureEditor: options.textureEditor,
       sceneViewport: this.sceneViewport,
     });
     this.animationAction = new AnimationAction(
       {
         actions: this,
+        vrmEditor: options.vrmEditor,
         textureEditor: options.textureEditor,
         sceneViewport: this.sceneViewport,
       },
     );
-    this.subscribeSceneActions();
+    this.subscribeSceneActions(options.config!);
   }
 
   public onUpdate(delta: number): void {
@@ -101,7 +112,7 @@ export class Actions {
     if (this.characterAction) this.characterAction.charactersInit(styles);
   }
 
-  public subscribeSceneActions(): void {
+  public subscribeSceneActions(config: SceneConfig): void {
     const { mouseControls, touchControls } = this.sceneViewport;
     this.subscribe('loadNewStyle', (characterName, texture) => {
       if (this.animationAction && this.animationAction.mixer) {
@@ -110,7 +121,8 @@ export class Actions {
           touchControls.targetRotationX = 0;
           this.rotateToDefault();
           this.stylesAction.isLoadStyle = true;
-          if (this.startObject) this.stylesAction.changeStyleTexture(texture, this.startObject?.name);
+          this.stylesAction.changeStyleTexture(texture);
+          this.stylesAction.changeStyleCharacter(characterName, config);
         }
       }
     });
