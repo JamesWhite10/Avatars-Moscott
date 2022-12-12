@@ -143,7 +143,7 @@ class ResourcesManager {
   }
 
   public getVrmByUrlOrFail = (url: string): GLTF => {
-    return { ...this.getResourceContentByUrlOrFail<VrmResource>(url, ResourceType.VRM) };
+    return this.getResourceContentByUrlOrFail<VrmResource>(url, ResourceType.VRM);
   };
 
   public getResourceContentByUrlOrFail<T extends Resource>(url: string, type: ResourceType): Required<T>['content'] {

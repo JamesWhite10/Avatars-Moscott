@@ -142,7 +142,7 @@ export class StylesAction {
       .getTextureByUrlOrFail(avatarPart.texturesMap.base);
 
     if (character) {
-      this._vrmEditor.applyToBaseTexture(avatarPart.id, `${character.id}_base`, texture);
+      this._vrmEditor.applyTexture(avatarPart.id, `${character.id}_base`, texture);
       this._vrmEditor.preparePartsTexture(configurator, 1);
     }
   }

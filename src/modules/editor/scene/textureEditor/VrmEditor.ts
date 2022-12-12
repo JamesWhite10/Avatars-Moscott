@@ -47,7 +47,7 @@ export class VrmEditor {
     this.applyToBaseParts(vrm.userData.vrm, partName, configName, slot);
     const configurator = this.vrmConfiguratorData.find((item) => item.name === 'mira_base');
     if (configurator) {
-      this.applyToBaseTexture(partName, configName, texture);
+      this.applyTexture(partName, configName, texture);
       this.preparePartsTexture(configurator, 0);
     }
   }
@@ -62,7 +62,7 @@ export class VrmEditor {
     if (configuratorData) configuratorData.configurator.applyAsset(part, slotName, partName);
   }
 
-  public applyToBaseTexture(partType: string, objectName: string, texture: THREE.Texture): void {
+  public applyTexture(partType: string, objectName: string, texture: THREE.Texture): void {
     const object = this.vrmConfiguratorData.find((item) => item.name === objectName);
     if (object) {
       const currentTexture = object.textures.find((item) => item[partType]);

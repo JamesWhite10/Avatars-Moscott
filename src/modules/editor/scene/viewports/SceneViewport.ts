@@ -231,7 +231,7 @@ export class SceneViewport {
           keys.forEach((value) => {
             const textureUrl = avatarPart.texturesMap[value.key];
             const texture = this.resourcesManager.getTextureByUrlOrFail(textureUrl);
-            this.vrmEditor.applyToBaseTexture(value.name, `${character.name}_base`.toLowerCase(), texture);
+            this.vrmEditor.applyTexture(value.name, `${character.name}_base`.toLowerCase(), texture);
           });
         }
       });
@@ -250,7 +250,7 @@ export class SceneViewport {
               this.vrmEditor.applyToBaseParts(rootPart.userData.vrm, avatarPart.id, style.id, avatarPart.slots[0]);
             }
             const texture = this.resourcesManager.getTextureByUrlOrFail(avatarPart.texturesMap.base);
-            this.vrmEditor.applyToBaseTexture(avatarPart.id, style.id, texture);
+            this.vrmEditor.applyTexture(avatarPart.id, style.id, texture);
           }
         });
       }

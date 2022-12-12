@@ -160,7 +160,7 @@ export default class EditorStore {
           if (this.threeScene.actions?.characterAction && characterStyle) {
             this.styleStore.setActiveStyle(characterStyle.id);
             this.threeScene.actions.characterAction.setDefaultData(
-              'mira_base',
+              characterStyle.id,
               style.targetTextureName,
               style.currentTextureName,
             );
