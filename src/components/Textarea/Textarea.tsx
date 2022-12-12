@@ -92,7 +92,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, PropsWithChildren<TextareaProps
         disabled={disabled}
       />
       <label
-        className={classNames.formLabel}
+        className={cn(classNames.formLabel, { [classNames.formBlock]: innerValue.length !== 0 })}
         htmlFor={nameId + name}
       >
         {label}

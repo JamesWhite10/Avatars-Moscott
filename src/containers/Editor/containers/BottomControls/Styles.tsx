@@ -57,6 +57,7 @@ const Styles: FC = observer(() => {
                 active={style.id === activeStyle}
                 video={style.videoUrl}
                 onClick={() => cardCLickHandler(style)}
+                isLoading={isLoadingStyle}
               />
             </SwiperSlide>
           ))}

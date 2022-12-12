@@ -9,6 +9,8 @@ import FormInput from '@app/components/FormInput/FormInput';
 import { FieldValues, useForm } from 'react-hook-form';
 import FormTextArea from '@app/components/FormTextArea/FormTextArea';
 import AnimatedButton from '@app/components/AnimatedButton/AnimatedButton';
+import NavButton from '@app/components/NavButton';
+import AnimationIcon from '@app/components/Icons/AnimationIcon';
 
 export interface FormValues extends FieldValues {
   userName: string;
@@ -65,6 +67,14 @@ const Components = () => {
     },
   };
 
+  const stateButton = () => {
+    setIsActive(!active);
+    if (active) {
+      setLoading(!loading);
+      setIsActive(true);
+    }
+  };
+
   return (
     <div style={{ background: '#CDCDCD', width: '100%', height: '100vh' }}>
       <div style={styles.presentationButtons}>
@@ -112,6 +122,7 @@ const Components = () => {
           contentType="video"
         />
         <Card
+          isLoading
           active
           label="Mira"
           image={MiraImage.src}
@@ -121,6 +132,31 @@ const Components = () => {
           image={YukiImage.src}
           label="Yuki"
           contentType="image"
+        />
+        <Card
+          video="/avatars/mira_style1.MP4"
+          contentType="video"
+          active
+          isLoading
+          contentSize="sm"
+        />
+        <Card
+          video="/avatars/mira_style1.MP4"
+          contentType="video"
+          contentSize="sm"
+        />
+        <Card
+          active
+          label="Mira"
+          image={MiraImage.src}
+          contentType="image"
+          contentSize="sm"
+        />
+        <Card
+          image={YukiImage.src}
+          label="Yuki"
+          contentType="image"
+          contentSize="sm"
         />
       </div>
       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
@@ -192,6 +228,16 @@ const Components = () => {
         >
           Animation
         </AnimatedButton>
+      </div>
+      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+        <NavButton
+          active={active}
+          loading={loading}
+          onClick={() => {
+            stateButton();
+          }}
+          icon={<AnimationIcon />}
+        />
       </div>
     </div>
   );

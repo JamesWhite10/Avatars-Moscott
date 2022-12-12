@@ -130,28 +130,33 @@ export class Actions {
     this.subscribe('loadNewCharacter', (characterName, model) => {
       if (this.animationAction && this.characterAction && model.visible) {
         this.animationAction.playAnimation('forgiveness', true, 1, false);
-
         mouseControls.setIsLockRotate(true);
         touchControls.setIsLockRotate(true);
         mouseControls.targetRotationX = 0;
         touchControls.targetRotationX = 0;
-
         this.rotateToDefault();
 
         if (this.startObject) this.startObject.rotation.y = 0;
-
         this.characterAction.isLoadCharacter = true;
-        if (!this.startObject) this.loadNewCharacter(model);
-        else {
-          this.animationAction.mixer?.addEventListener('finished', () => {
-            if (model.visible) this.loadNewCharacter(model);
-          });
-        }
+
+        const duration = this.startObject ? 3500 : 2500;
+
+        this.characterAction.changeCharacter(model, duration);
+        this.characterAction.changeTexture(duration);
       }
     });
 
     this.subscribe('characterChange', () => {
-      if (this.animationAction) {
+      if (this.animationAction && this.characterAction) {
+        this.characterAction.isLoadCharacter = false;
+        if (this.startObject) {
+          this.sceneViewport.mouseControls.clearData();
+          this.sceneViewport.touchControls.clearData();
+        }
+
+        this.sceneViewport.mouseControls.setObject(this.startObject);
+        this.sceneViewport.touchControls.setObject(this.startObject);
+
         this.animationAction.playAnimation('activeStart', true);
         this.animationAction.clearInActiveAnimation();
         if (this.startObject) this.animationAction.playAnimation('activeBack', false);
@@ -190,22 +195,6 @@ export class Actions {
           })
           .start();
       }
-    }
-  }
-
-  public loadNewCharacter(model: THREE.Object3D): void {
-    if (this.characterAction && this.characterAction.isLoadCharacter && this.animationAction) {
-      this.characterAction.isLoadCharacter = false;
-      this.characterAction.changeCharacter(model);
-      this.characterAction.changeTexture();
-      this.animationAction.playAnimation('activeStart', true);
-      if (this.startObject) {
-        this.sceneViewport.mouseControls.clearData();
-        this.sceneViewport.touchControls.clearData();
-      }
-
-      this.sceneViewport.mouseControls.setObject(model);
-      this.sceneViewport.touchControls.setObject(model);
     }
   }
 

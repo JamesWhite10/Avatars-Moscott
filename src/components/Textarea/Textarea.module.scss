@@ -14,7 +14,7 @@
   font-size: 16px;
   line-height: 22px;
   box-sizing: border-box;
-  overflow: auto;
+  overflow: hidden;
   resize: none;
   color: rgba(255, 255, 255, 1);
   padding: 16px;
@@ -35,12 +35,16 @@
   }
 
   &:focus {
+    overflow: auto;
     background: var(--primary-700);
     filter: drop-shadow(0 0 #4444dd);
     outline: none;
     border: 1px solid rgba(127, 135, 255, 1);
     box-shadow: rgba(127, 135, 255, 0.5) 0 1px 4px, rgb(127, 135, 255, 0.5) 0 0 0 3px;
     -webkit-appearance: none;
+    ~.formBlock {
+      background: var(--primary-700);
+    }
   }
 
   &:disabled {
@@ -78,11 +82,31 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
+.formBlock {
+  position: absolute;
+  width: 99%;
+  height: 30%;
+  top: 1px;
+  padding: 10px 0 0 18px;
+  margin-left: 2px;
+  display: block;
+  transition: .4s;
+  font-size: 14px;
+  line-height: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  z-index: 10;
+  border-radius: 12px 12px 0 0 ;
+  @media (max-width: $mq-mobile-max) {
+    height: 20%;
+  }
+}
+
 .clearIcon {
   position: absolute;
   top: 10px;
   right: 18px;
   cursor: pointer;
+  z-index: 10;
 }
 
 .formFieldTextAreaValue {

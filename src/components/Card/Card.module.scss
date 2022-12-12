@@ -1,8 +1,6 @@
 .root {
   background: #D6DCF3;
   border-radius: 20px;
-  width: 80px;
-  height: 160px;
   transition: all .2s ease;
   cursor: pointer;
   position: relative;
@@ -26,6 +24,9 @@
   &:hover {
     border: 6px solid var(--primary-600);
   }
+  &:active {
+    border: 6px solid var(--primary-700);
+  }
 }
 
 .overlay_active {
@@ -38,9 +39,8 @@
 .image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
   position: absolute;
-  top:0;
+  top: 0;
   background: #D6DCF3;
   left: 0;
   opacity: 1;
@@ -76,4 +76,21 @@
   font-weight: 700;
   font-size: 14px;
   line-height: 20px;
+}
+
+.cardSmall {
+  width: 96px;
+  height: 96px;
+}
+
+.lg {
+  width: 80px;
+  height: 160px;
+  object-fit: cover;
+}
+
+.sm {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
 }

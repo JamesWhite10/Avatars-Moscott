@@ -129,7 +129,7 @@ export class CharacterAction {
     }
   }
 
-  public changeCharacter(modelObject: THREE.Object3D): void {
+  public changeCharacter(modelObject: THREE.Object3D, durationDissolve = 2500): void {
     const { mouseControls, touchControls } = this._sceneViewport;
     if (!this._actions) return;
     if (this._textureEditor) {
@@ -137,7 +137,7 @@ export class CharacterAction {
       const dissolveFrom = { dissolve: 0.0 };
 
       const dissolveTween = new TWEEN.Tween(dissolveFrom)
-        .to(dissolveTo, 900)
+        .to(dissolveTo, durationDissolve)
         .onUpdate(({ dissolve }) => {
           this._vrmEditor.vrmMaterials.forEach((material) => {
             if (material.userData.shader) {
@@ -187,8 +187,8 @@ export class CharacterAction {
     }
   }
 
-  public changeTexture(): void {
-    if (this._textureEditor) {
+  public changeTexture(durationBlending = 2500): void {
+    if (this._textureEditor && this._actions) {
       const currentBlending = { from: 1.0, to: 0.0 };
       const additionalBlending = { from: 0.0, to: 1.0 };
 
@@ -200,7 +200,7 @@ export class CharacterAction {
       const currentBlendingName = textures[currentTextureName];
 
       new TWEEN.Tween({ current: currentBlending.from, additional: additionalBlending.from })
-        .to({ current: currentBlending.to, additional: additionalBlending.to }, 2000)
+        .to({ current: currentBlending.to, additional: additionalBlending.to }, durationBlending)
         .onUpdate(({ additional, current }) => {
           this._textureEditor.blendingShader.uniforms.forEach((value) => {
             value.uniform[currentBlendingName].value = current;
