@@ -11,6 +11,20 @@ import FormTextArea from '@app/components/FormTextArea/FormTextArea';
 import AnimatedButton from '@app/components/AnimatedButton/AnimatedButton';
 import NavButton from '@app/components/NavButton';
 import AnimationIcon from '@app/components/Icons/AnimationIcon';
+import NavPanelMobile from '@app/components/NavPanel/NavPanelMobile';
+import NavPanel from '@app/components/NavPanel/NavPanel';
+import { useMedia } from 'react-use';
+import { screenSizes } from '@app/config/media';
+import AvatarIcon from '@app/components/Icons/AvatarIcon';
+import StyleIcon from '@app/components/Icons/StyleIcon';
+import HairstyleIcon from '@app/components/Icons/HairstyleIcon';
+import EyesIcon from '@app/components/Icons/EyesIcon';
+import CostumeIcon from '@app/components/Icons/CostumeIcon';
+import ShoesIcon from '@app/components/Icons/ShoesIcon';
+import BackgroundIcon from '@app/components/Icons/BackgroundIcon';
+import { FreeMode } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import classNames from '@app/components/NavPanel/NavPanel.module.scss';
 import ScrollArea from '@app/components/ScrollArea';
 import { appConfig } from '@app/config/appConfig';
 
@@ -28,6 +42,7 @@ const Components = () => {
   const [progress, setProgress] = useState(0);
   const [playing, setPlaying] = useState(false);
   const timer = useRef<NodeJS.Timer>();
+  const isDesktop = useMedia(screenSizes.mqDesktop, false);
 
   const playHandler = () => {
     if (playing) {
@@ -73,7 +88,7 @@ const Components = () => {
     setIsActive(!active);
     if (active) {
       setLoading(!loading);
-      setIsActive(!active);
+      setIsActive(true);
     }
   };
 
@@ -240,6 +255,85 @@ const Components = () => {
           }}
           icon={<AnimationIcon />}
         />
+      </div>
+      <div>
+        {isDesktop && <NavPanel>
+          <NavPanel.Group>
+            <NavButton
+              icon={<AvatarIcon />}
+            />
+            <NavButton
+              icon={<StyleIcon />}
+            />
+          </NavPanel.Group>
+          <NavPanel.Group>
+            <NavButton
+              icon={<HairstyleIcon />}
+            />
+            <NavButton
+              icon={<EyesIcon />}
+            />
+            <NavButton
+              icon={<CostumeIcon />}
+            />
+            <NavButton
+              icon={<ShoesIcon />}
+            />
+            <NavButton
+              icon={<BackgroundIcon />}
+            />
+          </NavPanel.Group>
+          <NavPanel.Group>
+            <NavButton
+              icon={<AnimationIcon />}
+            />
+          </NavPanel.Group>
+        </NavPanel>}
+        {!isDesktop && <NavPanelMobile>
+          <Swiper
+            freeMode
+            slidesPerView="auto"
+            spaceBetween={12}
+            modules={[FreeMode]}
+          >
+            <SwiperSlide className={classNames.animationsSlideItem}>
+              <NavPanelMobile.Group>
+                <NavButton
+                  icon={<AvatarIcon />}
+                />
+                <NavButton
+                  icon={<StyleIcon />}
+                />
+              </NavPanelMobile.Group>
+            </SwiperSlide>
+            <SwiperSlide className={classNames.animationsSlideItem}>
+              <NavPanelMobile.Group>
+                <NavButton
+                  icon={<HairstyleIcon />}
+                />
+                <NavButton
+                  icon={<EyesIcon />}
+                />
+                <NavButton
+                  icon={<CostumeIcon />}
+                />
+                <NavButton
+                  icon={<ShoesIcon />}
+                />
+                <NavButton
+                  icon={<BackgroundIcon />}
+                />
+              </NavPanelMobile.Group>
+            </SwiperSlide>
+            <SwiperSlide className={classNames.animationsSlideItem}>
+              <NavPanelMobile.Group>
+                <NavButton
+                  icon={<AnimationIcon />}
+                />
+              </NavPanelMobile.Group>
+            </SwiperSlide>
+          </Swiper>
+        </NavPanelMobile>}
       </div>
       <div>
         <ScrollArea
