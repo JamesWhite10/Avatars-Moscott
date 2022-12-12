@@ -1,0 +1,72 @@
+@import "styles/media.module";
+
+.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 64px;
+  width: auto;
+  height: 100%;
+  min-height: 100%;
+  position: absolute;
+  overflow: auto;
+  top: 0;
+  right: 15px;
+  @media (max-height: $mq-mobile-max) {
+    padding: 15px 0 15px 0;
+    display: block;
+    transition: 1.5s ease;
+  }
+}
+
+.scroll_wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  row-gap: 12px;
+  flex-shrink: 0;
+  width: auto;
+  @media (max-height: $mq-mobile-max) {
+    overflow: scroll;
+
+    &::-webkit-scrollbar {
+      width: 0;
+    }
+  }
+}
+
+.root_mobile {
+  width: 100%;
+  position: absolute;
+  bottom: 90px;
+  left: 0;
+  height: 0;
+  padding: 0 12px 0 12px;
+}
+
+.slider_wrapper {
+  width: auto;
+  display: flex;
+}
+
+.animationsSlideItem {
+  width: auto;
+}
+
+.root_group {
+  width: auto;
+  height: auto;
+  padding: 8px;
+  background: var(--transparent-bg-gray-300);
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(2px);
+}
+
+.root_group_desktop {
+  flex-direction: column;
+}
