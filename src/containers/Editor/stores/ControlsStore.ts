@@ -4,20 +4,13 @@ import EventEmitter from 'eventemitter3';
 export type ControlsEventType = {
   soundChange: (isMuted: boolean) => void;
   takeScreenShot: () => void;
-  styleSelect: () => void;
-  characterSelect: () => void;
-  animationSelect: () => void;
   aboutModalOpen: (enable: boolean) => void;
 };
-
-export type AvatarPropertyType = 'style' | 'accessories' | 'character' | 'animations';
 
 export default class ControlsStore {
   public fullScreenMode: boolean = false;
 
   public soundDisabled: boolean = false;
-
-  public activeProperty?: AvatarPropertyType = undefined;
 
   public eventEmitter!: EventEmitter<ControlsEventType>;
 
@@ -48,23 +41,6 @@ export default class ControlsStore {
 
   public isOpen(enable: boolean): void {
     this.eventEmitter.emit('aboutModalOpen', enable);
-  }
-
-  public setActiveAvatarPropertyType(property?: AvatarPropertyType): void {
-    this.activeProperty = property;
-    switch (property) {
-      case 'character':
-        this.eventEmitter.emit('characterSelect');
-        break;
-      case 'style':
-        this.eventEmitter.emit('styleSelect');
-        break;
-      case 'animations':
-        this.eventEmitter.emit('animationSelect');
-        break;
-      default:
-        break;
-    }
   }
 
   public onFullScreenChange(): Promise<void> {

@@ -3,10 +3,7 @@ import { SceneViewport } from '@app/modules/editor/scene/viewports/index';
 import ResourcesManager from '../../../modules/editor/scene/ResourcesManager';
 import ControlsStore from './ControlsStore';
 import { AnimationsType, Avatar, EnvironmentConfigType, Style } from '../../../types';
-import CharacterStore from './CharacterStore';
-import StyleStore from './StyleStore';
 import SoundSystem from '../../../sound/SoundSystem';
-import AnimationStore from './AnimationStore';
 import AboutStore from './AboutStore';
 import PanelsStore from './PanelsStore';
 
@@ -25,13 +22,7 @@ export default class EditorStore {
 
   public controlsStore!: ControlsStore;
 
-  public charactersStore!: CharacterStore;
-
   public aboutStore!: AboutStore;
-
-  public styleStore!: StyleStore;
-
-  public animationStore!: AnimationStore;
 
   public soundSystem!: SoundSystem;
 
@@ -42,9 +33,6 @@ export default class EditorStore {
     makeAutoObservable(this, {}, { autoBind: true });
     this.controlsStore = new ControlsStore();
     this.aboutStore = new AboutStore();
-    this.charactersStore = new CharacterStore();
-    this.styleStore = new StyleStore();
-    this.animationStore = new AnimationStore();
     this.soundSystem = soundSystem;
     this.panelsStore = new PanelsStore(this.threeScene);
     this.subscribe();
@@ -55,50 +43,51 @@ export default class EditorStore {
     this.controlsStore.subscribe('takeScreenShot', () => {
       if (this.threeScene && this.threeScene.actions) this.threeScene.actions.takeScreenshot();
     });
-    this.controlsStore.subscribe('styleSelect', () => {
-      this.styleStore.setShowStyleSelection(true);
+    this.panelsStore.subscribe('styleSelect', () => {
+      this.panelsStore.stylePanelStore.setShowStyleSelection(true);
     });
     this.controlsStore.subscribe('soundChange', (isMuted) => {
       this.soundSystem.mute(!isMuted);
     });
-    this.controlsStore.subscribe('characterSelect', () => {
-      this.charactersStore.setShowCharacterSelection(!this.charactersStore.showCharacterSelection);
+    this.panelsStore.subscribe('characterSelect', () => {
+      const isShow = this.panelsStore.avatarPanelStore.showCharacterSelection;
+      this.panelsStore.avatarPanelStore.setShowCharacterSelection(!isShow);
     });
-    this.controlsStore.subscribe('animationSelect', () => {
-      this.animationStore.setShowAnimationSelection(true);
+    this.panelsStore.subscribe('animationSelect', () => {
+      this.panelsStore.animationsPanelStore.setShowAnimationSelection(true);
     });
     this.controlsStore.subscribe('aboutModalOpen', (enable) => {
-      if (!this.charactersStore.character) return;
+      if (!this.panelsStore.avatarPanelStore.character) return;
       this.aboutStore.aboutModalIsOpen = enable;
     });
 
-    this.charactersStore.subscribe('characterChange', (id) => {
+    this.panelsStore.avatarPanelStore.subscribe('characterChange', (id) => {
       if (this.threeScene && this.threeScene.actions && this.threeScene.actions.characterAction) {
-        const characterCandidate = this.charactersStore.characters.find((character) => character.id === id);
-        this.charactersStore.setShowCharacterSelection(false);
+        const characterCandidate = this.panelsStore.avatarPanelStore.characters.find((character) => character.id === id);
+        this.panelsStore.avatarPanelStore.setShowCharacterSelection(false);
         if (characterCandidate) {
           this.threeScene.actions.characterAction.changeData(characterCandidate?.id as string);
           if (characterCandidate) this.soundSystem.playSound(characterCandidate.name.toLowerCase());
         }
       }
     });
-    this.charactersStore.subscribe('characterSelectionClosed', () => {
-      this.controlsStore.setActiveAvatarPropertyType();
+    this.panelsStore.avatarPanelStore.subscribe('characterSelectionClosed', () => {
+      this.panelsStore.setActivePanelType();
     });
-    this.styleStore.subscribe('styleChange', (id) => {
+    this.panelsStore.stylePanelStore.subscribe('styleChange', (id) => {
       if (this.threeScene && this.threeScene.actions && this.threeScene.actions.stylesAction) {
         const texture = this.findTexture(id);
-        this.styleStore.isLoadingStyle = true;
+        this.panelsStore.stylePanelStore.isLoadingStyle = true;
         this.threeScene.actions.stylesAction.changeStyle(texture || '', id);
         this.soundSystem.playSound(id, true);
       }
     });
 
-    this.styleStore.subscribe('styleSelectionClosed', () => this.controlsStore.setActiveAvatarPropertyType());
+    this.panelsStore.stylePanelStore.subscribe('styleSelectionClosed', () => this.panelsStore.setActivePanelType());
     let activeId: string | undefined;
-    this.animationStore.subscribe('animation_select', (id) => {
+    this.panelsStore.animationsPanelStore.subscribe('animation_select', (id) => {
       if (activeId !== id) {
-        this.animationStore.setProgress(0);
+        this.panelsStore.animationsPanelStore.setProgress(0);
         if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
           this.threeScene.actions.animationAction.playUiAnimation(id);
         }
@@ -106,16 +95,16 @@ export default class EditorStore {
       activeId = id;
     });
 
-    this.animationStore.subscribe('pause', (paused) => {
+    this.panelsStore.animationsPanelStore.subscribe('pause', (paused) => {
       if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
         if (paused) this.threeScene.actions.animationAction.pauseAnimation();
         else this.threeScene.actions.animationAction.continueAnimation();
       }
     });
 
-    this.animationStore.subscribe('stop', () => {
+    this.panelsStore.animationsPanelStore.subscribe('stop', () => {
       if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
-        this.animationStore.setProgress(0);
+        this.panelsStore.animationsPanelStore.setProgress(0);
         if (activeId) {
           if (!this.threeScene.actions.animationAction.isIdle) {
             this.threeScene.actions.animationAction.stopAnimation();
@@ -126,15 +115,15 @@ export default class EditorStore {
       }
     });
 
-    this.animationStore.subscribe('selection_closed', () => {
-      this.controlsStore.setActiveAvatarPropertyType();
+    this.panelsStore.animationsPanelStore.subscribe('selection_closed', () => {
+      this.panelsStore.setActivePanelType();
       if (activeId) {
         if (this.threeScene && this.threeScene.actions && this.threeScene.actions.animationAction) {
           this.threeScene.actions.animationAction.stopAnimation();
           this.threeScene.actions.animationAction.playAnimation('activeStart', true, Infinity, false);
         }
-        this.animationStore.setProgress(0);
-        this.animationStore.setActiveAnimationId();
+        this.panelsStore.animationsPanelStore.setProgress(0);
+        this.panelsStore.animationsPanelStore.setActiveAnimationId();
         activeId = undefined;
       }
     });
@@ -155,14 +144,16 @@ export default class EditorStore {
         if (this.threeScene && this.threeScene.actions?.characterAction) this.sceneSubscribe();
         if (!this.threeScene) return;
         this.sceneSubscribe();
-        this.styleStore.setStyles(styles);
-        this.animationStore.setAnimations(animations);
-        const character = this.charactersStore.setUp(characters);
+        this.panelsStore.stylePanelStore.setStyles(styles);
+        this.panelsStore.animationsPanelStore.setAnimations(animations);
+        const character = this.panelsStore.avatarPanelStore.setUp(characters);
         if (character && character.name) {
           const style = this.findBaseStyle(character.name);
-          const characterStyle = this.styleStore.styles.find((item) => item.id.includes(character.name.toLowerCase()));
+          const characterStyle = this.panelsStore.stylePanelStore.styles.find(
+            (item) => (item.id.includes(character.name.toLowerCase())),
+          );
           if (this.threeScene.actions?.characterAction && characterStyle) {
-            this.styleStore.setActiveStyle(characterStyle.id);
+            this.panelsStore.stylePanelStore.setActiveStyle(characterStyle.id);
             this.threeScene.actions.characterAction.setDefaultData(
               characterStyle.id,
               style.targetTextureName,
@@ -205,48 +196,48 @@ export default class EditorStore {
   public sceneSubscribe(): void {
     if (this.threeScene && this.threeScene.actions) {
       this.threeScene.actions.subscribe('characterChange', (name) => {
-        const avatarName = this.charactersStore.characters.find((character) => name.includes(character.id));
+        const avatarName = this.panelsStore.avatarPanelStore.characters.find((character) => name.includes(character.id));
         if (!avatarName) return;
-        this.styleStore.setActiveStyleFilter(avatarName.name);
-        this.charactersStore.setCharacterIsChanging(false);
-        this.animationStore.setAnimationLoading(false);
-        this.styleStore.setLoadingStyle(false);
-        this.charactersStore.setCharacter(avatarName.name);
-        const { character } = this.charactersStore;
+        this.panelsStore.stylePanelStore.setActiveStyleFilter(avatarName.name);
+        this.panelsStore.avatarPanelStore.setCharacterIsChanging(false);
+        this.panelsStore.animationsPanelStore.setAnimationLoading(false);
+        this.panelsStore.stylePanelStore.setLoadingStyle(false);
+        this.panelsStore.avatarPanelStore.setCharacter(avatarName.name);
+        const { character } = this.panelsStore.avatarPanelStore;
         if (character) this.aboutStore.setCharacterImage(character.renderImage);
 
         this.soundSystem.playSound(avatarName.name.toLowerCase(), true);
       });
 
       this.threeScene.actions.subscribe('animationEnded', () => {
-        this.animationStore.setAnimationLoading(false);
-        this.styleStore.setLoadingStyle(false);
-        this.charactersStore.setCharacterIsChanging(false);
+        this.panelsStore.animationsPanelStore.setAnimationLoading(false);
+        this.panelsStore.stylePanelStore.setLoadingStyle(false);
+        this.panelsStore.avatarPanelStore.setCharacterIsChanging(false);
       });
 
       this.threeScene.actions.subscribe('loadNewCharacter', () => {
-        this.animationStore.setAnimationLoading(true);
-        this.styleStore.setLoadingStyle(true);
-        this.charactersStore.setCharacterIsChanging(true);
+        this.panelsStore.animationsPanelStore.setAnimationLoading(true);
+        this.panelsStore.stylePanelStore.setLoadingStyle(true);
+        this.panelsStore.avatarPanelStore.setCharacterIsChanging(true);
       });
 
       this.threeScene.actions.subscribe('loadNewStyle', () => {
-        this.animationStore.setAnimationLoading(true);
-        this.styleStore.setLoadingStyle(true);
-        this.charactersStore.setCharacterIsChanging(true);
+        this.panelsStore.animationsPanelStore.setAnimationLoading(true);
+        this.panelsStore.stylePanelStore.setLoadingStyle(true);
+        this.panelsStore.avatarPanelStore.setCharacterIsChanging(true);
       });
 
       this.threeScene.actions.subscribe('setAnimationTime', (time) => {
-        if (!this.animationStore.isPaused) this.animationStore.setProgress(time);
+        if (!this.panelsStore.animationsPanelStore.isPaused) this.panelsStore.animationsPanelStore.setProgress(time);
       });
 
       this.threeScene.actions.subscribe('animationEnded', () => {
-        this.styleStore.setLoadingStyle(false);
-        this.styleStore.setLoadingStyle(false);
+        this.panelsStore.stylePanelStore.setLoadingStyle(false);
+        this.panelsStore.stylePanelStore.setLoadingStyle(false);
       });
 
       this.threeScene.actions.subscribe('loadTimeAnimation', (isLoading: boolean) => {
-        this.animationStore.setAnimationLoading(isLoading);
+        this.panelsStore.animationsPanelStore.setAnimationLoading(isLoading);
       });
     }
   }

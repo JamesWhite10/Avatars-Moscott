@@ -1,73 +1,61 @@
-import { FC, useCallback, useMemo } from 'react';
+import React, { FC } from 'react';
 import { observer } from 'mobx-react';
 import classNames from './BottomControls.module.scss';
-import Styles from './Styles';
 import { useMedia } from 'react-use';
-import variables from '../../../../../styles/media.module.scss';
-import Button from '@app/components/Button';
-import { useAnimationStore, useControlsStore, useStyleStore } from '@app/containers/Editor/hooks/useEditorStore';
-import Characters from '@app/containers/Editor/containers/BottomControls/Characters';
-import useSoundSystem from '@app/hooks/useSoundSystem';
-import AnimationsMobile from '@app/containers/Editor/containers/BottomControls/AnimationsMobile';
+import { screenSizes } from '@app/config/media';
+import NavPanelMobile from '@app/components/NavPanel';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper';
+import AvatarPanelNavItem from '../AvatarPanel/AvatarPanelNavItem';
+import StylePanelNavItem from '@app/containers/Editor/containers/StylePanel/StylePanelNavItem';
+import HeadPanelNavItem from '../HeadPanel/HeadPanelNavItem';
+import EyePanelNavItem from '../EyePanel/EyePanelNavItem';
+import BodyPanelNavItem from '../BodyPanel/BodyPanelNavItem';
+import BackgroundPanelNavItem from '../BackgroundPanel/BackgroundPanelNavItem';
+import AnimationsPanelNavItem from '../AnimationsPanel/AnimationsPanelNavItem';
+import ShoesPanelNavItem from '@app/containers/Editor/containers/ShoesPanel/ShoesPanelNavItem';
+import AnimationsPanelMobile from '@app/containers/Editor/containers/AnimationsPanel/AnimationsPanelMobile';
+import AvatarPanelMobile from '@app/containers/Editor/containers/AvatarPanel/AvatarPanelMobile';
+import StylePanelMobile from '@app/containers/Editor/containers/StylePanel/StylePanelMobile';
 
 const BottomControls: FC = observer(() => {
-  const { activeProperty, setActiveAvatarPropertyType } = useControlsStore();
-  const { setControlElement, showStyleSelection, setShowStyleSelection } = useStyleStore();
-  const { setShowAnimationSelection } = useAnimationStore();
-  const isMobile = useMedia(`(max-width: ${variables.mqMobileMax})`);
-  const soundSystem = useSoundSystem();
-
-  const needShowCloseButton = useMemo(() => {
-    if (!isMobile) return false;
-    return activeProperty && activeProperty !== 'character';
-  }, [isMobile, activeProperty]);
-
-  const styleSelectHandler = useCallback(() => {
-    soundSystem.playSound('click', true);
-    if (activeProperty === 'style') {
-      setShowStyleSelection(false);
-      return;
-    }
-    setActiveAvatarPropertyType('style');
-  }, [activeProperty]);
-
-  const closeButtonHandler = useCallback(() => {
-    soundSystem.playSound('click', true);
-    if (activeProperty === 'style') setShowStyleSelection(false);
-    if (activeProperty === 'animations') setShowAnimationSelection(false);
-  }, [activeProperty, soundSystem]);
-
-  const mobileButtonText = useMemo(() => {
-    return activeProperty === 'animations' ? 'Close' : 'Ok';
-  }, [activeProperty]);
+  const isDesktop = useMedia(screenSizes.mqDesktop, false);
 
   return (
-    <div className={classNames.root}>
-      <Styles />
-      <Characters />
-      {isMobile && <AnimationsMobile />}
-      <div className={classNames.centerContainer}>
-        {needShowCloseButton ? (
-          <Button
-            ref={setControlElement}
-            onClick={closeButtonHandler}
-            onMouseEnter={() => soundSystem.playSound('hover', true)}
-          >
-            {mobileButtonText}
-          </Button>
-        ) : (
-          <Button
-            ref={setControlElement}
-            active={showStyleSelection}
-            onClick={styleSelectHandler}
-            colorScheme="secondary"
-            onMouseEnter={() => soundSystem.playSound('hover', true)}
-          >
-            Style
-          </Button>
-        )}
-      </div>
-    </div>
+    <>
+      {!isDesktop && <NavPanelMobile>
+        <Swiper
+          freeMode
+          slidesPerView="auto"
+          spaceBetween={12}
+          modules={[FreeMode]}
+        >
+          <SwiperSlide className={classNames.animationsSlideItem}>
+            <NavPanelMobile.Group>
+              <AvatarPanelNavItem />
+              <StylePanelNavItem />
+            </NavPanelMobile.Group>
+          </SwiperSlide>
+          <SwiperSlide className={classNames.animationsSlideItem}>
+            <NavPanelMobile.Group>
+              <HeadPanelNavItem />
+              <EyePanelNavItem />
+              <BodyPanelNavItem />
+              <ShoesPanelNavItem />
+              <BackgroundPanelNavItem />
+            </NavPanelMobile.Group>
+          </SwiperSlide>
+          <SwiperSlide className={classNames.animationsSlideItem}>
+            <NavPanelMobile.Group>
+              <AnimationsPanelNavItem />
+            </NavPanelMobile.Group>
+          </SwiperSlide>
+        </Swiper>
+      </NavPanelMobile>}
+      {!isDesktop && <AvatarPanelMobile />}
+      {!isDesktop && <AnimationsPanelMobile />}
+      {!isDesktop && <StylePanelMobile />}
+    </>
   );
 });
 

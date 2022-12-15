@@ -1,9 +1,9 @@
 import { makeAutoObservable } from 'mobx';
 
-export type BackgroundPanelType = 'background';
+export type BackgroundPanelId = 'background';
 
 export default class BackgroundPanelStore {
-  public readonly panelId: BackgroundPanelType = 'background';
+  public readonly panelId: BackgroundPanelId = 'background';
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });

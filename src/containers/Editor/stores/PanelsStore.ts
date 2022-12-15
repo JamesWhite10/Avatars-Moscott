@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import AnimationsPanelStore from './panels/AnimationsPanelStore';
+import AnimationsPanelStore, { AnimationsPanelId } from './panels/AnimationsPanelStore';
 import AvatarPanelStore, { AvatarPanelId } from './panels/AvatarPanelStore';
 import BodyPanelStore, { BodyPanelId } from './panels/BodyPanelStore';
 import EyePanelStore, { EyePanelId } from './panels/EyePanelStore';
@@ -7,9 +7,17 @@ import HeadPanelStore, { HeadPanelId } from './panels/HeadPanelStore';
 import ShoesPanelStore, { ShoesPanelId } from './panels/ShoesPanelStore';
 import StylePanelStore, { StylePanelId } from './panels/StylePanelStore';
 import { SceneViewport } from '../../../modules/editor/scene/viewports/SceneViewport';
-import BackgroundPanelStore from './panels/BackgroundPanelStore';
+import BackgroundPanelStore, { BackgroundPanelId } from './panels/BackgroundPanelStore';
+import EventEmitter from 'eventemitter3';
 
-export type ActivePanelIdType = AvatarPanelId | BodyPanelId | EyePanelId | HeadPanelId | StylePanelId | ShoesPanelId;
+export type PanelEventType = {
+  styleSelect: () => void;
+  characterSelect: () => void;
+  animationSelect: () => void;
+};
+
+export type ActivePanelIdType = AvatarPanelId | AnimationsPanelId | BackgroundPanelId
+| BodyPanelId | EyePanelId | HeadPanelId | StylePanelId | ShoesPanelId;
 
 export default class PanelsStore {
   public activePanelId?: ActivePanelIdType = 'avatar';
@@ -30,6 +38,8 @@ export default class PanelsStore {
 
   private readonly _backgroundPanelStore!: BackgroundPanelStore;
 
+  public eventEmitter!: EventEmitter<PanelEventType>;
+
   private readonly _scene: SceneViewport | null = null;
 
   constructor(scene: SceneViewport | null) {
@@ -42,7 +52,15 @@ export default class PanelsStore {
     this._shoesPanelStore = new ShoesPanelStore();
     this._stylePanelStore = new StylePanelStore();
     this._backgroundPanelStore = new BackgroundPanelStore();
+    this.eventEmitter = new EventEmitter<PanelEventType>();
     makeAutoObservable(this, {}, { autoBind: true });
+  }
+
+  public subscribe<T extends keyof PanelEventType>(
+    event: T,
+    handler: PanelEventType[T],
+  ): void {
+    this.eventEmitter.on(event, handler as (...args: any) => void);
   }
 
   get sceneOrFail(): SceneViewport {
@@ -84,5 +102,18 @@ export default class PanelsStore {
 
   public setActivePanelType(activePanelId?: ActivePanelIdType): void {
     this.activePanelId = activePanelId;
+    switch (activePanelId) {
+      case 'avatar':
+        this.eventEmitter.emit('characterSelect');
+        break;
+      case 'style':
+        this.eventEmitter.emit('styleSelect');
+        break;
+      case 'animations':
+        this.eventEmitter.emit('animationSelect');
+        break;
+      default:
+        break;
+    }
   }
 }

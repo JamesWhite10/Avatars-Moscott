@@ -3,10 +3,11 @@
 .root {
   position: absolute;
   width: 100%;
+  z-index: 1;
 }
 
 .leftGroup_container {
-  left: 8px;
+  left: 15px;
   top: 8px;
   position: absolute;
 }

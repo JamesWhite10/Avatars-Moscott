@@ -1,3 +1,36 @@
-.root {
+.animationsContainer {
+  position: fixed;
+  top: 50%;
+  width: 177px;
+  max-width: 177px;
+  pointer-events: auto;
+  overflow: scroll;
+  max-height: 260px;
+  height: auto;
+  transform: translateY(-50%);
+  left: 90px;
 
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overflow: scroll;
+}
+
+.animationSliderContainer {
+  width: 100%;
+  position: absolute;
+  bottom: 140px;
+  left: 0;
+  height: 0;
+}
+
+.sliderWrapper {
+  width: auto;
+  display: flex;
+}
+
+.animationsSlideItem {
+  width: auto;
 }
