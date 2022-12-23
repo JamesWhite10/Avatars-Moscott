@@ -1,12 +1,13 @@
 import { FC, MutableRefObject, useCallback, useRef } from 'react';
-import classNames from './RightControls.module.scss';
-import Fade from '@app/components/Transition/Fade';
 import { observer } from 'mobx-react';
-import { useAnimationStore } from '@app/containers/Editor/hooks/useEditorStore';
-import AnimatedButton from '@app/components/AnimatedButton';
+import { useAnimationsStore, usePanelsStore } from '@app/containers/Editor/hooks/useEditorStore';
 import { useClickAway } from 'react-use';
+import Fade from '@app/components/Transition/Fade';
+import classNames from './AnimationsPanel.module.scss';
+import AnimatedButton from '@app/components/AnimatedButton';
 
-const Animations: FC = observer(() => {
+const AnimationsPanel: FC = observer(() => {
+  const { activePanelId } = usePanelsStore();
   const {
     controlElements,
     showAnimationSelection,
@@ -19,7 +20,8 @@ const Animations: FC = observer(() => {
     setShowAnimationSelection,
     onStop,
     isLoadAnimation,
-  } = useAnimationStore();
+    panelId,
+  } = useAnimationsStore();
 
   const areaRef = useRef<HTMLDivElement>(null);
 
@@ -50,7 +52,7 @@ const Animations: FC = observer(() => {
     <Fade
       appear
       unmountOnExit
-      enable={showAnimationSelection}
+      enable={showAnimationSelection && activePanelId === panelId}
       className={classNames.animationsContainer}
     >
       <div
@@ -75,4 +77,4 @@ const Animations: FC = observer(() => {
   );
 });
 
-export default Animations;
+export default AnimationsPanel;

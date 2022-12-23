@@ -1,14 +1,15 @@
-import { FC, MutableRefObject, useRef } from 'react';
+import React, { FC, MutableRefObject, useRef } from 'react';
 import { observer } from 'mobx-react';
+import { useAvatarStore, usePanelsStore } from '@app/containers/Editor/hooks/useEditorStore';
 import { Swiper as SwiperClass } from 'swiper';
 import { useClickAway } from 'react-use';
-import classNames from '@app/containers/Editor/containers/BottomControls/BottomControls.module.scss';
+import Fade from '@app/components/Transition/Fade';
+import classNames from './AvatarPanel.module.scss';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Card from '@app/components/Card';
-import { useCharacterStore } from '@app/containers/Editor/hooks/useEditorStore';
-import Fade from '@app/components/Transition/Fade';
 
-const Characters: FC = observer(() => {
+const AvatarPanelMobile: FC = observer(() => {
+  const { activePanelId } = usePanelsStore();
   const {
     isPrepared,
     showCharacterSelection,
@@ -17,7 +18,8 @@ const Characters: FC = observer(() => {
     characters,
     setShowCharacterSelection,
     controlElement,
-  } = useCharacterStore();
+    panelId,
+  } = useAvatarStore();
 
   const areaRef = useRef<SwiperClass>();
   useClickAway(areaRef as unknown as MutableRefObject<HTMLElement>, (e) => {
@@ -31,7 +33,7 @@ const Characters: FC = observer(() => {
     <Fade
       appear
       unmountOnExit
-      enable={showCharacterSelection}
+      enable={showCharacterSelection && activePanelId === panelId}
       className={classNames.sliderContainer}
     >
       <div
@@ -64,4 +66,4 @@ const Characters: FC = observer(() => {
   );
 });
 
-export default Characters;
+export default AvatarPanelMobile;

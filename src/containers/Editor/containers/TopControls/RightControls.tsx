@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import classNames from './TopControls.module.scss';
 import IconButton from '@app/components/IconButton';
 import { FullScreenExitIcon, FullScreenIcon, MusicIcon, MusicOffIcon, ScreenShotIcon } from '@app/components/Icons';
-import { useAnimationStore, useControlsStore } from '@app/containers/Editor/hooks/useEditorStore';
+import { useAnimationsStore, useControlsStore } from '@app/containers/Editor/hooks/useEditorStore';
 import useSoundSystem from '@app/hooks/useSoundSystem';
 
 const RightControls: FC = observer(() => {
@@ -16,7 +16,7 @@ const RightControls: FC = observer(() => {
     onTakeScreenShot,
   } = useControlsStore();
 
-  const { setControlElement, setIsPaused } = useAnimationStore();
+  const { setControlElement, setIsPaused } = useAnimationsStore();
 
   const soundSystem = useSoundSystem();
 

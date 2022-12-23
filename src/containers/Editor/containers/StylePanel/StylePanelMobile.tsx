@@ -1,17 +1,16 @@
-import {
-  FC, MutableRefObject, useCallback, useRef,
-} from 'react';
+import React, { FC, MutableRefObject, useCallback, useRef } from 'react';
 import { observer } from 'mobx-react';
-import { useStyleStore } from '@app/containers/Editor/hooks/useEditorStore';
+import Fade from '@app/components/Transition/Fade';
+import classNames from './StylePanel.module.scss';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Card from '@app/components/Card';
-import classNames from './BottomControls.module.scss';
-import Fade from '@app/components/Transition/Fade';
-import { useClickAway } from 'react-use';
+import { usePanelsStore, useStyleStore } from '@app/containers/Editor/hooks/useEditorStore';
 import { Swiper as SwiperClass } from 'swiper';
+import { useClickAway } from 'react-use';
 import { Style } from '@app/types';
 
-const Styles: FC = observer(() => {
+const StylePanelMobile: FC = observer(() => {
+  const { activePanelId } = usePanelsStore();
   const {
     activeStyle,
     styles,
@@ -20,10 +19,10 @@ const Styles: FC = observer(() => {
     controlElement,
     setShowStyleSelection,
     isLoadingStyle,
+    panelId,
   } = useStyleStore();
 
   const areaRef = useRef<SwiperClass>();
-
   useClickAway(areaRef as unknown as MutableRefObject<HTMLElement>, (e) => {
     if (!controlElement || !e.target || !showStyleSelection) return;
     if (!controlElement.contains(e.target as Node)) setShowStyleSelection(false);
@@ -37,7 +36,7 @@ const Styles: FC = observer(() => {
     <Fade
       appear
       unmountOnExit
-      enable={showStyleSelection}
+      enable={showStyleSelection && activePanelId === panelId}
       className={classNames.sliderContainer}
     >
       <div className={classNames.sliderWrapper}>
@@ -67,4 +66,4 @@ const Styles: FC = observer(() => {
   );
 });
 
-export default Styles;
+export default StylePanelMobile;

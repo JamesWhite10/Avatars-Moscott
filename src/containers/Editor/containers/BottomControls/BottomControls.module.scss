@@ -5,38 +5,6 @@
   left: 0;
 }
 
-.centerContainer {
-  position: absolute;
-  bottom:0;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.sliderWrapper {
-  width: auto;
-  display: flex;
-}
-
-.sliderContainer {
-  width: 100%;
-  position: absolute;
-  bottom: 224px;
-  left: 0;
-  height: 0;
-}
-
-.animationSliderContainer {
-  width: 100%;
-  position: absolute;
-  bottom: 90px;
-  left: 0;
-  height: 0;
-}
-
-.slideItem {
-  width: 96px;
-}
-
 .animationsSlideItem {
   width: auto;
 }

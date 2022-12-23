@@ -1,14 +1,15 @@
-import { FC, MutableRefObject, useCallback, useRef } from 'react';
+import React, { FC, MutableRefObject, useCallback, useRef } from 'react';
 import { observer } from 'mobx-react';
-import { useAnimationStore } from '@app/containers/Editor/hooks/useEditorStore';
 import Fade from '@app/components/Transition/Fade';
+import classNames from './AnimationsPanel.module.scss';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode, Swiper as SwiperClass } from 'swiper';
 import AnimatedButton from '@app/components/AnimatedButton';
-import classNames from './BottomControls.module.scss';
-import { Swiper as SwiperClass, FreeMode } from 'swiper';
+import { useAnimationsStore, usePanelsStore } from '@app/containers/Editor/hooks/useEditorStore';
 import { useClickAway } from 'react-use';
 
-const AnimationsMobile: FC = observer(() => {
+const AnimationsPanelMobile: FC = observer(() => {
+  const { activePanelId } = usePanelsStore();
   const {
     controlElements,
     showAnimationSelection,
@@ -20,7 +21,8 @@ const AnimationsMobile: FC = observer(() => {
     isPaused,
     setIsPaused,
     onStop,
-  } = useAnimationStore();
+    panelId,
+  } = useAnimationsStore();
   const areaRef = useRef<SwiperClass>();
   useClickAway(areaRef as unknown as MutableRefObject<HTMLElement>, (e) => {
     if (!controlElements || !e.target || !showAnimationSelection) return;
@@ -48,7 +50,7 @@ const AnimationsMobile: FC = observer(() => {
     <Fade
       appear
       unmountOnExit
-      enable={showAnimationSelection}
+      enable={showAnimationSelection && activePanelId === panelId}
       className={classNames.animationSliderContainer}
     >
       <div className={classNames.sliderWrapper}>
@@ -80,4 +82,4 @@ const AnimationsMobile: FC = observer(() => {
   );
 });
 
-export default AnimationsMobile;
+export default AnimationsPanelMobile;

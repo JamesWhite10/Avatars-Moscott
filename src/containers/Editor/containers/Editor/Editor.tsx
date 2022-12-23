@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import classNames from './Editor.module.scss';
 import SceneLoad from '@app/containers/Editor/containers/SceneLoad';
@@ -7,7 +7,7 @@ import useEditorStore from '@app/containers/Editor/hooks/useEditorStore';
 import WorkArea from '@app/containers/Editor/containers/WorkArea';
 import TopControls from '@app/containers/Editor/containers/TopControls';
 import BottomControls from '@app/containers/Editor/containers/BottomControls';
-import RightControls from '@app/containers/Editor/containers/RightControls';
+import LeftControls from '@app/containers/Editor/containers/LeftControls';
 import { appConfig } from '@app/config/appConfig';
 import VideoMaterials from '@app/containers/Editor/containers/VideoMaterials/index';
 
@@ -36,7 +36,7 @@ const Editor: FC = observer(() => {
         />
         <WorkArea>
           <TopControls />
-          <RightControls />
+          <LeftControls />
           <BottomControls />
         </WorkArea>
         <About />

@@ -1,14 +1,18 @@
 import { makeAutoObservable } from 'mobx';
-import { Style } from '@app/types';
-import { EmitterInterface } from '../../../stores/EmitterInterface';
+import { EmitterInterface } from '../../../../stores/EmitterInterface';
 import EventEmitter from 'eventemitter3';
+import { Style } from '../../../../types/index';
 
-export type StyleStoreEventsType = {
+export type StylePanelId = 'style';
+
+export type StylePanelEventsType = {
   styleChange: (id: string) => void;
   styleSelectionClosed: () => void;
 };
 
-export default class StyleStore implements EmitterInterface<StyleStoreEventsType> {
+export default class StylePanelStore implements EmitterInterface<StylePanelEventsType> {
+  public readonly panelId: StylePanelId = 'style';
+
   public activeStyle?: string = 'style_one';
 
   public activeStyleFilter?: string = undefined;
@@ -19,7 +23,7 @@ export default class StyleStore implements EmitterInterface<StyleStoreEventsType
 
   public controlElement: HTMLButtonElement | null = null;
 
-  public eventEmitter!: EventEmitter<StyleStoreEventsType>;
+  public eventEmitter!: EventEmitter<StylePanelEventsType>;
 
   public isLoadingStyle = false;
 
@@ -63,11 +67,11 @@ export default class StyleStore implements EmitterInterface<StyleStoreEventsType
     this.isLoadingStyle = loading;
   }
 
-  public off(event: keyof StyleStoreEventsType): void {
+  public off(event: keyof StylePanelEventsType): void {
     this.eventEmitter.off(event);
   }
 
-  public subscribe<E extends keyof StyleStoreEventsType>(event: E, handler: StyleStoreEventsType[E]): void {
+  public subscribe<E extends keyof StylePanelEventsType>(event: E, handler: StylePanelEventsType[E]): void {
     this.eventEmitter.on(event, handler as (...args: any) => void);
   }
 

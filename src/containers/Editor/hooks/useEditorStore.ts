@@ -2,10 +2,11 @@ import EditorStore from '../stores/EditorStore';
 import { EditorContext } from '../Context/EditorContext';
 import { useContext } from 'react';
 import ControlsStore from '../stores/ControlsStore';
-import CharacterStore from '../stores/CharacterStore';
-import StyleStore from '../stores/StyleStore';
 import AboutStore from '../stores/AboutStore';
-import AnimationStore from '../stores/AnimationStore';
+import PanelsStore from '../stores/PanelsStore';
+import AvatarPanelStore from '../stores/panels/AvatarPanelStore';
+import AnimationsPanelStore from '../stores/panels/AnimationsPanelStore';
+import StylePanelStore from '../stores/panels/StylePanelStore';
 
 export const useEditorStore = (): EditorStore => {
   const rootContext = useContext(EditorContext);
@@ -15,24 +16,28 @@ export const useEditorStore = (): EditorStore => {
   return rootContext.store;
 };
 
-export const useControlsStore = (): ControlsStore => {
-  return useEditorStore().controlsStore;
-};
-
-export const useCharacterStore = (): CharacterStore => {
-  return useEditorStore().charactersStore;
-};
-
-export const useStyleStore = (): StyleStore => {
-  return useEditorStore().styleStore;
-};
-
 export const useAboutStore = (): AboutStore => {
   return useEditorStore().aboutStore;
 };
 
-export const useAnimationStore = (): AnimationStore => {
-  return useEditorStore().animationStore;
+export const useControlsStore = (): ControlsStore => {
+  return useEditorStore().controlsStore;
+};
+
+export const useAvatarStore = (): AvatarPanelStore => {
+  return useEditorStore().panelsStore.avatarPanelStore;
+};
+
+export const useAnimationsStore = (): AnimationsPanelStore => {
+  return useEditorStore().panelsStore.animationsPanelStore;
+};
+
+export const useStyleStore = (): StylePanelStore => {
+  return useEditorStore().panelsStore.stylePanelStore;
+};
+
+export const usePanelsStore = (): PanelsStore => {
+  return useEditorStore().panelsStore;
 };
 
 export default useEditorStore;

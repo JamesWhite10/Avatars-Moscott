@@ -1,15 +1,19 @@
 import { makeAutoObservable } from 'mobx';
+import { EmitterInterface } from '../../../../stores/EmitterInterface';
 import EventEmitter from 'eventemitter3';
-import { Avatar } from '../../../types';
-import { EmitterInterface } from '../../../stores/EmitterInterface';
+import { Avatar } from '../../../../types/index';
 
-export type CharacterStoreEventsType = {
+export type AvatarPanelId = 'avatar';
+
+export type AvatarPanelEventsType = {
   characterChange: (id: string) => void;
   characterSelectionClosed: () => void;
 };
 
-export default class CharacterStore implements EmitterInterface<CharacterStoreEventsType> {
-  public eventEmitter!: EventEmitter<CharacterStoreEventsType>;
+export default class AvatarPanelStore implements EmitterInterface<AvatarPanelEventsType> {
+  public readonly panelId: AvatarPanelId = 'avatar';
+
+  public eventEmitter!: EventEmitter<AvatarPanelEventsType>;
 
   public isPrepared = false;
 
@@ -37,9 +41,9 @@ export default class CharacterStore implements EmitterInterface<CharacterStoreEv
     return character;
   }
 
-  public subscribe<T extends keyof CharacterStoreEventsType>(
+  public subscribe<T extends keyof AvatarPanelEventsType>(
     event: T,
-    handler: CharacterStoreEventsType[T],
+    handler: AvatarPanelEventsType[T],
   ): void {
     // TODO небольшой хак, нужно разобраться с типами
     this.eventEmitter.on(event, handler as (...args: any) => void);
@@ -49,7 +53,7 @@ export default class CharacterStore implements EmitterInterface<CharacterStoreEv
     this.controlElement = el;
   }
 
-  public off(event: keyof CharacterStoreEventsType): void {
+  public off(event: keyof AvatarPanelEventsType): void {
     this.eventEmitter.off(event);
   }
 

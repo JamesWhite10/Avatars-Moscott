@@ -1,16 +1,20 @@
 import { makeAutoObservable } from 'mobx';
-import { EmitterInterface } from '../../../stores/EmitterInterface';
+import { EmitterInterface } from '../../../../stores/EmitterInterface';
 import EventEmitter from 'eventemitter3';
-import { AnimationsType } from '../../../types/index';
+import { AnimationsType } from '../../../../types/index';
 
-export type AnimationEventsType = {
+export type AnimationsPanelId = 'animations';
+
+export type AnimationsPanelEventsType = {
   animation_select: (id: string) => void;
   selection_closed: () => void;
   pause: (paused: boolean) => void;
   stop: () => void;
 };
 
-export default class AnimationStore implements EmitterInterface<AnimationEventsType> {
+export default class AnimationsPanelStore implements EmitterInterface<AnimationsPanelEventsType> {
+  public readonly panelId: AnimationsPanelId = 'animations';
+
   public showAnimationSelection = false;
 
   public animations: AnimationsType[] = [];
@@ -25,18 +29,18 @@ export default class AnimationStore implements EmitterInterface<AnimationEventsT
 
   public isLoadAnimation: boolean = false;
 
-  eventEmitter!: EventEmitter<AnimationEventsType>;
+  eventEmitter!: EventEmitter<AnimationsPanelEventsType>;
 
   constructor() {
-    this.eventEmitter = new EventEmitter<AnimationEventsType>();
+    this.eventEmitter = new EventEmitter<AnimationsPanelEventsType>();
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
-  off(event: keyof AnimationEventsType): void {
+  off(event: keyof AnimationsPanelEventsType): void {
     this.eventEmitter.off(event);
   }
 
-  subscribe<E extends keyof AnimationEventsType>(event: E, handler: AnimationEventsType[E]): void {
+  subscribe<E extends keyof AnimationsPanelEventsType>(event: E, handler: AnimationsPanelEventsType[E]): void {
     this.eventEmitter.on(event, handler as (...args: any) => void);
   }
 
