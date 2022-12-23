@@ -3,14 +3,7 @@ include:
     ref: master
     file: "node/lint.yml"
 
-deploy.dev:
-  variables:
-    ENV_FILE: '${DEV_ENV}'
-    PROJECT_NAME: avatars-moscott-ui
-    EXT_PORT: 3009
-    INT_PORT: 3000
-    DOCKERFILE: .docker/Dockerfile
-    DOCKER_PROJECT_DIR: "."
+.deploy:
   before_script:
     - |
       {
@@ -33,7 +26,40 @@ deploy.dev:
     - rm .yarnrc .npmrc
   tags:
     - web3dev-dev
+
+deploy.dev:
+  variables:
+    ENV_FILE: '${DEV_ENV}'
+    PROJECT_NAME: avatars-moscott-ui
+    EXT_PORT: 3009
+    INT_PORT: 3000
+    DOCKERFILE: .docker/Dockerfile
+    DOCKER_PROJECT_DIR: "."
+  extends: .deploy
   only:
     - develop
 
+deploy.dev.stage2:
+  variables:
+    ENV_FILE: '${DEV_ENV}'
+    PROJECT_NAME: avatars-moscott-ui-stage2
+    EXT_PORT: 3038
+    INT_PORT: 3000
+    DOCKERFILE: .docker/Dockerfile
+    DOCKER_PROJECT_DIR: "."
+  extends: .deploy
+  only:
+    - stage2
 
+deploy.release:
+  variables:
+    ENV_FILE: '${RELEASE_ENV}'
+    PROJECT_NAME: avatars-moscott-ui-release
+    EXT_PORT: 3039
+    INT_PORT: 3000
+    DOCKERFILE: .docker/Dockerfile
+    DOCKER_PROJECT_DIR: "."
+  extends: .deploy
+  only:
+    variables:
+      - $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+-rc\d+$/
