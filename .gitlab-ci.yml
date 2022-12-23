@@ -49,7 +49,7 @@ deploy.dev.stage2:
     DOCKER_PROJECT_DIR: "."
   extends: .deploy
   only:
-    - stage2
+    - stage_2
 
 deploy.release:
   variables:
