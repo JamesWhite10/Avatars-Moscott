@@ -29,6 +29,7 @@ export type SceneEventType = {
   startUiAnimation: () => void;
 
   loadParts: (isLoad: boolean) => void;
+  onLoadBackground: (isLoad: boolean) => void;
 };
 
 export interface ActionOptions {
@@ -55,7 +56,7 @@ export class Actions {
 
   public raycastSystem: RaycastSystem;
 
-  public startPosition: THREE.Vector3 = new THREE.Vector3(1.3, 0, 0);
+  public startPosition: THREE.Vector3 = new THREE.Vector3(1.3, 0.02, 0);
 
   public startObject: THREE.Object3D | null = null;
 

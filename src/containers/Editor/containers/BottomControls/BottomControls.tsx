@@ -17,6 +17,11 @@ import ShoesPanelNavItem from '@app/containers/Editor/containers/ShoesPanel/Shoe
 import AnimationsPanelMobile from '@app/containers/Editor/containers/AnimationsPanel/AnimationsPanelMobile';
 import AvatarPanelMobile from '@app/containers/Editor/containers/AvatarPanel/AvatarPanelMobile';
 import StylePanelMobile from '@app/containers/Editor/containers/StylePanel/StylePanelMobile';
+import HeadPanelMobile from '@app/containers/Editor/containers/HeadPanel/HeadPanelMobile';
+import BodyPanelMobile from '../BodyPanel/BodyPanelMobile';
+import ShoesPanelMobile from '../ShoesPanel/ShoesPanelMobile';
+import BackgroundPanelMobile from '../BackgroundPanel/BackgroundPanelMobile';
+import EyePanelMobile from '../EyePanel/EyePanelMobile';
 
 const BottomControls: FC = observer(() => {
   const isDesktop = useMedia(screenSizes.mqDesktop, false);
@@ -55,6 +60,11 @@ const BottomControls: FC = observer(() => {
       {!isDesktop && <AvatarPanelMobile />}
       {!isDesktop && <AnimationsPanelMobile />}
       {!isDesktop && <StylePanelMobile />}
+      {!isDesktop && <HeadPanelMobile />}
+      {!isDesktop && <BodyPanelMobile />}
+      {!isDesktop && <ShoesPanelMobile />}
+      {!isDesktop && <BackgroundPanelMobile />}
+      {!isDesktop && <EyePanelMobile />}
     </>
   );
 });

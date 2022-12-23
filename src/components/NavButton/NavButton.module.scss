@@ -26,6 +26,12 @@
     background: initial;
     opacity: 0.5;
     cursor: not-allowed;
+    &:hover {
+      background: initial;
+      svg, path {
+        fill: #4145A7;
+      }
+    }
   }
 }
 

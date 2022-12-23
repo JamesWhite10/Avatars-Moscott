@@ -41,14 +41,41 @@ export class VrmEditor {
     this._sceneViewport = options.sceneViewport;
   }
 
+  public loadPart(vrmSource: string, textureSource: string, configName: string, slot: string, partName: string): void {
+    const resource = this._sceneViewport.resourcesManager.resources[vrmSource];
+    if (!resource) {
+      this._sceneViewport.resourcesManager.addVrm(vrmSource);
+      this._sceneViewport.resourcesManager.addTexture(textureSource);
+      this._sceneViewport.resourcesManager.load()
+        .then(() => {
+          this.changeVrmPart(vrmSource, textureSource, configName, slot, partName);
+        });
+    } else {
+      this.changeVrmPart(vrmSource, textureSource, configName, slot, partName);
+    }
+  }
+
   public changeVrmPart(vrmSource: string, textureSource: string, configName: string, slot: string, partName: string): void {
     const vrm = this._sceneViewport.resourcesManager.getVrmByUrlOrFail(vrmSource);
     const texture = this._sceneViewport.resourcesManager.getTextureByUrlOrFail(textureSource);
     this.applyToBaseParts(vrm.userData.vrm, partName, configName, slot);
-    const configurator = this.vrmConfiguratorData.find((item) => item.name === 'mira_base');
+    const configurator = this.vrmConfiguratorData.find((item) => item.name === configName);
     if (configurator) {
       this.applyTexture(partName, configName, texture);
       this.preparePartsTexture(configurator, 0);
+    }
+  }
+
+  public changeTexture(partName: string, configName: string, textureSource: string): void {
+    const configurator = this.vrmConfiguratorData.find((item) => item.name === configName);
+    if (configurator) {
+      this._sceneViewport.resourcesManager.addTexture(textureSource);
+      this._sceneViewport.resourcesManager.load()
+        .then(() => {
+          const texture = this._sceneViewport.resourcesManager.getTextureByUrlOrFail(textureSource);
+          this.applyTexture(partName, configName, texture);
+          this.preparePartsTexture(configurator, 0);
+        });
     }
   }
 
@@ -110,7 +137,7 @@ export class VrmEditor {
       data: { position: new THREE.Vector3(0, 0.8, 0) },
     });
     primitiveCollider.object.name = rootVrmName;
-    primitiveCollider.object.position.set(2.8, 0, -1.5);
+    primitiveCollider.object.position.set(2.8, 0.04, -1.5);
 
     return primitiveCollider.object;
   }
