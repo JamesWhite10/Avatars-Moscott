@@ -1,3 +1,16 @@
-.root {
+.sliderContainer {
+  width: 100%;
+  position: absolute;
+  bottom: 275px;
+  left: 0;
+  height: 0;
+}
 
+.sliderWrapper {
+  width: auto;
+  display: flex;
+}
+
+.slideItem {
+  width: 96px;
 }

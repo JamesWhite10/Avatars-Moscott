@@ -32,6 +32,7 @@ export class StylesAction {
   public changeStyleTexture(texture: string): void {
     const { currentTextureName } = this._textureEditor.blendingShader;
     if (this._textureEditor) {
+      this._actions?.eventEmitter.emit('onLoadBackground', true);
       this._textureEditor.blendingShader.currentTextureName = texture;
 
       const additionalBlendingName = textures[texture];
@@ -45,6 +46,7 @@ export class StylesAction {
           this._textureEditor.blendingShader.uniforms.forEach((value) => {
             value.uniform[currentBlendingName].value = current;
             value.uniform[additionalBlendingName].value = additional;
+            if (additional === 1) this._actions?.eventEmitter.emit('onLoadBackground', false);
           });
           this._textureEditor.sceneMaterials.forEach((item) => {
             if (item.userData.shader) {

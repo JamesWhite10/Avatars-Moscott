@@ -14,6 +14,11 @@ import { screenSizes } from '@app/config/media';
 import AnimationsPanel from '@app/containers/Editor/containers/AnimationsPanel/AnimationsPanel';
 import AvatarPanel from '@app/containers/Editor/containers/AvatarPanel/AvatarPanel';
 import StylePanel from '@app/containers/Editor/containers/StylePanel/StylePanel';
+import HeadPanel from '@app/containers/Editor/containers/HeadPanel/HeadPanel';
+import BodyPanel from '../BodyPanel/BodyPanel';
+import ShoesPanel from '../ShoesPanel/ShoesPanel';
+import BackgroundPanel from '../BackgroundPanel/BackgroundPanel';
+import EyePanel from '../EyePanel/EyePanel';
 
 const LeftControls: FC = observer(() => {
   const isDesktop = useMedia(screenSizes.mqDesktop, false);
@@ -39,6 +44,11 @@ const LeftControls: FC = observer(() => {
       {isDesktop && <AnimationsPanel /> }
       {isDesktop && <AvatarPanel /> }
       {isDesktop && <StylePanel /> }
+      {isDesktop && <HeadPanel /> }
+      {isDesktop && <BodyPanel /> }
+      {isDesktop && <ShoesPanel /> }
+      {isDesktop && <BackgroundPanel /> }
+      {isDesktop && <EyePanel /> }
     </>
   );
 });

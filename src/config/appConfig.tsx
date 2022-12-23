@@ -1,7 +1,11 @@
-import { AnimationsType, Avatar, EnvironmentConfigType, Style } from '@app/types';
+import { AnimationsType, Avatar, BackgroundPart, EnvironmentConfigType, Style } from '@app/types';
 import { CyberfoxIcon, Web3devIcon } from '../components/Icons/index';
 import MiraImage from '@app/assets/mira.png';
 import YukiImage from '@app/assets/yuki.png';
+import Background1 from '@app/assets/scrolingPanel/background1.png';
+import Background2 from '@app/assets/scrolingPanel/background2.png';
+import Background3 from '@app/assets/scrolingPanel/background3.png';
+import Background4 from '@app/assets/scrolingPanel/background4.png';
 import MiraImageRender from '@app/assets/about/MiraAbout.png';
 import YukiImageRender from '@app/assets/about/YukiAbout.png';
 import {
@@ -186,9 +190,17 @@ const animations: AnimationsType[] = [
   },
 ];
 
+const background: BackgroundPart[] = [
+  { id: 'firstTexture', image: Background4.src },
+  { id: 'secondTexture', image: Background3.src },
+  { id: 'thirdTexture', image: Background2.src },
+  { id: 'fourthTexture', image: Background1.src },
+];
+
 export const appConfig = {
   avatars,
   styles,
   sceneConfig,
   animations,
+  background,
 };

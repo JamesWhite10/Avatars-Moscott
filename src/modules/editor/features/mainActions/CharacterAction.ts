@@ -151,7 +151,7 @@ export class CharacterAction {
         .onUpdate(({ x, z }) => {
           if (this._actions && this._actions.startObject) {
             this._actions.startObject.rotation.y = 0;
-            this._actions.startObject.position.set(2.8, 0, -1.5);
+            this._actions.startObject.position.set(2.8, 0.04, -1.5);
           }
 
           if (this._actions) {

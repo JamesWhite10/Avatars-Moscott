@@ -15,7 +15,9 @@ const Editor: FC = observer(() => {
   const { initialize, threeScene, showLoadingScreen } = useEditorStore();
 
   useEffect(() => {
-    if (showLoadingScreen) initialize(appConfig.avatars, appConfig.styles, appConfig.sceneConfig, appConfig.animations);
+    if (showLoadingScreen) {
+      initialize(appConfig.avatars, appConfig.styles, appConfig.sceneConfig, appConfig.animations, appConfig.background);
+    }
   }, [useEditorStore, showLoadingScreen]);
 
   const editorRefCallback = useCallback((element: HTMLDivElement) => {

@@ -14,6 +14,11 @@ export type PanelEventType = {
   styleSelect: () => void;
   characterSelect: () => void;
   animationSelect: () => void;
+  headSelect: () => void;
+  bodySelect: () => void;
+  shoesSelect: () => void;
+  backgroundSelect: () => void;
+  eyeSelect: () => void;
 };
 
 export type ActivePanelIdType = AvatarPanelId | AnimationsPanelId | BackgroundPanelId
@@ -111,6 +116,21 @@ export default class PanelsStore {
         break;
       case 'animations':
         this.eventEmitter.emit('animationSelect');
+        break;
+      case 'head':
+        this.eventEmitter.emit('headSelect');
+        break;
+      case 'body':
+        this.eventEmitter.emit('bodySelect');
+        break;
+      case 'shoes':
+        this.eventEmitter.emit('shoesSelect');
+        break;
+      case 'background':
+        this.eventEmitter.emit('backgroundSelect');
+        break;
+      case 'eye':
+        this.eventEmitter.emit('eyeSelect');
         break;
       default:
         break;

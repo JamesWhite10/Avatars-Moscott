@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import { SceneViewport } from '@app/modules/editor/scene/viewports/index';
 import ResourcesManager from '../../../modules/editor/scene/ResourcesManager';
 import ControlsStore from './ControlsStore';
-import { AnimationsType, Avatar, EnvironmentConfigType, Style } from '../../../types';
+import { AnimationsType, Avatar, BackgroundPart, EnvironmentConfigType, Style } from '../../../types';
 import SoundSystem from '../../../sound/SoundSystem';
 import AboutStore from './AboutStore';
 import PanelsStore from './PanelsStore';
@@ -46,6 +46,21 @@ export default class EditorStore {
     this.panelsStore.subscribe('styleSelect', () => {
       this.panelsStore.stylePanelStore.setShowStyleSelection(true);
     });
+    this.panelsStore.subscribe('headSelect', () => {
+      this.panelsStore.headPanelStore.setShowHeadSelection(true);
+    });
+    this.panelsStore.subscribe('bodySelect', () => {
+      this.panelsStore.bodyPanelStore.setShowBodySelection(true);
+    });
+    this.panelsStore.subscribe('shoesSelect', () => {
+      this.panelsStore.shoesPanelStore.setShowShoesSelection(true);
+    });
+    this.panelsStore.subscribe('backgroundSelect', () => {
+      this.panelsStore.backgroundPanelStore.setShowBackgroundSelection(true);
+    });
+    this.panelsStore.subscribe('eyeSelect', () => {
+      this.panelsStore.eyePanelStore.setShowEyeSelection(true);
+    });
     this.controlsStore.subscribe('soundChange', (isMuted) => {
       this.soundSystem.mute(!isMuted);
     });
@@ -59,6 +74,82 @@ export default class EditorStore {
     this.controlsStore.subscribe('aboutModalOpen', (enable) => {
       if (!this.panelsStore.avatarPanelStore.character) return;
       this.aboutStore.aboutModalIsOpen = enable;
+    });
+
+    this.panelsStore.headPanelStore.subscribe('headChange', (head) => {
+      if (this.threeScene && this.threeScene.vrmEditor) {
+        const editor = this.threeScene.vrmEditor;
+        const { character } = this.panelsStore.avatarPanelStore;
+        this.panelsStore.headPanelStore.setActiveHead(head.id);
+        if (character) {
+          editor.loadPart(
+            head.source || '',
+            head.texturesMap.base,
+            `${character.id}_base`,
+            head.slots[0],
+            head.id,
+          );
+        }
+      }
+    });
+
+    this.panelsStore.bodyPanelStore.subscribe('bodyChange', (body) => {
+      if (this.threeScene && this.threeScene.vrmEditor) {
+        const editor = this.threeScene.vrmEditor;
+        const { character } = this.panelsStore.avatarPanelStore;
+        this.panelsStore.bodyPanelStore.setActiveBody(body.id);
+        if (character) {
+          editor.loadPart(
+            body.source || '',
+            body.texturesMap.base,
+            `${character.id}_base`,
+            body.slots[0],
+            body.id,
+          );
+        }
+      }
+    });
+
+    this.panelsStore.shoesPanelStore.subscribe('shoesChange', (shoe) => {
+      if (this.threeScene && this.threeScene.vrmEditor) {
+        const editor = this.threeScene.vrmEditor;
+        const { character } = this.panelsStore.avatarPanelStore;
+        this.panelsStore.shoesPanelStore.setActiveShoes(shoe.id);
+        if (character) {
+          editor.loadPart(
+            shoe.source || '',
+            shoe.texturesMap.base,
+            `${character.id}_base`,
+            shoe.slots[0],
+            shoe.id,
+          );
+        }
+      }
+    });
+
+    this.panelsStore.backgroundPanelStore.subscribe('backgroundChange', (background) => {
+      if (this.threeScene && this.threeScene.vrmEditor) {
+        const { character } = this.panelsStore.avatarPanelStore;
+        this.panelsStore.backgroundPanelStore.setActiveBackground(background.id);
+        if (character) {
+          this.threeScene.actions?.stylesAction?.changeStyleTexture(background.id);
+        }
+      }
+    });
+
+    this.panelsStore.eyePanelStore.subscribe('eyeChange', (eye) => {
+      if (this.threeScene && this.threeScene.vrmEditor) {
+        const editor = this.threeScene.vrmEditor;
+        const { character } = this.panelsStore.avatarPanelStore;
+        this.panelsStore.eyePanelStore.setActiveEye(eye);
+        if (character) {
+          editor.changeTexture(
+            `${character.id}_eyes_base`,
+            `${character.id}_base`,
+            eye,
+          );
+        }
+      }
     });
 
     this.panelsStore.avatarPanelStore.subscribe('characterChange', (id) => {
@@ -84,6 +175,11 @@ export default class EditorStore {
     });
 
     this.panelsStore.stylePanelStore.subscribe('styleSelectionClosed', () => this.panelsStore.setActivePanelType());
+    this.panelsStore.headPanelStore.subscribe('headSelectionClosed', () => this.panelsStore.setActivePanelType());
+    this.panelsStore.bodyPanelStore.subscribe('bodySelectionClosed', () => this.panelsStore.setActivePanelType());
+    this.panelsStore.shoesPanelStore.subscribe('shoesSelectionClosed', () => this.panelsStore.setActivePanelType());
+    this.panelsStore.backgroundPanelStore.subscribe('backgroundSelectionClosed', () => this.panelsStore.setActivePanelType());
+    this.panelsStore.eyePanelStore.subscribe('eyeSelectionClosed', () => this.panelsStore.setActivePanelType());
     let activeId: string | undefined;
     this.panelsStore.animationsPanelStore.subscribe('animation_select', (id) => {
       if (activeId !== id) {
@@ -134,6 +230,7 @@ export default class EditorStore {
     styles: Style[],
     environment: EnvironmentConfigType,
     animations: AnimationsType[],
+    backgrounds: BackgroundPart[],
   ): void {
     this.threeScene = new SceneViewport.SceneViewport();
     if (!this.threeScene) return;
@@ -145,6 +242,7 @@ export default class EditorStore {
         if (!this.threeScene) return;
         this.sceneSubscribe();
         this.panelsStore.stylePanelStore.setStyles(styles);
+        this.panelsStore.backgroundPanelStore.setBackgrounds(backgrounds);
         this.panelsStore.animationsPanelStore.setAnimations(animations);
         const character = this.panelsStore.avatarPanelStore.setUp(characters);
         if (character && character.name) {
@@ -199,9 +297,19 @@ export default class EditorStore {
         const avatarName = this.panelsStore.avatarPanelStore.characters.find((character) => name.includes(character.id));
         if (!avatarName) return;
         this.panelsStore.stylePanelStore.setActiveStyleFilter(avatarName.name);
+        this.panelsStore.headPanelStore.setActiveHeadFilter(avatarName.name);
+        this.panelsStore.bodyPanelStore.setActiveBodyFilter(avatarName.name);
+        this.panelsStore.shoesPanelStore.setActiveShoesFilter(avatarName.name);
+        this.panelsStore.backgroundPanelStore.setActiveBackgroundFilter(avatarName.name);
+        this.panelsStore.eyePanelStore.setActiveEyeFilter(avatarName.name);
         this.panelsStore.avatarPanelStore.setCharacterIsChanging(false);
         this.panelsStore.animationsPanelStore.setAnimationLoading(false);
         this.panelsStore.stylePanelStore.setLoadingStyle(false);
+        this.panelsStore.headPanelStore.setLoadingHead(false);
+        this.panelsStore.bodyPanelStore.setLoadingBody(false);
+        this.panelsStore.shoesPanelStore.setLoadingShoes(false);
+        this.panelsStore.backgroundPanelStore.setLoadingBackground(false);
+        this.panelsStore.eyePanelStore.setLoadingEye(false);
         this.panelsStore.avatarPanelStore.setCharacter(avatarName.name);
         const { character } = this.panelsStore.avatarPanelStore;
         if (character) this.aboutStore.setCharacterImage(character.renderImage);
@@ -212,18 +320,33 @@ export default class EditorStore {
       this.threeScene.actions.subscribe('animationEnded', () => {
         this.panelsStore.animationsPanelStore.setAnimationLoading(false);
         this.panelsStore.stylePanelStore.setLoadingStyle(false);
+        this.panelsStore.headPanelStore.setLoadingHead(false);
+        this.panelsStore.bodyPanelStore.setLoadingBody(false);
+        this.panelsStore.shoesPanelStore.setLoadingShoes(false);
+        this.panelsStore.backgroundPanelStore.setLoadingBackground(false);
+        this.panelsStore.eyePanelStore.setLoadingEye(false);
         this.panelsStore.avatarPanelStore.setCharacterIsChanging(false);
       });
 
       this.threeScene.actions.subscribe('loadNewCharacter', () => {
         this.panelsStore.animationsPanelStore.setAnimationLoading(true);
         this.panelsStore.stylePanelStore.setLoadingStyle(true);
+        this.panelsStore.headPanelStore.setLoadingHead(true);
+        this.panelsStore.bodyPanelStore.setLoadingBody(true);
+        this.panelsStore.shoesPanelStore.setLoadingShoes(true);
+        this.panelsStore.backgroundPanelStore.setLoadingBackground(true);
+        this.panelsStore.eyePanelStore.setLoadingEye(true);
         this.panelsStore.avatarPanelStore.setCharacterIsChanging(true);
       });
 
       this.threeScene.actions.subscribe('loadNewStyle', () => {
         this.panelsStore.animationsPanelStore.setAnimationLoading(true);
         this.panelsStore.stylePanelStore.setLoadingStyle(true);
+        this.panelsStore.headPanelStore.setLoadingHead(true);
+        this.panelsStore.bodyPanelStore.setLoadingBody(true);
+        this.panelsStore.shoesPanelStore.setLoadingShoes(true);
+        this.panelsStore.backgroundPanelStore.setLoadingBackground(true);
+        this.panelsStore.eyePanelStore.setLoadingEye(true);
         this.panelsStore.avatarPanelStore.setCharacterIsChanging(true);
       });
 
@@ -233,7 +356,15 @@ export default class EditorStore {
 
       this.threeScene.actions.subscribe('animationEnded', () => {
         this.panelsStore.stylePanelStore.setLoadingStyle(false);
-        this.panelsStore.stylePanelStore.setLoadingStyle(false);
+        this.panelsStore.headPanelStore.setLoadingHead(false);
+        this.panelsStore.bodyPanelStore.setLoadingBody(false);
+        this.panelsStore.shoesPanelStore.setLoadingShoes(false);
+        this.panelsStore.backgroundPanelStore.setLoadingBackground(false);
+        this.panelsStore.eyePanelStore.setLoadingEye(false);
+      });
+
+      this.threeScene.actions.subscribe('onLoadBackground', (value) => {
+        this.panelsStore.backgroundPanelStore.setLoadingBackground(value);
       });
 
       this.threeScene.actions.subscribe('loadTimeAnimation', (isLoading: boolean) => {

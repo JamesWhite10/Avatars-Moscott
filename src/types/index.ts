@@ -14,6 +14,7 @@ export type Slot = 'hair' | 'eye' | 'costume' | 'base' | 'shoes' | string;
 
 export type AvatarPart = {
   id: string;
+  image: string;
   source?: string;
   texturesMap: Record<string, string>;
   slots: Slot[];
@@ -46,4 +47,9 @@ export type AnimationsType = {
   id: string;
   name: string;
   animation: string;
+};
+
+export type BackgroundPart = {
+  id: string;
+  image: string;
 };
