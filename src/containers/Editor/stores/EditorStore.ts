@@ -295,7 +295,9 @@ export default class EditorStore {
     if (this.threeScene && this.threeScene.actions) {
       this.threeScene.actions.subscribe('characterChange', (name) => {
         const avatarName = this.panelsStore.avatarPanelStore.characters.find((character) => name.includes(character.id));
+        const styleName = this.panelsStore.stylePanelStore.styles.find((style) => name.includes(style.id));
         if (!avatarName) return;
+        this.panelsStore.stylePanelStore.setActiveStyle(styleName?.id);
         this.panelsStore.stylePanelStore.setActiveStyleFilter(avatarName.name);
         this.panelsStore.headPanelStore.setActiveHeadFilter(avatarName.name);
         this.panelsStore.bodyPanelStore.setActiveBodyFilter(avatarName.name);
