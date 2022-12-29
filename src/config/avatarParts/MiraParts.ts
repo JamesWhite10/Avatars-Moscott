@@ -10,6 +10,10 @@ export const MiraBase: AvatarPart = {
   id: 'mira_head',
   image: '',
   source: '/3d/assets/models/Mira/vrms/mira_base.vrm',
+  eyeImage: {
+    mira_eyes_base: MiraHair1.src,
+    mira_eyes_alternate: MiraHair2.src,
+  },
   texturesMap: {
     base: '/3d/assets/models/Mira/textures/Base/miraheadtail_color.jpg',
     alternate: '/3d/assets/models/Mira/textures/Base/miraheadtail_color_alternate.png',
