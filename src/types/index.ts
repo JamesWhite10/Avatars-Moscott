@@ -16,7 +16,6 @@ export type AvatarPart = {
   id: string;
   image: string;
   source?: string;
-  eyeImage: Record<string, string>;
   texturesMap: Record<string, string>;
   slots: Slot[];
 };

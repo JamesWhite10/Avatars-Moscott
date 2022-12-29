@@ -5,17 +5,11 @@ import YukiShoes1 from '../../assets/scrolingPanel/yuki_shoes_1.png';
 import YukiShoes2 from '../../assets/scrolingPanel/yuki_shoes_2.png';
 import YukiHair1 from '../../assets/scrolingPanel/yuki_hair_1.png';
 import YukiHair2 from '../../assets/scrolingPanel/yuki_hair_2.png';
-import MiraHair1 from '../../assets/scrolingPanel/mira_hair_1.png';
-import MiraHair2 from '../../assets/scrolingPanel/mira_hair_2.png';
 
 export const YukiBase: AvatarPart = {
   id: 'yuki_head',
   image: '',
   source: '/3d/assets/models/Yuki/vrms/yuki_base.vrm',
-  eyeImage: {
-    mira_eyes_base: MiraHair1.src,
-    mira_eyes_alternate: MiraHair2.src,
-  },
   texturesMap: {
     base: '/3d/assets/models/Yuki/textures/Base/yukiheadtail_color.jpg',
     alternate: '/3d/assets/models/Yuki/textures/Base/yukiheadtail_color_alternate.png',
