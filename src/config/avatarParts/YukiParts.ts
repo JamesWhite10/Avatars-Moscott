@@ -1,4 +1,4 @@
-import { AvatarPart } from '../../types/index';
+import { AvatarPart } from '@app/types';
 import YukiCostume1 from '../../assets/scrolingPanel/yuki_costume_1.png';
 import YukiCostume2 from '../../assets/scrolingPanel/yuki_costume_2.png';
 import YukiShoes1 from '../../assets/scrolingPanel/yuki_shoes_1.png';
